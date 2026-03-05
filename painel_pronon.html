@@ -112,7 +112,7 @@ function TabOverview(){
         <ResponsiveContainer width="100%" height={260}>
           <PieChart><Pie data={statusData} cx="50%" cy="50%" outerRadius={100} innerRadius={55} dataKey="value" label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`} labelLine={false} style={{fontSize:10}}>
             {statusData.map((e,i)=><Cell key={i} fill={e.fill}/>)}
-          </Pie><Tooltip content={<TooltipCustom/>}/></PieChart>
+          </Pie><Tooltip cursor={{fill:'rgba(92,184,255,.06)'}} wrapperStyle={{background:'transparent',border:'none',boxShadow:'none',padding:0}} content={<TooltipCustom/>}/></PieChart>
         </ResponsiveContainer>
       </div>
       <div className="card" style={{flex:'1 1 500px'}}>
@@ -122,7 +122,7 @@ function TabOverview(){
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,.05)"/>
             <XAxis type="number" stroke="#556677" fontSize={11}/>
             <YAxis type="category" dataKey="ed" stroke="#556677" fontSize={12} width={50}/>
-            <Tooltip content={<TooltipCustom/>}/>
+            <Tooltip cursor={{fill:'rgba(92,184,255,.06)'}} wrapperStyle={{background:'transparent',border:'none',boxShadow:'none',padding:0}} content={<TooltipCustom/>}/>
             <Legend wrapperStyle={{fontSize:11}}/>
             <Bar dataKey="aprovCapt" name="Aprov. Captação" stackId="a" fill="#14b8a6" radius={[0,0,0,0]}/>
             <Bar dataKey="aprovNaoContemp" name="Aprov. Não Cont." stackId="a" fill="#f59e0b"/>
@@ -167,7 +167,7 @@ function TabEquip(){
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,.05)"/>
             <XAxis type="number" stroke="#556677" fontSize={11}/>
             <YAxis type="category" dataKey="name" width={160} stroke="#556677" fontSize={11}/>
-            <Tooltip content={<TooltipCustom/>}/>
+            <Tooltip cursor={{fill:'rgba(92,184,255,.06)'}} wrapperStyle={{background:'transparent',border:'none',boxShadow:'none',padding:0}} content={<TooltipCustom/>}/>
             <Bar dataKey="value" name="Projetos" radius={[0,4,4,0]}>
               {eqData.map(e=><Cell key={e.name} fill={e.fill}/>)}
             </Bar>
@@ -181,7 +181,7 @@ function TabEquip(){
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,.05)"/>
             <XAxis dataKey="ed" stroke="#556677" fontSize={12}/>
             <YAxis stroke="#556677" fontSize={11}/>
-            <Tooltip content={<TooltipCustom/>}/>
+            <Tooltip cursor={{fill:'rgba(92,184,255,.06)'}} wrapperStyle={{background:'transparent',border:'none',boxShadow:'none',padding:0}} content={<TooltipCustom/>}/>
             <Legend wrapperStyle={{fontSize:10}}/>
             {allCats.filter(c=>c!=='Diagnóstico/Outros'&&c!=='Não classificado').slice(0,8).map(c=>
               <Bar key={c} dataKey={c} stackId="a" fill={EQUIP_COLORS[c]||'#64748b'}/>
@@ -256,7 +256,7 @@ function TabEquipVal(){
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,.05)"/>
           <XAxis type="number" stroke="#556677" fontSize={11} tickFormatter={fmt}/>
           <YAxis type="category" dataKey="cat" width={170} stroke="#556677" fontSize={11}/>
-          <Tooltip content={({active,payload,label})=>{
+          <Tooltip cursor={{fill:'rgba(92,184,255,.06)'}} wrapperStyle={{background:'transparent',border:'none',boxShadow:'none',padding:0}} content={({active,payload,label})=>{
             if(!active||!payload?.length)return null;
             const d=payload[0]?.payload;
             return(<div style={{background:'#131e2e',border:'1px solid rgba(92,184,255,.3)',borderRadius:12,padding:'12px 16px',fontSize:12}}>
@@ -327,7 +327,7 @@ function TabCiclos(){
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,.05)"/>
             <XAxis dataKey="ed" stroke="#556677" fontSize={13}/>
             <YAxis stroke="#556677" fontSize={11}/>
-            <Tooltip content={<TooltipCustom/>}/><Legend wrapperStyle={{fontSize:11}}/>
+            <Tooltip cursor={{fill:'rgba(92,184,255,.06)'}} wrapperStyle={{background:'transparent',border:'none',boxShadow:'none',padding:0}} content={<TooltipCustom/>}/><Legend wrapperStyle={{fontSize:11}}/>
             <Bar dataKey="total" name="Total" fill="#3b82f6" radius={[4,4,0,0]}/>
             <Bar dataKey="aprovCapt" name="Aprov. Captação" fill="#14b8a6" radius={[4,4,0,0]}/>
             <Bar dataKey="reprovado" name="Reprovados" fill="#ef4444" radius={[4,4,0,0]}/>
@@ -341,7 +341,7 @@ function TabCiclos(){
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,.05)"/>
             <XAxis dataKey="ed" stroke="#556677" fontSize={13}/>
             <YAxis stroke="#556677" fontSize={11} tickFormatter={fmt}/>
-            <Tooltip content={({active,payload,label})=>{
+            <Tooltip cursor={{fill:'rgba(92,184,255,.06)'}} wrapperStyle={{background:'transparent',border:'none',boxShadow:'none',padding:0}} content={({active,payload,label})=>{
               if(!active||!payload?.length)return null;
               return(<div style={{background:'#131e2e',border:'1px solid rgba(92,184,255,.3)',borderRadius:12,padding:'10px 14px',fontSize:12}}>
                 <div style={{color:'#5cb8ff',fontWeight:700,marginBottom:4}}>{label}</div>
@@ -381,7 +381,7 @@ function TabFinanceiro(){
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,.05)"/>
           <XAxis dataKey="ed" stroke="#556677" fontSize={13}/>
           <YAxis stroke="#556677" fontSize={11} tickFormatter={fmt}/>
-          <Tooltip content={({active,payload,label})=>{
+          <Tooltip cursor={{fill:'rgba(92,184,255,.06)'}} wrapperStyle={{background:'transparent',border:'none',boxShadow:'none',padding:0}} content={({active,payload,label})=>{
             if(!active||!payload?.length)return null;
             return(<div style={{background:'#131e2e',border:'1px solid rgba(92,184,255,.3)',borderRadius:12,padding:'10px 14px',fontSize:12}}>
               <div style={{color:'#5cb8ff',fontWeight:700,marginBottom:4}}>Ciclo {label}</div>
@@ -717,30 +717,106 @@ function TabGeo(){
 /* ═══ MAIN APP ═══ */
 function App(){
   const [tab,setTab]=useState(0);
-  const TABS=['Visão Geral','Equipamentos','Valores p/ Equip.','Ciclos','Financeiro','Geografia'];
+  const [open,setOpen]=useState(true);
+  const TABS=[
+    {label:'Visão Geral',    icon:'📊'},
+    {label:'Equipamentos',   icon:'🔬'},
+    {label:'Valores p/ Equip.',icon:'💰'},
+    {label:'Ciclos',         icon:'🔄'},
+    {label:'Financeiro',     icon:'📈'},
+    {label:'Geografia',      icon:'🗺'},
+  ];
   const panels=[TabOverview,TabEquip,TabEquipVal,TabCiclos,TabFinanceiro,TabGeo];
   const Panel=panels[tab];
 
+  const sideW = open ? 220 : 56;
+
   return(
-    <div style={{minHeight:'100vh',background:'linear-gradient(145deg,#0a1628,#0f1f35 40%,#0a1628)'}}>
-      <div style={{padding:'20px 28px 0',borderBottom:'1px solid rgba(255,255,255,.06)',background:'rgba(0,0,0,.2)'}}>
-        <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:16}}>
-          <div style={{width:40,height:40,borderRadius:12,background:'linear-gradient(135deg,#1a7fc4,#2cb5a0)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,fontWeight:800,color:'#fff'}}>P</div>
-          <div>
-            <div style={{fontSize:20,fontWeight:800,color:'#e8ecf1'}}>PRONON <span style={{fontWeight:400,color:'#4a5568'}}>|</span> <span style={{fontWeight:400,fontSize:14,color:'#7a8a9a'}}>Painel Analítico</span></div>
-            <div style={{fontSize:11,color:'#4a5568'}}>CGPROJ/SAES/MS · 408 projetos · Ciclos 2023–2025</div>
+    <div style={{display:'flex',minHeight:'100vh',background:'linear-gradient(145deg,#0a1628,#0f1f35 40%,#0a1628)'}}>
+
+      {/* ── SIDEBAR ── */}
+      <div style={{
+        width:sideW,minWidth:sideW,height:'100vh',position:'sticky',top:0,
+        background:'rgba(0,0,0,.25)',borderRight:'1px solid rgba(255,255,255,.06)',
+        display:'flex',flexDirection:'column',overflow:'hidden',
+        transition:'width .27s cubic-bezier(.4,0,.2,1),min-width .27s cubic-bezier(.4,0,.2,1)',
+        zIndex:10,
+      }}>
+
+        {/* Top bar: home + collapse */}
+        <div style={{display:'flex',alignItems:'center',justifyContent: open ? 'space-between' : 'center',
+          padding: open ? '12px 12px 10px' : '12px 0 10px',borderBottom:'1px solid rgba(255,255,255,.06)',gap:6,flexShrink:0}}>
+          {open && (
+            <div style={{display:'flex',alignItems:'center',gap:8,minWidth:0}}>
+              <div style={{width:30,height:30,borderRadius:8,background:'linear-gradient(135deg,#1a7fc4,#2cb5a0)',
+                display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:800,color:'#fff',flexShrink:0}}>P</div>
+              <div style={{minWidth:0}}>
+                <div style={{fontSize:12,fontWeight:800,color:'#e8ecf1',whiteSpace:'nowrap'}}>PRONON</div>
+                <div style={{fontSize:9,color:'#3d5068',letterSpacing:'.06em',whiteSpace:'nowrap'}}>CGPROJ/SAES/MS</div>
+              </div>
+            </div>
+          )}
+          <div style={{display:'flex',gap:5,flexShrink:0}}>
+            <button title="Página inicial" onClick={()=>window.location.href='index.html'} style={{
+              width:28,height:28,borderRadius:6,border:'1px solid rgba(255,255,255,.1)',
+              background:'rgba(255,255,255,.04)',color:'#5a6b7d',fontSize:13,cursor:'pointer',
+              display:'flex',alignItems:'center',justifyContent:'center',transition:'all .15s'}}
+              onMouseOver={e=>{e.currentTarget.style.borderColor='#2cb5a0';e.currentTarget.style.color='#2cb5a0';}}
+              onMouseOut={e=>{e.currentTarget.style.borderColor='rgba(255,255,255,.1)';e.currentTarget.style.color='#5a6b7d';}}>
+              🏠
+            </button>
+            <button title={open?'Recolher':'Expandir'} onClick={()=>setOpen(!open)} style={{
+              width:28,height:28,borderRadius:6,border:'1px solid rgba(255,255,255,.1)',
+              background:'rgba(255,255,255,.04)',color:'#5a6b7d',fontSize:13,cursor:'pointer',
+              display:'flex',alignItems:'center',justifyContent:'center',transition:'all .15s'}}
+              onMouseOver={e=>{e.currentTarget.style.borderColor='#2cb5a0';e.currentTarget.style.color='#2cb5a0';}}
+              onMouseOut={e=>{e.currentTarget.style.borderColor='rgba(255,255,255,.1)';e.currentTarget.style.color='#5a6b7d';}}>
+              {open ? '←' : '→'}
+            </button>
           </div>
         </div>
-        <div style={{display:'flex',gap:0,overflowX:'auto'}}>
-          {TABS.map((t,i)=><button key={i} className={`tab-btn ${tab===i?'active':''}`} onClick={()=>setTab(i)}>{t}</button>)}
+
+        {/* Nav tabs */}
+        <div style={{flex:1,overflowY:'auto',overflowX:'hidden',padding: open ? '8px 8px' : '8px 4px'}}>
+          {open && <div style={{fontSize:9,fontWeight:700,letterSpacing:'.14em',textTransform:'uppercase',color:'#2d3d4d',padding:'6px 8px 4px'}}>Seções</div>}
+          {TABS.map((t,i)=>(
+            <button key={i} onClick={()=>setTab(i)} title={t.label} style={{
+              width:'100%',display:'flex',alignItems:'center',gap: open ? 10 : 0,
+              justifyContent: open ? 'flex-start' : 'center',
+              padding: open ? '9px 10px' : '9px 0',
+              border:'none',borderRadius:8,cursor:'pointer',
+              marginBottom:2,transition:'all .15s',
+              background: tab===i ? 'rgba(26,127,196,.18)' : 'transparent',
+              borderLeft: open && tab===i ? '2px solid #5cb8ff' : open ? '2px solid transparent' : 'none',
+              color: tab===i ? '#5cb8ff' : '#5a6b7d',
+              fontFamily:'inherit',fontSize: open ? 12 : 16,fontWeight:600,
+            }}
+            onMouseOver={e=>{if(tab!==i)e.currentTarget.style.background='rgba(255,255,255,.04)';}}
+            onMouseOut={e=>{if(tab!==i)e.currentTarget.style.background='transparent';}}>
+              <span style={{fontSize:14,flexShrink:0}}>{t.icon}</span>
+              {open && <span style={{whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{t.label}</span>}
+            </button>
+          ))}
+        </div>
+
+        {/* Footer */}
+        {open && (
+          <div style={{padding:'10px 12px',borderTop:'1px solid rgba(255,255,255,.05)',fontSize:9,color:'#2d3d4d',lineHeight:1.5,flexShrink:0}}>
+            408 projetos · Ciclos 2023–2025<br/>Março/2026
+          </div>
+        )}
+      </div>
+
+      {/* ── MAIN ── */}
+      <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'auto'}}>
+        <div style={{padding:'20px 24px',flex:1}}>
+          <Panel/>
+        </div>
+        <div style={{padding:'14px 24px',borderTop:'1px solid rgba(255,255,255,.04)',textAlign:'center',fontSize:10,color:'#2d3d4d'}}>
+          PRONON · Programa Nacional de Apoio à Atenção Oncológica · CGPROJ/SAES/Ministério da Saúde · Março/2026
         </div>
       </div>
-      <div style={{padding:'24px 28px',maxWidth:1280,margin:'0 auto'}}>
-        <Panel/>
-      </div>
-      <div style={{padding:'16px 28px',marginTop:24,borderTop:'1px solid rgba(255,255,255,.04)',textAlign:'center',fontSize:10,color:'#2d3d4d'}}>
-        PRONON · Programa Nacional de Apoio à Atenção Oncológica · CGPROJ/SAES/Ministério da Saúde · Março/2026
-      </div>
+
     </div>
   );
 }
