@@ -167,18 +167,167 @@ footer span{font-family:'DM Mono',monospace;font-size:10px;color:var(--td);}
 @media screen {
   .print-header{display:none;}
 }
+
+/* ── SIDEBAR COLLAPSE ── */
+.sidebar{transition:width .28s cubic-bezier(.4,0,.2,1),min-width .28s cubic-bezier(.4,0,.2,1);}
+.sidebar.collapsed{width:52px;min-width:52px;}
+.sidebar.collapsed .sidebar-header-content,
+.sidebar.collapsed .search-wrap,
+.sidebar.collapsed .emp-count,
+.sidebar.collapsed .emp-info,
+.sidebar.collapsed .emp-item-meta{display:none;}
+.sidebar.collapsed .emp-item{justify-content:center;padding:8px 0;}
+.sidebar.collapsed .emp-avatar{margin:0;}
+.sidebar.collapsed .emp-list{overflow:hidden;}
+.sidebar.collapsed .sidebar-top-bar{justify-content:center;}
+.sidebar-top-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 8px;gap:8px;border-bottom:1px solid var(--bd);}
+.sidebar-top-bar.collapsed{padding:12px 0;justify-content:center;}
+
+/* HOME + COLLAPSE BUTTONS */
+.top-btn{width:30px;height:30px;border-radius:7px;border:1px solid var(--bd);background:var(--s2);color:var(--tm);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.top-btn:hover{border-color:var(--ac);color:var(--ac);background:rgba(0,229,160,.06);}
+.top-btn-group{display:flex;align-items:center;gap:6px;}
+.collapse-btn{font-size:13px;}
+.collapse-btn .icon-open{display:inline;}
+.collapse-btn .icon-closed{display:none;}
+.sidebar.collapsed .collapse-btn .icon-open{display:none;}
+.sidebar.collapsed .collapse-btn .icon-closed{display:inline;}
+
+/* Sidebar title area */
+.sidebar-header-content{flex:1;min-width:0;}
+.sidebar-header-content .sidebar-title{margin-bottom:0;}
+
+/* Main expands when sidebar collapses */
+.layout{transition:none;}
 </style>
 </head>
 <body>
-<div class="layout">
-<aside class="sidebar">
-  <div class="sidebar-header">
-    <div class="sidebar-title">Colaboradores</div>
-    <div class="search-wrap">
-      <span class="search-icon">&#128269;</span>
-      <input class="search-input" id="searchInput" type="text" placeholder="Buscar colaborador...">
+
+<style id="gate-style">
+#gate-overlay{position:fixed;inset:0;background:#0b0f14;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;}
+#gate-overlay::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,160,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,160,.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;}
+.gate-box{background:#131820;border:1px solid #1f2d3d;border-radius:16px;padding:36px 32px;width:100%;max-width:360px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.7);}
+.gate-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:#00e5a0;border-radius:16px 16px 0 0;}
+.gate-icon{font-size:32px;margin-bottom:16px;}
+.gate-gov{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#3d5068;margin-bottom:12px;font-family:'DM Mono',monospace;}
+.gate-title{font-size:18px;font-weight:800;letter-spacing:-.01em;color:#e8edf3;margin-bottom:4px;}
+.gate-sub{font-size:11px;color:#6b7f96;margin-bottom:22px;line-height:1.5;}
+.gate-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#3d5068;margin-bottom:6px;}
+.gate-input-wrap{position:relative;margin-bottom:8px;}
+.gate-input{width:100%;background:#1a2230;border:1px solid #1f2d3d;border-radius:8px;padding:10px 40px 10px 12px;color:#e8edf3;font-size:14px;font-family:'DM Mono',monospace;outline:none;letter-spacing:.1em;transition:border-color .2s;box-sizing:border-box;}
+.gate-input:focus{border-color:#00e5a0;}
+.gate-input.err{border-color:#ff6b35;animation:gshake .3s ease;}
+@keyframes gshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.gate-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#3d5068;font-size:14px;}
+.gate-error{font-size:10px;color:#ff6b35;font-family:'DM Mono',monospace;margin-bottom:14px;min-height:16px;}
+.gate-btn{width:100%;background:#00e5a0;color:#0b0f14;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:12px;border:none;border-radius:8px;cursor:pointer;font-family:'Sora',sans-serif;margin-bottom:12px;transition:opacity .15s;}
+.gate-btn:hover{opacity:.88;}
+.gate-btn:disabled{opacity:.35;cursor:not-allowed;}
+.gate-back{display:block;text-align:center;font-size:11px;color:#3d5068;cursor:pointer;text-decoration:none;}
+.gate-back:hover{color:#6b7f96;}
+.gate-attempts{font-family:'DM Mono',monospace;font-size:10px;color:#3d5068;text-align:right;margin-top:6px;}
+</style>
+
+<div id="gate-overlay">
+  <div class="gate-box">
+    <div class="gate-gov">Ministério da Saúde · CGPROJ / SAES</div>
+    <div class="gate-icon">🔒</div>
+    <div class="gate-title" id="gate-title">Acesso Restrito</div>
+    <div class="gate-sub">Este painel é de uso interno. Digite a senha para continuar.</div>
+    <div class="gate-label">Senha</div>
+    <div class="gate-input-wrap">
+      <input class="gate-input" id="gate-input" type="password" placeholder="••••••••" autocomplete="current-password">
+      <span class="gate-eye" id="gate-eye" onclick="gToggleEye()">👁</span>
     </div>
-    <div class="emp-count" id="empCount">306 colaboradores</div>
+    <div class="gate-error" id="gate-error"></div>
+    <button class="gate-btn" id="gate-btn" onclick="gSubmit()">Entrar</button>
+    <a class="gate-back" href="index.html">← Voltar ao índice de painéis</a>
+    <div class="gate-attempts" id="gate-attempts"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var HASH = 'b4c00cd82f41629001f797810be552b886595b64cceeaadce1517f4c9f0812e3';
+  var PANEL_ID = 'ponto';
+  var attempts = 0;
+  var MAX = 5;
+
+  // Already unlocked this session?
+  if(sessionStorage.getItem('unlocked_' + PANEL_ID) === '1'){
+    document.getElementById('gate-overlay').style.display = 'none';
+    return;
+  }
+
+  // Prevent scrolling while gate is shown
+  document.body.style.overflow = 'hidden';
+
+  async function sha256(str){
+    var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+  }
+
+  window.gToggleEye = function(){
+    var inp = document.getElementById('gate-input');
+    var eye = document.getElementById('gate-eye');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    eye.textContent = inp.type === 'password' ? '👁' : '🙈';
+  };
+
+  window.gSubmit = async function(){
+    var val = document.getElementById('gate-input').value;
+    if(!val){ document.getElementById('gate-error').textContent = 'Digite a senha.'; return; }
+    var btn = document.getElementById('gate-btn');
+    btn.disabled = true; btn.textContent = 'Verificando...';
+    var hash = await sha256(val);
+    btn.disabled = false; btn.textContent = 'Entrar';
+    if(hash === HASH){
+      sessionStorage.setItem('unlocked_' + PANEL_ID, '1');
+      document.getElementById('gate-overlay').style.display = 'none';
+      document.body.style.overflow = '';
+    } else {
+      attempts++;
+      var rem = MAX - attempts;
+      document.getElementById('gate-input').value = '';
+      document.getElementById('gate-input').className = 'gate-input err';
+      document.getElementById('gate-error').textContent = 'Senha incorreta.';
+      if(rem <= 2 && rem > 0) document.getElementById('gate-attempts').textContent = rem + ' tentativa(s) restante(s)';
+      if(attempts >= MAX){
+        document.getElementById('gate-error').textContent = 'Bloqueado por 30 segundos.';
+        btn.disabled = true;
+        setTimeout(function(){ attempts=0; btn.disabled=false; document.getElementById('gate-attempts').textContent=''; }, 30000);
+      }
+      setTimeout(function(){ document.getElementById('gate-input').className='gate-input'; }, 400);
+    }
+  };
+
+  document.getElementById('gate-input').addEventListener('keydown', function(e){
+    if(e.key==='Enter') window.gSubmit();
+  });
+})();
+</script>
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-top-bar" id="sidebarTopBar">
+    <div class="sidebar-header-content">
+      <div class="sidebar-title">Colaboradores</div>
+    </div>
+    <div class="top-btn-group">
+      <button class="top-btn" title="Página inicial" onclick="goHome()">&#127968;</button>
+      <button class="top-btn collapse-btn" id="collapseBtn" title="Recolher menu" onclick="toggleSidebar()">
+        <span class="icon-open">&#8678;</span>
+        <span class="icon-closed">&#8680;</span>
+      </button>
+    </div>
+  </div>
+  <div id="sidebarSearchArea">
+    <div style="padding:10px 14px 6px;">
+      <div class="search-wrap">
+        <span class="search-icon">&#128269;</span>
+        <input class="search-input" id="searchInput" type="text" placeholder="Buscar colaborador...">
+      </div>
+      <div class="emp-count" id="empCount">306 colaboradores</div>
+    </div>
   </div>
   <div class="emp-list" id="empList"></div>
 </aside>
@@ -530,6 +679,30 @@ function buildOverviewCharts(){
 /* ── INIT ── */
 buildSidebar('');
 buildOverviewCharts();
+
+/* ── SIDEBAR COLLAPSE & HOME ── */
+var _sidebarCollapsed = false;
+
+function toggleSidebar(){
+  var sb = document.getElementById('sidebar');
+  var sa = document.getElementById('sidebarSearchArea');
+  var bar = document.getElementById('sidebarTopBar');
+  _sidebarCollapsed = !_sidebarCollapsed;
+  if(_sidebarCollapsed){
+    sb.classList.add('collapsed');
+    if(sa) sa.style.display = 'none';
+    bar.classList.add('collapsed');
+  } else {
+    sb.classList.remove('collapsed');
+    if(sa) sa.style.display = '';
+    bar.classList.remove('collapsed');
+  }
+}
+
+function goHome(){
+  window.location.href = 'index.html';
+}
+
 
 
 /* ── LOC SUMMARY ── */
