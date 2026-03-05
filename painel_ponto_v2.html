@@ -127,76 +127,7 @@ footer span{font-family:'DM Mono',monospace;font-size:10px;color:var(--td);}
 </div>
 
 <script>
-// ── CADASTRO DOS PAINÉIS ───────────────────────────────────────────────────
-// Para adicionar um novo painel, basta adicionar um objeto nesta lista.
-var PANELS = [
-  {
-    id: 'ponto',
-    title: 'Registros de Ponto',
-    desc: 'Acompanhamento de horas trabalhadas, localização de registros e ranking de colaboradores. Filtro individual por colaborador com histórico completo.',
-    icon: '⏱',
-    file: 'painel_ponto_v2.html',
-    status: 'live',      // live | wip | draft
-    color: 'green',
-    tags: ['Pontomais', 'SAES-M11', '306 colaboradores', 'Jan–Mar 2026'],
-    date: '05/03/2026',
-  },
-  {
-    id: 'OPAS',
-    title: 'Execução Financeira OPAS',
-    desc: 'Dashboard de gastos por Termo Aditivo (TA1, TA3, TA4, TA5) com visão de contratos PF, PJ, passagens e diárias.',
-    icon: '💰',
-    file: 'relatorio_gastos_tc105.jsx',   // troque pelo nome real do seu arquivo
-    status: 'wip',
-    color: 'yellow',
-    tags: ['TC-105-2019', 'OPAS/OMS', 'TED', 'TC-086-2015','Matrizes Lógicas'],
-    date: '2026',
-  },
-  {
-    id: 'pronon',
-    title: 'PRONON',
-    desc: 'Programa Nacional de Apoio à Atenção Oncológica — acompanhamento de execução financeira, projetos habilitados e metas por unidade conveniada.',
-    icon: '🎗',
-    file: 'Pronon.html',
-    status: 'live',
-    color: 'blue',
-    tags: ['PRONON', 'Oncologia', 'Convênios', 'SAES'],
-    date: '2026',
-  },
-  {
-    id: 'teds',
-    title: 'Termos de Execução Descentralizada',
-    desc: 'Painel de acompanhamento de TEDs vigentes — execução orçamentária, financeira e física por parceiro, produto e etapa.',
-    icon: '📋',
-    file: 'painel_teds.html',
-    status: 'wip',
-    color: 'yellow',
-    tags: ['TED', 'Descentralização', 'OPAS', 'Execução'],
-    date: '2026',
-  },
-  {
-    id: 'proadi',
-    title: 'PROADI-SUS',
-    desc: 'Programa de Apoio ao Desenvolvimento Institucional do SUS — monitoramento de projetos, instituições parceiras, produtos entregues e investimentos.',
-    icon: '🏥',
-    file: 'painel_proadi.html',
-    status: 'wip',
-    color: 'orange',
-    tags: ['PROADI-SUS', 'Hospitais de Excelência', 'P&D', 'SUS'],
-    date: '2026',
-  },
-  // ── ADICIONE NOVOS PAINÉIS AQUI ──────────────────────────────────────────
-  // {
-  //   id: 'novo',
-  //   title: 'Nome do Painel',
-  //   desc: 'Descrição breve do que o painel mostra.',
-  //   icon: '📊',
-  //   file: 'nome_do_arquivo.html',
-  //   status: 'wip',
-  //   color: 'orange',
-  //   tags: ['Tag1', 'Tag2'],
-  //   date: '2026',
-  // },
+
 ];
 
 // ── STATUS LABELS ─────────────────────────────────────────────────────────
