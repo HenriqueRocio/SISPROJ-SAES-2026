@@ -82,6 +82,35 @@ footer span{font-family:'DM Mono',monospace;font-size:10px;color:var(--td);}
 .footer-logo-dot{width:6px;height:6px;border-radius:50%;background:var(--ac);}
 
 @media(max-width:600px){h1{font-size:28px;}.wrap{padding:28px 16px 48px;}.cards-grid{grid-template-columns:1fr;}}
+
+/* ── PASSWORD MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:32px 28px;width:100%;max-width:380px;position:relative;transform:translateY(16px);transition:transform .25s;box-shadow:0 24px 64px rgba(0,0,0,.6);}
+.modal-overlay.open .modal-box{transform:translateY(0);}
+.modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac);border-radius:16px 16px 0 0;}
+.modal-icon{width:48px;height:48px;border-radius:12px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px;}
+.modal-title{font-size:16px;font-weight:800;letter-spacing:-.01em;margin-bottom:4px;}
+.modal-sub{font-size:11px;color:var(--tm);margin-bottom:20px;line-height:1.5;}
+.modal-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--td);margin-bottom:6px;}
+.modal-input-wrap{position:relative;margin-bottom:8px;}
+.modal-input{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:10px 40px 10px 12px;color:var(--tx);font-size:13px;font-family:'DM Mono',monospace;outline:none;letter-spacing:.08em;transition:border-color .2s;}
+.modal-input:focus{border-color:var(--ac);}
+.modal-input.error{border-color:var(--ac3) !important;animation:shake .3s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.modal-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--td);font-size:14px;user-select:none;transition:color .15s;}
+.modal-eye:hover{color:var(--tm);}
+.modal-error{font-size:10px;color:var(--ac3);font-family:'DM Mono',monospace;margin-bottom:12px;min-height:14px;}
+.modal-btn{width:100%;background:var(--ac);color:#0b0f14;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:11px;border:none;border-radius:8px;cursor:pointer;font-family:'Sora',sans-serif;transition:opacity .15s,transform .1s;margin-bottom:10px;}
+.modal-btn:hover{opacity:.88;}
+.modal-btn:active{transform:scale(.98);}
+.modal-btn:disabled{opacity:.4;cursor:not-allowed;}
+.modal-cancel{display:block;text-align:center;font-size:11px;color:var(--td);cursor:pointer;padding:4px;transition:color .15s;}
+.modal-cancel:hover{color:var(--tm);}
+.modal-attempts{font-family:'DM Mono',monospace;font-size:10px;color:var(--td);text-align:right;margin-top:4px;}
+.locked-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:10px;background:rgba(61,80,104,.25);color:var(--td);border:1px solid var(--bd);font-family:'DM Mono',monospace;}
+.unlocked-badge{background:rgba(0,229,160,.08);color:var(--ac);border-color:rgba(0,229,160,.2);}
+.panel-card .card-lock{position:absolute;top:14px;right:14px;font-size:12px;opacity:.5;}
 </style>
 </head>
 <body>
@@ -131,7 +160,7 @@ footer span{font-family:'DM Mono',monospace;font-size:10px;color:var(--td);}
 // Para adicionar um novo painel, basta adicionar um objeto nesta lista.
 var PANELS = [
   {
-    id: 'Controle de Ponto',
+    id: 'ponto',
     title: 'Registros de Ponto',
     desc: 'Acompanhamento de horas trabalhadas, localização de registros e ranking de colaboradores. Filtro individual por colaborador com histórico completo.',
     icon: '⏱',
@@ -146,10 +175,10 @@ var PANELS = [
     title: 'Execução Financeira OPAS',
     desc: 'Dashboard de gastos por Termo Aditivo (TA1, TA3, TA4, TA5) com visão de contratos PF, PJ, passagens e diárias.',
     icon: '💰',
-    file: 'relatorio_gastos_OPAS.jsx',   // troque pelo nome real do seu arquivo
+    file: 'relatorio_gastos_tc105.jsx',   // troque pelo nome real do seu arquivo
     status: 'wip',
-    color: 'purple',
-    tags: ['TC-105-2019', 'OPAS/OMS', 'TED', 'TC-089-15', 'Matrizes Lógicas'],
+    color: 'blue',
+    tags: ['TC-105-2019', 'OPAS/OMS', 'TED', 'TC-089-2015', 'Matrizes Lógicas'],
     date: '2026',
   },
   {
@@ -157,9 +186,9 @@ var PANELS = [
     title: 'PRONON',
     desc: 'Programa Nacional de Apoio à Atenção Oncológica — acompanhamento de execução financeira, projetos habilitados e metas por unidade conveniada.',
     icon: '🎗',
-    file: 'Pronon.html',
+    file: 'painel_pronon.html',
     status: 'live',
-    color: 'green',
+    color: 'purple',
     tags: ['PRONON', 'Oncologia', 'Convênios', 'SAES'],
     date: '2026',
   },
@@ -238,6 +267,7 @@ function render(filter) {
     var card = document.createElement('a');
     card.className = 'panel-card ' + p.color;
     card.href = p.file;
+    card.onclick = function(e){ handleCardClick(e, p); };
     card.setAttribute('data-id', p.id);
     card.innerHTML =
       '<div class="card-top">'
@@ -249,9 +279,11 @@ function render(filter) {
         + '<div class="card-desc">' + p.desc + '</div>'
       + '</div>'
       + '<div class="card-meta">' + tagsHtml + '</div>'
-      + '<div class="card-footer">'
+      + '<div class="card-footer" style="position:relative;">'
         + '<span class="card-date">Atualizado: ' + p.date + '</span>'
-        + '<span class="card-arrow">&#8594;</span>'
+        + '<span style="display:flex;align-items:center;gap:8px;">'
+        + (isUnlocked(p.id) ? '<span class="unlocked-badge">&#128275; Desbloqueado</span>' : '<span class="locked-badge">&#128274; Senha</span>')
+        + '<span class="card-arrow">&#8594;</span></span>'
       + '</div>';
     grid.appendChild(card);
   });
@@ -269,6 +301,154 @@ document.getElementById('footerDate').textContent =
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 render('');
+
+/* ── AUTH CONFIG ─────────────────────────────────────────────────
+   Para trocar a senha:
+   1. Calcule o SHA-256 da nova senha (use https://emn178.github.io/online-tools/sha256.html)
+   2. Substitua o hash abaixo
+   Senha padrão: saes@2026
+─────────────────────────────────────────────────────────────── */
+var GLOBAL_HASH = 'b4c00cd82f41629001f797810be552b886595b64cceeaadce1517f4c9f0812e3';
+
+// Hash por painel (se quiser senhas diferentes por painel, troque aqui)
+// Se não definido, usa GLOBAL_HASH
+var PANEL_HASH = {
+  'ponto':  'b4c00cd82f41629001f797810be552b886595b64cceeaadce1517f4c9f0812e3',
+  'tc105':  'b4c00cd82f41629001f797810be552b886595b64cceeaadce1517f4c9f0812e3',
+  'pronon': 'b4c00cd82f41629001f797810be552b886595b64cceeaadce1517f4c9f0812e3',
+  'teds':   'b4c00cd82f41629001f797810be552b886595b64cceeaadce1517f4c9f0812e3',
+  'proadi': 'b4c00cd82f41629001f797810be552b886595b64cceeaadce1517f4c9f0812e3',
+};
+
+var _pendingPanel = null;
+var _attempts = 0;
+var MAX_ATTEMPTS = 5;
+
+/* SHA-256 via Web Crypto API (nativo no browser) */
+async function sha256(str) {
+  var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+}
+
+/* Session unlock: chave salva por painel na aba atual */
+function isUnlocked(id) {
+  return sessionStorage.getItem('unlocked_' + id) === '1';
+}
+function setUnlocked(id) {
+  sessionStorage.setItem('unlocked_' + id, '1');
+}
+
+/* Intercept card click */
+function handleCardClick(e, panel) {
+  e.preventDefault();
+  if(isUnlocked(panel.id)) {
+    window.location.href = panel.file;
+    return;
+  }
+  openModal(panel);
+}
+
+/* Modal controls */
+function openModal(panel) {
+  _pendingPanel = panel;
+  _attempts = 0;
+  document.getElementById('modalTitle').textContent = panel.title;
+  document.getElementById('modalSub').textContent = 'Digite a senha para acessar "' + panel.title + '".';
+  document.getElementById('modalIcon').textContent = panel.icon;
+  document.getElementById('modalInput').value = '';
+  document.getElementById('modalError').textContent = '';
+  document.getElementById('modalAttempts').textContent = '';
+  document.getElementById('modalInput').className = 'modal-input';
+  document.getElementById('authModal').classList.add('open');
+  setTimeout(function(){ document.getElementById('modalInput').focus(); }, 60);
+}
+
+function closeModal() {
+  document.getElementById('authModal').classList.remove('open');
+  _pendingPanel = null;
+  _attempts = 0;
+}
+
+function toggleEye() {
+  var inp = document.getElementById('modalInput');
+  var eye = document.getElementById('modalEye');
+  if(inp.type === 'password') { inp.type = 'text'; eye.textContent = '🙈'; }
+  else { inp.type = 'password'; eye.textContent = '👁'; }
+}
+
+async function submitPassword() {
+  if(!_pendingPanel) return;
+  var val = document.getElementById('modalInput').value;
+  if(!val) { document.getElementById('modalError').textContent = 'Digite a senha.'; return; }
+
+  var btn = document.getElementById('modalBtn');
+  btn.disabled = true;
+  btn.textContent = 'Verificando...';
+
+  var hash = await sha256(val);
+  var expected = PANEL_HASH[_pendingPanel.id] || GLOBAL_HASH;
+
+  btn.disabled = false;
+  btn.textContent = 'Entrar';
+
+  if(hash === expected) {
+    setUnlocked(_pendingPanel.id);
+    closeModal();
+    window.location.href = _pendingPanel.file;
+  } else {
+    _attempts++;
+    var remaining = MAX_ATTEMPTS - _attempts;
+    document.getElementById('modalInput').value = '';
+    document.getElementById('modalInput').className = 'modal-input error';
+    document.getElementById('modalError').textContent = 'Senha incorreta.';
+    if(remaining <= 2 && remaining > 0) {
+      document.getElementById('modalAttempts').textContent = remaining + ' tentativa(s) restante(s)';
+    }
+    if(_attempts >= MAX_ATTEMPTS) {
+      document.getElementById('modalError').textContent = 'Muitas tentativas. Tente novamente mais tarde.';
+      document.getElementById('modalBtn').disabled = true;
+      setTimeout(function(){
+        _attempts = 0;
+        document.getElementById('modalBtn').disabled = false;
+        document.getElementById('modalAttempts').textContent = '';
+      }, 30000);
+    }
+    setTimeout(function(){
+      document.getElementById('modalInput').className = 'modal-input';
+    }, 400);
+  }
+}
+
+/* Close on overlay click */
+document.getElementById('authModal').addEventListener('click', function(e){
+  if(e.target === this) closeModal();
+});
+
+/* Enter key */
+document.getElementById('modalInput').addEventListener('keydown', function(e){
+  if(e.key === 'Enter') submitPassword();
+  if(e.key === 'Escape') closeModal();
+});
+
 </script>
+
+<!-- PASSWORD MODAL -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box" role="dialog" aria-modal="true">
+    <div class="modal-icon" id="modalIcon">🔒</div>
+    <div class="modal-title" id="modalTitle">Acesso restrito</div>
+    <div class="modal-sub" id="modalSub">Digite a senha para acessar este painel.</div>
+    <div class="modal-label">Senha</div>
+    <div class="modal-input-wrap">
+      <input class="modal-input" id="modalInput" type="password" placeholder="••••••••" autocomplete="current-password">
+      <span class="modal-eye" id="modalEye" onclick="toggleEye()">👁</span>
+    </div>
+    <div class="modal-error" id="modalError"></div>
+    <button class="modal-btn" id="modalBtn" onclick="submitPassword()">Entrar</button>
+    <span class="modal-cancel" onclick="closeModal()">Cancelar</span>
+    <div class="modal-attempts" id="modalAttempts"></div>
+  </div>
+</div>
+
 </body>
 </html>
