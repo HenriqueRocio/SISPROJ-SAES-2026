@@ -109,7 +109,7 @@ footer span{font-family:'DM Mono',monospace;font-size:10px;color:var(--td);}
 .modal-cancel:hover{color:var(--tm);}
 .modal-attempts{font-family:'DM Mono',monospace;font-size:10px;color:var(--td);text-align:right;margin-top:4px;}
 .locked-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:10px;background:rgba(61,80,104,.25);color:var(--td);border:1px solid var(--bd);font-family:'DM Mono',monospace;}
-.unlocked-badge{background:rgba(0,229,160,.08);color:var(--ac);border-color:rgba(0,229,160,.2);}
+.unlocked-badge{background:rgba(0,229,160,.08);color:var(--ac);border-color:rgba(0,229,160,.2);font-size:9px;font-weight:600;padding:2px 7px;}
 .panel-card .card-lock{position:absolute;top:14px;right:14px;font-size:12px;opacity:.5;}
 </style>
 </head>
@@ -171,14 +171,14 @@ var PANELS = [
     date: '05/03/2026',
   },
   {
-    id: 'OPAS',
-    title: 'Execução Financeira OPAS',
+    id: 'tc105',
+    title: 'Execução Financeira TC-105',
     desc: 'Dashboard de gastos por Termo Aditivo (TA1, TA3, TA4, TA5) com visão de contratos PF, PJ, passagens e diárias.',
     icon: '💰',
     file: 'relatorio_gastos_tc105.jsx',   // troque pelo nome real do seu arquivo
-    status: 'wip',
+    status: 'live',
     color: 'blue',
-    tags: ['TC-105-2019', 'OPAS/OMS', 'TED', 'TC-089-2015', 'Matrizes Lógicas'],
+    tags: ['TC-105-2019', 'OPAS/OMS', 'TED', 'Matrizes Lógicas'],
     date: '2026',
   },
   {
@@ -187,7 +187,7 @@ var PANELS = [
     desc: 'Programa Nacional de Apoio à Atenção Oncológica — acompanhamento de execução financeira, projetos habilitados e metas por unidade conveniada.',
     icon: '🎗',
     file: 'painel_pronon.html',
-    status: 'live',
+    status: 'wip',
     color: 'purple',
     tags: ['PRONON', 'Oncologia', 'Convênios', 'SAES'],
     date: '2026',
@@ -282,7 +282,7 @@ function render(filter) {
       + '<div class="card-footer" style="position:relative;">'
         + '<span class="card-date">Atualizado: ' + p.date + '</span>'
         + '<span style="display:flex;align-items:center;gap:8px;">'
-        + (isUnlocked(p.id) ? '<span class="unlocked-badge">&#128275; Desbloqueado</span>' : '<span class="locked-badge">&#128274; Senha</span>')
+        + (isUnlocked(p.id) ? '<span class="unlocked-badge locked-badge">&#10003; Desbloqueado</span>' : '<span class="locked-badge">&#128274; Senha</span>')
         + '<span class="card-arrow">&#8594;</span></span>'
       + '</div>';
     grid.appendChild(card);
