@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Projetos TEDs Vigentes — SAES/MS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08101e;
+    --bg2: #0d1829;
+    --bg3: #111f35;
+    --card: #131e30;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --navy: #1a2d4a;
+    --blue: #2563eb;
+    --blue-soft: #3b82f6;
+    --teal: #0ea5e9;
+    --gold: #f59e0b;
+    --gold-light: #fbbf24;
+    --green: #10b981;
+    --rose: #f43f5e;
+    --purple: #8b5cf6;
+    --text: #e8edf5;
+    --text-muted: #8899b4;
+    --text-dim: #4a5d78;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+/* HEADER */
+.header {
+background: linear-gradient(135deg, #07101d 0%, #0a1628 50%, #0c1f3a 100%);
+border-bottom: 1px solid var(–border2);
+padding: 0 32px;
+position: sticky;
+top: 0;
+z-index: 100;
+backdrop-filter: blur(12px);
+}
+.header-inner {
+max-width: 1600px;
+margin: 0 auto;
+display: flex;
+align-items: center;
+justify-content: space-between;
+height: 64px;
+gap: 20px;
+}
+.brand {
+display: flex;
+align-items: center;
+gap: 14px;
+flex-shrink: 0;
+}
+.brand-icon {
+width: 38px; height: 38px;
+background: linear-gradient(135deg, var(–blue), var(–teal));
+border-radius: 10px;
+display: flex; align-items: center; justify-content: center;
+font-size: 18px;
+}
+.brand-text h1 {
+font-family: ‘Sora’, sans-serif;
+font-size: 15px;
+font-weight: 800;
+letter-spacing: 0.5px;
+color: #fff;
+}
+.brand-text p {
+font-size: 11px;
+color: var(–text-muted);
+letter-spacing: 1px;
+text-transform: uppercase;
+}
+.header-badge {
+background: rgba(16,185,129,0.15);
+border: 1px solid rgba(16,185,129,0.3);
+color: var(–green);
+font-size: 11px;
+font-weight: 600;
+padding: 4px 10px;
+border-radius: 20px;
+letter-spacing: 0.5px;
+flex-shrink: 0;
+}
+.header-meta {
+font-size: 11px;
+color: var(–text-dim);
+font-family: ‘IBM Plex Mono’, monospace;
+flex-shrink: 0;
+}
+
+/* MAIN */
+.main {
+max-width: 1600px;
+margin: 0 auto;
+padding: 28px 32px 60px;
+}
+
+/* KPI ROW */
+.kpi-grid {
+display: grid;
+grid-template-columns: repeat(5, 1fr);
+gap: 14px;
+margin-bottom: 24px;
+}
+.kpi-card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 20px;
+position: relative;
+overflow: hidden;
+transition: border-color 0.2s;
+cursor: default;
+}
+.kpi-card::before {
+content:’’;
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 2px;
+}
+.kpi-card.blue::before { background: linear-gradient(90deg, var(–blue), var(–teal)); }
+.kpi-card.gold::before { background: linear-gradient(90deg, var(–gold), #ef4444); }
+.kpi-card.green::before { background: var(–green); }
+.kpi-card.teal::before { background: var(–teal); }
+.kpi-card.purple::before { background: var(–purple); }
+.kpi-card:hover { border-color: var(–border2); }
+.kpi-label {
+font-size: 11px;
+color: var(–text-muted);
+text-transform: uppercase;
+letter-spacing: 0.8px;
+font-weight: 500;
+margin-bottom: 10px;
+}
+.kpi-value {
+font-family: ‘Sora’, sans-serif;
+font-size: 26px;
+font-weight: 800;
+line-height: 1;
+margin-bottom: 6px;
+}
+.kpi-card.blue .kpi-value { color: #fff; }
+.kpi-card.gold .kpi-value { color: var(–gold-light); }
+.kpi-card.green .kpi-value { color: var(–green); }
+.kpi-card.teal .kpi-value { color: var(–teal); }
+.kpi-card.purple .kpi-value { color: #a78bfa; }
+.kpi-sub {
+font-size: 11px;
+color: var(–text-dim);
+font-family: ‘IBM Plex Mono’, monospace;
+}
+.kpi-icon {
+position: absolute;
+bottom: 16px; right: 16px;
+font-size: 28px;
+opacity: 0.1;
+}
+
+/* SECTION TITLE */
+.section-title {
+font-size: 12px;
+font-weight: 600;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+color: var(–text-muted);
+margin-bottom: 14px;
+padding-bottom: 8px;
+border-bottom: 1px solid var(–border);
+}
+
+/* CHARTS ROW */
+.charts-grid {
+display: grid;
+grid-template-columns: 2fr 1.2fr 1.2fr;
+gap: 14px;
+margin-bottom: 24px;
+}
+.chart-card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 20px;
+}
+.chart-card h3 {
+font-size: 12px;
+font-weight: 600;
+letter-spacing: 0.8px;
+text-transform: uppercase;
+color: var(–text-muted);
+margin-bottom: 16px;
+}
+
+/* BAR CHART custom */
+.bar-chart { display: flex; flex-direction: column; gap: 10px; }
+.bar-row { display: flex; align-items: center; gap: 10px; }
+.bar-label {
+font-size: 12px;
+color: var(–text-muted);
+width: 82px;
+flex-shrink: 0;
+text-align: right;
+font-weight: 500;
+}
+.bar-track {
+flex: 1;
+height: 8px;
+background: rgba(255,255,255,0.06);
+border-radius: 4px;
+overflow: hidden;
+position: relative;
+}
+.bar-fill {
+height: 100%;
+border-radius: 4px;
+transition: width 1s cubic-bezier(0.4,0,0.2,1);
+}
+.bar-val {
+font-size: 11px;
+color: var(–text-muted);
+font-family: ‘IBM Plex Mono’, monospace;
+flex-shrink: 0;
+width: 46px;
+text-align: right;
+}
+
+/* DONUT */
+.donut-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.donut-svg { flex-shrink: 0; }
+.donut-legend { width: 100%; }
+.donut-legend-item {
+display: flex;
+align-items: center;
+gap: 8px;
+margin-bottom: 8px;
+font-size: 12px;
+}
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.legend-name { flex: 1; color: var(–text-muted); }
+.legend-pct { color: var(–text); font-family: ‘IBM Plex Mono’, monospace; font-size: 11px; }
+
+/* EXECUTION PROGRESS */
+.exec-wrap { display: flex; flex-direction: column; gap: 14px; }
+.exec-item {}
+.exec-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.exec-name { font-size: 12px; color: var(–text); font-weight: 500; }
+.exec-pct { font-size: 11px; font-family: ‘IBM Plex Mono’, monospace; color: var(–text-muted); }
+.exec-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.exec-fill { height: 100%; border-radius: 3px; }
+.exec-subs { display: flex; justify-content: space-between; margin-top: 3px; font-size: 10px; color: var(–text-dim); font-family: ‘IBM Plex Mono’, monospace; }
+
+/* FILTERS */
+.filters-bar {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 16px 20px;
+margin-bottom: 16px;
+display: flex;
+gap: 12px;
+align-items: center;
+flex-wrap: wrap;
+}
+.filter-group { display: flex; align-items: center; gap: 8px; }
+.filter-label { font-size: 11px; color: var(–text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+.filter-select, .filter-input {
+background: rgba(255,255,255,0.05);
+border: 1px solid var(–border2);
+border-radius: var(–radius-sm);
+color: var(–text);
+font-size: 12px;
+padding: 6px 10px;
+font-family: ‘DM Sans’, sans-serif;
+cursor: pointer;
+outline: none;
+transition: border-color 0.2s;
+}
+.filter-select:hover, .filter-input:hover { border-color: rgba(59,130,246,0.4); }
+.filter-select:focus, .filter-input:focus { border-color: var(–blue-soft); }
+.filter-input { width: 220px; }
+.filter-input::placeholder { color: var(–text-dim); }
+option { background: #1a2d4a; }
+.filter-count {
+margin-left: auto;
+font-size: 12px;
+color: var(–text-muted);
+font-family: ‘IBM Plex Mono’, monospace;
+}
+.btn-clear {
+background: rgba(244,63,94,0.15);
+border: 1px solid rgba(244,63,94,0.3);
+color: var(–rose);
+font-size: 11px;
+padding: 6px 12px;
+border-radius: var(–radius-sm);
+cursor: pointer;
+font-family: ‘DM Sans’, sans-serif;
+transition: all 0.2s;
+}
+.btn-clear:hover { background: rgba(244,63,94,0.25); }
+
+/* TABLE */
+.table-card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+overflow: hidden;
+}
+.table-header {
+padding: 16px 20px;
+border-bottom: 1px solid var(–border);
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+.table-header h3 { font-size: 13px; font-weight: 600; color: var(–text); }
+.table-wrap { overflow-x: auto; }
+table {
+width: 100%;
+border-collapse: collapse;
+font-size: 12px;
+}
+thead th {
+background: rgba(255,255,255,0.03);
+padding: 10px 14px;
+text-align: left;
+font-size: 10px;
+font-weight: 600;
+letter-spacing: 0.8px;
+text-transform: uppercase;
+color: var(–text-dim);
+white-space: nowrap;
+border-bottom: 1px solid var(–border);
+cursor: pointer;
+user-select: none;
+transition: color 0.2s;
+}
+thead th:hover { color: var(–text-muted); }
+thead th.sorted { color: var(–blue-soft); }
+tbody tr {
+border-bottom: 1px solid rgba(255,255,255,0.03);
+transition: background 0.15s;
+}
+tbody tr:hover { background: rgba(255,255,255,0.03); }
+tbody td {
+padding: 10px 14px;
+color: var(–text);
+white-space: nowrap;
+vertical-align: middle;
+}
+.td-projeto { font-family: ‘IBM Plex Mono’, monospace; font-size: 11px; color: var(–blue-soft); font-weight: 500; }
+.td-titulo { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(–text-muted); font-size: 11px; }
+.td-num { font-family: ‘IBM Plex Mono’, monospace; font-size: 11px; text-align: right; }
+.td-dept { font-size: 11px; font-weight: 600; }
+.pill {
+display: inline-block;
+padding: 2px 8px;
+border-radius: 12px;
+font-size: 10px;
+font-weight: 600;
+letter-spacing: 0.3px;
+}
+.pill-fin { background: rgba(37,99,235,0.2); color: #93c5fd; border: 1px solid rgba(37,99,235,0.3); }
+.pill-gest { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); }
+.pill-hib { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.25); }
+.pill-prog { background: rgba(14,165,233,0.15); color: #7dd3fc; border: 1px solid rgba(14,165,233,0.25); }
+.pill-emenda { background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.25); }
+.exec-bar-mini {
+width: 80px;
+height: 4px;
+background: rgba(255,255,255,0.08);
+border-radius: 2px;
+overflow: hidden;
+display: inline-block;
+vertical-align: middle;
+margin-right: 6px;
+}
+.exec-bar-mini-fill { height: 100%; border-radius: 2px; }
+.pag-bar {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 12px 20px;
+border-top: 1px solid var(–border);
+font-size: 12px;
+color: var(–text-muted);
+}
+.pag-buttons { display: flex; gap: 6px; }
+.pag-btn {
+background: rgba(255,255,255,0.05);
+border: 1px solid var(–border2);
+color: var(–text-muted);
+padding: 5px 12px;
+border-radius: 6px;
+cursor: pointer;
+font-family: ‘DM Sans’, sans-serif;
+font-size: 12px;
+transition: all 0.15s;
+}
+.pag-btn:hover:not(:disabled) { background: rgba(255,255,255,0.1); color: var(–text); }
+.pag-btn:disabled { opacity: 0.35; cursor: default; }
+.pag-btn.active { background: var(–blue); border-color: var(–blue); color: #fff; }
+
+/* TOOLTIP */
+.tooltip-wrap { position: relative; }
+.tooltip-wrap:hover .tooltip { opacity: 1; pointer-events: auto; }
+.tooltip {
+position: absolute;
+bottom: calc(100% + 6px);
+left: 50%;
+transform: translateX(-50%);
+background: #1e3254;
+border: 1px solid var(–border2);
+border-radius: 8px;
+padding: 8px 12px;
+font-size: 11px;
+color: var(–text);
+white-space: nowrap;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.15s;
+z-index: 200;
+max-width: 280px;
+white-space: normal;
+text-align: center;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* Animations */
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(16px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.kpi-card { animation: fadeUp 0.5s ease both; }
+.kpi-card:nth-child(1) { animation-delay: 0.05s; }
+.kpi-card:nth-child(2) { animation-delay: 0.1s; }
+.kpi-card:nth-child(3) { animation-delay: 0.15s; }
+.kpi-card:nth-child(4) { animation-delay: 0.2s; }
+.kpi-card:nth-child(5) { animation-delay: 0.25s; }
+
+@media (max-width: 1200px) {
+.kpi-grid { grid-template-columns: repeat(3, 1fr); }
+.charts-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+.main { padding: 16px; }
+.kpi-grid { grid-template-columns: repeat(2, 1fr); }
+.charts-grid { grid-template-columns: 1fr; }
+}
+
+/* no results */
+.no-results {
+text-align: center;
+padding: 48px;
+color: var(–text-dim);
+font-size: 14px;
+}
+</style>
+
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-icon">🏥</div>
+      <div class="brand-text">
+        <h1>Painel de Projetos TEDs</h1>
+        <p>CGPROJ · SAES · Ministério da Saúde</p>
+      </div>
+    </div>
+    <div class="header-badge">● VIGENTES</div>
+    <div class="header-meta" id="update-meta">Atualizado em 05/03/2026</div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- KPIs -->
+
+  <div class="kpi-grid">
+    <div class="kpi-card blue">
+      <div class="kpi-label">Total de Projetos</div>
+      <div class="kpi-value" id="kpi-total">90</div>
+      <div class="kpi-sub">Todos vigentes</div>
+      <div class="kpi-icon">📋</div>
+    </div>
+    <div class="kpi-card gold">
+      <div class="kpi-label">Valor Aprovado</div>
+      <div class="kpi-value" id="kpi-aprovado">R$ 2,90 Bi</div>
+      <div class="kpi-sub" id="kpi-aprovado-full">R$ 2.897.192.934,77</div>
+      <div class="kpi-icon">💰</div>
+    </div>
+    <div class="kpi-card teal">
+      <div class="kpi-label">Valor Empenhado</div>
+      <div class="kpi-value" id="kpi-empenhado">R$ 927 Mi</div>
+      <div class="kpi-sub" id="kpi-emp-pct">32,0% do aprovado</div>
+      <div class="kpi-icon">📑</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Valor Pago</div>
+      <div class="kpi-value" id="kpi-pago">R$ 350 Mi</div>
+      <div class="kpi-sub" id="kpi-pago-pct">12,1% do aprovado</div>
+      <div class="kpi-icon">✅</div>
+    </div>
+    <div class="kpi-card purple">
+      <div class="kpi-label">A Pagar</div>
+      <div class="kpi-value" id="kpi-saldo">R$ 577 Mi</div>
+      <div class="kpi-sub">Empenhado – Pago</div>
+      <div class="kpi-icon">⏳</div>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+
+  <div class="charts-grid">
+    <!-- BAR: Por Departamento -->
+    <div class="chart-card">
+      <h3>Valor Aprovado por Departamento</h3>
+      <div class="bar-chart" id="dept-chart"></div>
+    </div>
+    <!-- DONUT: Tipo de Projeto -->
+    <div class="chart-card">
+      <h3>Por Tipo de Projeto</h3>
+      <div class="donut-wrap">
+        <svg class="donut-svg" width="130" height="130" viewBox="0 0 130 130" id="donut-tipo"></svg>
+        <div class="donut-legend" id="donut-tipo-legend"></div>
+      </div>
+    </div>
+    <!-- Execução Financeira por Dept -->
+    <div class="chart-card">
+      <h3>Execução Financeira por Dept.</h3>
+      <div class="exec-wrap" id="exec-chart"></div>
+    </div>
+  </div>
+
+  <!-- FILTERS + TABLE -->
+
+  <div class="section-title">Lista de Projetos</div>
+
+  <div class="filters-bar">
+    <div class="filter-group">
+      <span class="filter-label">Busca</span>
+      <input type="text" class="filter-input" id="search" placeholder="Projeto, título, processo, instituição...">
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Departamento</span>
+      <select class="filter-select" id="f-dept"><option value="">Todos</option></select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Tipo</span>
+      <select class="filter-select" id="f-tipo"><option value="">Todos</option></select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Fonte</span>
+      <select class="filter-select" id="f-fonte"><option value="">Todas</option></select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Instituição</span>
+      <select class="filter-select" id="f-inst"><option value="">Todas</option></select>
+    </div>
+    <span class="filter-count" id="filter-count">90 projetos</span>
+    <button class="btn-clear" onclick="clearFilters()">✕ Limpar</button>
+  </div>
+
+  <div class="table-card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortTable('Projeto')" id="th-Projeto">Projeto ↕</th>
+            <th onclick="sortTable('Departamento')" id="th-Departamento">Dept. ↕</th>
+            <th onclick="sortTable('Coordenação')" id="th-Coordenação">Coordenação</th>
+            <th onclick="sortTable('Tipo de Projeto')" id="th-TipodeProjeto">Tipo ↕</th>
+            <th onclick="sortTable('Fonte do Recurso')" id="th-FontedoRecurso">Fonte ↕</th>
+            <th onclick="sortTable('Instituição Parceira')" id="th-InstituiçãoParceira">Instituição ↕</th>
+            <th>Título</th>
+            <th onclick="sortTable('Valor Aprovado - Final')" id="th-ValorAprovado-Final" style="text-align:right">Aprovado ↕</th>
+            <th onclick="sortTable('Valor Empenhado')" id="th-ValorEmpenhado" style="text-align:right">Empenhado ↕</th>
+            <th onclick="sortTable('Valor Pago')" id="th-ValorPago" style="text-align:right">Pago ↕</th>
+            <th style="min-width:100px">% Exec.</th>
+            <th onclick="sortTable('Termino Atual')" id="th-TerminoAtual">Término ↕</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+      <div class="no-results" id="no-results" style="display:none">Nenhum projeto encontrado com os filtros selecionados.</div>
+    </div>
+    <div class="pag-bar">
+      <span id="pag-info" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim)">—</span>
+      <div class="pag-buttons" id="pag-buttons"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const DATA = [{"Projeto":"TED-009-2023","Departamento":"DAHUD","Coordenação":"GABINETE/DAHU","Tipo de Projeto":"Apoio à Gestão","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Apoio ao aprimoramento da gestão das políticas e programas da Atenção Hospitalar, Domiciliar e de Urgência e da Força Nacional do SUS.","Processo":"25000.108065/2023-28","Valor Aprovado - Final":75184552,"Valor Empenhado":57133413.96,"Valor Pago":49133413.96,"Início do Projeto":"2023-09-21","Termino Atual":"2027-09-21","Data da Publicação":"2023-08-10"},{"Projeto":"TED-007-2024","Departamento":"DRAC","Coordenação":"GABINETE/DRAC","Tipo de Projeto":"Apoio à Gestão","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Qualificação e disseminação de métodos, ferramentas e boas práticas nas áreas de programação, regulação, transferência de recursos, controle e avaliação da atenção especializada no SUS.","Processo":"25000.051560/2024-39","Valor Aprovado - Final":60736762,"Valor Empenhado":30750489.68,"Valor Pago":23750489.68,"Início do Projeto":"2024-06-19","Termino Atual":"2028-06-19","Data da Publicação":"2024-05-16"},{"Projeto":"TED-025-2024","Departamento":"DAET","Coordenação":"GABINETE/DAET","Tipo de Projeto":"Apoio à Gestão","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Promoção, qualificação e aprimoramento da Atenção Especializada em Saúde no âmbito do SUS.","Processo":"25000.100422/2024-91","Valor Aprovado - Final":133195158,"Valor Empenhado":50100000,"Valor Pago":40100000,"Início do Projeto":"2024-09-05","Termino Atual":"2028-09-05","Data da Publicação":"2024-07-30"},{"Projeto":"TED-141-2024","Departamento":"GAB. SAES","Coordenação":"CGPROJ","Tipo de Projeto":"Apoio à Gestão","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Fortalecimento dos mecanismos de governança e gestão da SAES.","Processo":"25000.176398/2024-61","Valor Aprovado - Final":303624786,"Valor Empenhado":53054526.54,"Valor Pago":41054526.54,"Início do Projeto":"2025-01-21","Termino Atual":"2030-01-21","Data da Publicação":"2024-12-18"},{"Projeto":"TED-027-2025","Departamento":"DEEQAE","Coordenação":"GABINETE/DEEQAE","Tipo de Projeto":"Apoio à Gestão","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Fortalecimento da Governança, dos Processos e de monitoramento da Atenção Especializada no SUS","Processo":"25000.098045/2025-01","Valor Aprovado - Final":187926261,"Valor Empenhado":23000000,"Valor Pago":13000000,"Início do Projeto":"2025-09-25","Termino Atual":"2029-09-25","Data da Publicação":"2025-08-29"},{"Projeto":"TED-086-2025","Departamento":"FNSUS","Coordenação":"CGFNS","Tipo de Projeto":"Apoio à Gestão","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Fortalecimento Estratégico da Força Nacional do SUS","Processo":"25000.192646/2025-00","Valor Aprovado - Final":87249173,"Valor Empenhado":6000000,"Valor Pago":600000,"Início do Projeto":"2025-11-21","Termino Atual":"2029-11-20","Data da Publicação":"2025-11-21"},{"Projeto":"TED-140-2025","Departamento":"INCA","Coordenação":"REDOME","Tipo de Projeto":"Apoio à Gestão","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Promoção da equidade e ampliação do acesso ao transplante de células tronco hematopoiéticas não aparentado (Redome) 2025-2029","Processo":"25410020967/2025-73","Valor Aprovado - Final":32688610,"Valor Empenhado":8149990,"Valor Pago":0,"Início do Projeto":"2025-12-29","Termino Atual":"2029-11-28","Data da Publicação":"2025-12-29"},{"Projeto":"ACT-012-2022","Departamento":"DAET","Coordenação":"CGSNT","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Implantação do Centro Nacional de Transplantes Complexos – CNTc.","Processo":"25000.116322/2022-14","Valor Aprovado - Final":262000000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2022-10-07","Termino Atual":"2027-10-06","Data da Publicação":"2022-10-31"},{"Projeto":"TED-068-2022","Departamento":"DESMAD","Coordenação":"CGMAD","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"UNIFESP","Tipo de Instituição":"Universidade Federal","Título do Projeto":"Ações de Promoção de Apoio Emocional em Crises e Cuidados para Prevenção e Abordagem do Suicídio, Automutilação e Luto","Processo":"25000.160107/2022-51","Valor Aprovado - Final":3092910.13,"Valor Empenhado":3092910.13,"Valor Pago":3092910.13,"Início do Projeto":"2022-12-29","Termino Atual":"2027-06-20","Data da Publicação":"2022-12-29"},{"Projeto":"TED-144-2023","Departamento":"DECAN","Coordenação":"CGCAN","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"HCPA","Tipo de Instituição":"Hospital Universitário Federal","Título do Projeto":"Aquisição de Equipamento e Material Permanente para substituição do equipamento Acelerador Linear","Processo":"25000.185040/2023-48","Valor Aprovado - Final":11750454.44,"Valor Empenhado":11750454.44,"Valor Pago":11750454.44,"Início do Projeto":"2023-12-26","Termino Atual":"2026-12-26","Data da Publicação":"2023-12-26"},{"Projeto":"TED-152-2023","Departamento":"DAET","Coordenação":"CGSH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"UFMG","Tipo de Instituição":"Universidade Federal","Título do Projeto":"Avaliação do programa de profilaxia primária em pacientes com hemofilia A grave e moderadamente grave.","Processo":"25000.163557/2023-86","Valor Aprovado - Final":286975,"Valor Empenhado":286975,"Valor Pago":286975,"Início do Projeto":"2023-12-26","Termino Atual":"2026-12-26","Data da Publicação":"2023-12-27"},{"Projeto":"TED-148-2023","Departamento":"FNSUS","Coordenação":"CGFNS","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"UNB","Tipo de Instituição":"Universidade Federal","Título do Projeto":"Estudos de avaliação e incorporação de tecnologias – Força Nacional SUS.","Processo":"25000.187355/2023-20","Valor Aprovado - Final":3000000,"Valor Empenhado":2000000,"Valor Pago":2000000,"Início do Projeto":"2023-12-29","Termino Atual":"2026-12-29","Data da Publicação":"2023-12-29"},{"Projeto":"TED-024-2024","Departamento":"DECAN","Coordenação":"CGCAN","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Testagem molecular do HPV no Estado de Pernambuco","Processo":"25000.096336/2024-76","Valor Aprovado - Final":16500524.78,"Valor Empenhado":11002132.73,"Valor Pago":4127805.51,"Início do Projeto":"2024-07-29","Termino Atual":"2026-07-01","Data da Publicação":"2024-07-30"},{"Projeto":"TED-041-2024","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"UFMA","Tipo de Instituição":"Universidade Federal","Título do Projeto":"Nefro X: Programa de Qualificação em Nefrologia Interdisciplinar para os Profissionais do SUS.","Processo":"25000.112668/2024-13","Valor Aprovado - Final":3960019.8,"Valor Empenhado":3960019.8,"Valor Pago":2820019.8,"Início do Projeto":"2024-09-26","Termino Atual":"2027-09-26","Data da Publicação":"2024-09-27"},{"Projeto":"TED-065-2024","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Construção do novo Hospital Escola da Universidade Federal de Pelotas – HE-UFPEL.","Processo":"25000.152866/2024-10","Valor Aprovado - Final":265227100,"Valor Empenhado":202158611.14,"Valor Pago":14000000,"Início do Projeto":"2024-11-09","Termino Atual":"2027-11-08","Data da Publicação":"2024-11-11"},{"Projeto":"TED-070-2024","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Construção do Bloco 2 da Unidade da Mulher e da Criança","Processo":"25000.152066/2024-91","Valor Aprovado - Final":31000000,"Valor Empenhado":28000000,"Valor Pago":15831033.84,"Início do Projeto":"2024-11-09","Termino Atual":"2026-11-08","Data da Publicação":"2024-11-11"},{"Projeto":"TED-069-2024","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Obras de construção para ampliação da capacidade assistencial do Hospital Universitário da Universidade Federal de São Carlos","Processo":"25000.154656/2024-58","Valor Aprovado - Final":24119068,"Valor Empenhado":23880000,"Valor Pago":14798208.71,"Início do Projeto":"2024-11-09","Termino Atual":"2026-04-07","Data da Publicação":"2024-11-11"},{"Projeto":"TED-072-2024","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Construção para ampliação do Hospital Universitário Cassiano Antônio de Moraes da UFES","Processo":"25000.152536/2024-16","Valor Aprovado - Final":30000000,"Valor Empenhado":30000000,"Valor Pago":2750000,"Início do Projeto":"2024-11-09","Termino Atual":"2027-01-30","Data da Publicação":"2024-11-11"},{"Projeto":"TED-073-2024","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Construção de novo Bloco para ampliação assistencial do HU-UFRR","Processo":"25000.152539/2024-50","Valor Aprovado - Final":50000000,"Valor Empenhado":1389308.01,"Valor Pago":926205.34,"Início do Projeto":"2024-11-09","Termino Atual":"2026-12-31","Data da Publicação":"2024-11-11"},{"Projeto":"TED-074-2024","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Construção de novo bloco assistencial de alta complexidade do CHU-UFPA","Processo":"25000.154110/2024-05","Valor Aprovado - Final":50000000,"Valor Empenhado":39390390,"Valor Pago":8700000,"Início do Projeto":"2024-11-09","Termino Atual":"2026-04-30","Data da Publicação":"2024-11-11"},{"Projeto":"TED-067-2024","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Construção de bloco assistencial do HUOL-UFRN com Centro Cirúrgico, UTI Adulto e UTI Pediátrica","Processo":"25000.154881/2024-94","Valor Aprovado - Final":40000000,"Valor Empenhado":21125000,"Valor Pago":1425000,"Início do Projeto":"2024-11-09","Termino Atual":"2027-02-08","Data da Publicação":"2024-11-11"},{"Projeto":"TED-071-2024","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Ampliação do Centro Cirúrgico do HUUNIVASF","Processo":"25000.155958/2024-43","Valor Aprovado - Final":6000000,"Valor Empenhado":3000000,"Valor Pago":0,"Início do Projeto":"2024-11-09","Termino Atual":"2026-11-08","Data da Publicação":"2024-11-11"},{"Projeto":"TED-068-2024","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Construção do Centro Administrativo, de Ensino, Pesquisa e Imagens (CAEPI) do HUL-UFS","Processo":"25000.152672/2024-14","Valor Aprovado - Final":39938762.19,"Valor Empenhado":39800000,"Valor Pago":15570460,"Início do Projeto":"2024-11-09","Termino Atual":"2026-11-08","Data da Publicação":"2024-11-11"},{"Projeto":"TED-066-2024","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Construção do Hospital Universitário da Universidade Federal do Cariri – HU-UFCA","Processo":"25000.157403/2024-36","Valor Aprovado - Final":200000000,"Valor Empenhado":102849998.86,"Valor Pago":4199999.32,"Início do Projeto":"2024-11-09","Termino Atual":"2027-11-08","Data da Publicação":"2024-11-11"},{"Projeto":"TED-102-2024","Departamento":"GAB. SAES","Coordenação":"CGPROJ","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Estudos prospectivos sobre o futuro da atenção à saúde especializada e Avaliação da Implementação da Rede Alyne.","Processo":"25000.163043/2024-10","Valor Aprovado - Final":9675814.61,"Valor Empenhado":500000,"Valor Pago":0,"Início do Projeto":"2024-12-03","Termino Atual":"2027-12-02","Data da Publicação":"2024-12-04"},{"Projeto":"TED-116-2024","Departamento":"DESMAD","Coordenação":"CGDDH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Estratégias de Educação e Pesquisa para a Gestão em Saúde Mental, Álcool e outras Drogas","Processo":"25000.168846/2024-52","Valor Aprovado - Final":48080942.73,"Valor Empenhado":37662000,"Valor Pago":23030000,"Início do Projeto":"2024-12-09","Termino Atual":"2026-12-09","Data da Publicação":"2024-12-09"},{"Projeto":"TED-119-2024","Departamento":"DESMAD","Coordenação":"CGDDH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Atenção Psicossocial e Saúde Mental em Situações de Desastres e Emergências em Saúde Pública – RS","Processo":"25000.168802/2024-22","Valor Aprovado - Final":2819334.67,"Valor Empenhado":2800000.01,"Valor Pago":1819334.67,"Início do Projeto":"2024-12-09","Termino Atual":"2026-08-08","Data da Publicação":"2024-12-09"},{"Projeto":"TED-124-2024","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Atenção integral e qualificação do cuidado especializado de crianças e adolescentes com condições crônicas complexas de saúde.","Processo":"25000.165210/2024-59","Valor Aprovado - Final":8834000,"Valor Empenhado":2385180,"Valor Pago":2385180,"Início do Projeto":"2024-12-10","Termino Atual":"2027-12-11","Data da Publicação":"2024-12-11"},{"Projeto":"TED-129-2024","Departamento":"DAET","Coordenação":"CGSPD","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Curso de qualificação da Rede de Cuidado à Pessoa com Deficiência.","Processo":"25000.148750/2024-78","Valor Aprovado - Final":3545000,"Valor Empenhado":3154500,"Valor Pago":3154500,"Início do Projeto":"2024-12-12","Termino Atual":"2026-12-12","Data da Publicação":"2024-12-12"},{"Projeto":"TED-131-2024","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Qualificação do modelo de gestão em maternidades na rede de atenção à saúde materna e neonatal.","Processo":"25000.165213/2024-92","Valor Aprovado - Final":17620730,"Valor Empenhado":4877963.55,"Valor Pago":4390871.55,"Início do Projeto":"2024-12-12","Termino Atual":"2027-12-12","Data da Publicação":"2024-12-13"},{"Projeto":"TED-118-2024","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos médicos para o novo prédio do Hospital de Clínicas da UFU","Processo":"25000.159398/2024-04","Valor Aprovado - Final":19992892,"Valor Empenhado":19984453.5,"Valor Pago":8018220.1,"Início do Projeto":"2024-12-13","Termino Atual":"2026-08-11","Data da Publicação":"2024-12-13"},{"Projeto":"TED-133-2024","Departamento":"DAET","Coordenação":"CGRAR","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Ampliação da linha de cuidado e de diagnóstico genômico – Política Nacional de Atenção às Pessoas com Doenças Raras.","Processo":"25000.151442/2024-20","Valor Aprovado - Final":13930948,"Valor Empenhado":8580348,"Valor Pago":500000,"Início do Projeto":"2024-12-18","Termino Atual":"2027-12-18","Data da Publicação":"2024-12-18"},{"Projeto":"TED-152-2024","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Renovação do parque de ressonâncias magnéticas para os Hospitais Universitários Federais da EBSERH","Processo":"25000.158535/2024-85","Valor Aprovado - Final":46803141,"Valor Empenhado":46803141,"Valor Pago":0,"Início do Projeto":"2024-12-18","Termino Atual":"2026-03-13","Data da Publicação":"2024-12-18"},{"Projeto":"TED-155-2024","Departamento":"DAET","Coordenação":"CGRAR","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Estabelecimento de polo genômico no IFF/Fiocruz para o fortalecimento da linha de cuidado para pessoas com Doenças Raras.","Processo":"25000.151542/2024-56","Valor Aprovado - Final":8217800,"Valor Empenhado":8217800,"Valor Pago":7000000,"Início do Projeto":"2024-12-26","Termino Atual":"2027-12-25","Data da Publicação":"2024-12-26"},{"Projeto":"TED-180-2024","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"UNIFESP","Tipo de Instituição":"Universidade Federal","Título do Projeto":"Reforma e adequação das Unidades de Atendimento Ambulatorial de Atenção à Saúde especializada – UNIFESP.","Processo":"25000.196666/2024-61","Valor Aprovado - Final":2600000,"Valor Empenhado":2600000,"Valor Pago":823218.92,"Início do Projeto":"2024-12-31","Termino Atual":"2026-09-03","Data da Publicação":"2024-12-31"},{"Projeto":"TED-182-2024","Departamento":"DECAN","Coordenação":"CGCAN","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"HCPA","Tipo de Instituição":"Hospital Universitário Federal","Título do Projeto":"Reforma de Bunker para Instalação do novo Acelerador Linear.","Processo":"25000.197343/2024-94","Valor Aprovado - Final":1069082.77,"Valor Empenhado":1069082.77,"Valor Pago":0,"Início do Projeto":"2024-12-31","Termino Atual":"2026-10-16","Data da Publicação":"2024-12-31"},{"Projeto":"TED-083-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"HCPA","Tipo de Instituição":"Hospital Universitário Federal","Título do Projeto":"Aquisição de equipamentos e mobiliários para nova sala cirúrgica – HCPA","Processo":"25000.146865/2025-17","Valor Aprovado - Final":748136.8,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-11-21","Termino Atual":"2026-11-21","Data da Publicação":"2025-11-21"},{"Projeto":"TED-107-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-107)","Processo":"25000.147450/2025-52","Valor Aprovado - Final":1499986.26,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-11-24","Termino Atual":"2026-12-31","Data da Publicação":"2025-11-24"},{"Projeto":"TED-110-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-110)","Processo":"25000.147511/2025-81","Valor Aprovado - Final":2498264.5,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-01","Termino Atual":"2026-12-31","Data da Publicação":"2025-12-01"},{"Projeto":"TED-111-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos médico-hospitalares para o HUPAA-UFAL da EBSERH","Processo":"25000.172639/2025-83","Valor Aprovado - Final":472975,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-01","Termino Atual":"2026-12-31","Data da Publicação":"2025-12-01"},{"Projeto":"TED-112-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos médico-hospitalares para o HC-UFTM da EBSERH","Processo":"25000.201055/2025-22","Valor Aprovado - Final":229295,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-01","Termino Atual":"2026-12-31","Data da Publicação":"2025-12-01"},{"Projeto":"TED-118-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-118)","Processo":"25000.154168/2025-21","Valor Aprovado - Final":1099764,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-01","Termino Atual":"2026-12-31","Data da Publicação":"2025-12-01"},{"Projeto":"TED-097-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"HCPA","Tipo de Instituição":"Hospital Universitário Federal","Título do Projeto":"Aquisição de monitores multiparamétricos e camas berço – HCPA","Processo":"25000.146384/2025-01","Valor Aprovado - Final":550000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-03","Termino Atual":"2026-12-03","Data da Publicação":"2025-12-03"},{"Projeto":"TED-101-2025","Departamento":"DAET","Coordenação":"CGSNT","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"COMAE","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Apoio Aéreo ao Transporte de Órgãos para Transplantes – Parceria MS e Comando de Operações Aeroespaciais","Processo":"25000.094322/2025-07","Valor Aprovado - Final":59259803.04,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-15","Termino Atual":"2028-12-14","Data da Publicação":"2025-12-15"},{"Projeto":"TED-105-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"HCPA","Tipo de Instituição":"Hospital Universitário Federal","Título do Projeto":"Aquisição de equipamentos para o Centro Obstétrico do HCPA","Processo":"25000.200185/2025-48","Valor Aprovado - Final":1300000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-16","Termino Atual":"2026-12-16","Data da Publicação":"2025-12-16"},{"Projeto":"TED-106-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos médico-hospitalares para o HE-UFPEL da EBSERH","Processo":"25000.150993/2025-57","Valor Aprovado - Final":269540,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-17","Termino Atual":"2027-01-16","Data da Publicação":"2025-12-17"},{"Projeto":"TED-108-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos médico-hospitalares para o HUAP-UFF da EBSERH","Processo":"25000.146894/2025-71","Valor Aprovado - Final":4999965,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-17","Termino Atual":"2027-01-16","Data da Publicação":"2025-12-17"},{"Projeto":"TED-109-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-109)","Processo":"25000.146930/2025-04","Valor Aprovado - Final":447498.89,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-17","Termino Atual":"2027-01-16","Data da Publicação":"2025-12-17"},{"Projeto":"TED-114-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-114)","Processo":"25000.146835/2025-01","Valor Aprovado - Final":999616.88,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-17","Termino Atual":"2027-01-16","Data da Publicação":"2025-12-17"},{"Projeto":"TED-112-2025-DAHUD","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":null,"Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Construção do novo prédio do Hospital Universitário da Universidade Federal de Juiz de Fora","Processo":"25000.180586/2025-74","Valor Aprovado - Final":216376195,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-19","Termino Atual":"2028-11-29","Data da Publicação":"2025-12-19"},{"Projeto":"TED-116-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"HCPA","Tipo de Instituição":"Hospital Universitário Federal","Título do Projeto":"Aquisição de monitores multiparâmetros para UTI Neonatal do HCPA","Processo":"25000.184420/2025-27","Valor Aprovado - Final":500000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-19","Termino Atual":"2026-12-19","Data da Publicação":"2025-12-19"},{"Projeto":"TED-121-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":null,"Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Construção do Hospital Universitário da Universidade Federal de Lavras (HU-UFLA)","Processo":"25000.176175/2025-84","Valor Aprovado - Final":67081437,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-19","Termino Atual":"2028-12-18","Data da Publicação":"2025-12-19"},{"Projeto":"TED-124-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":null,"Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Construção do Hospital Universitário da Universidade Federal de São Paulo – HU-Unidade Santo Amaro","Processo":"25000.176531/2025-60","Valor Aprovado - Final":257380000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-19","Termino Atual":"2029-04-18","Data da Publicação":"2025-12-19"},{"Projeto":"TED-123-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"HCPA","Tipo de Instituição":"Hospital Universitário Federal","Título do Projeto":"Aquisição de fancoletes e chillers para climatização da Unidade 5º Norte – HCPA","Processo":"25000.184710/2025-71","Valor Aprovado - Final":500000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-23","Termino Atual":"2026-12-23","Data da Publicação":"2025-12-23"},{"Projeto":"TED-127-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-127)","Processo":"25000.147380/2025-32","Valor Aprovado - Final":98200,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-23","Termino Atual":"2027-01-22","Data da Publicação":"2025-12-23"},{"Projeto":"TED-130-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos médico-hospitalares para o HU-UNIVASF da EBSERH","Processo":"25000.214209/2025-46","Valor Aprovado - Final":498044.55,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-26","Termino Atual":"2027-01-25","Data da Publicação":"2025-12-26"},{"Projeto":"TED-132-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-132)","Processo":"25000.217552/2025-42","Valor Aprovado - Final":500000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-26","Termino Atual":"2027-01-25","Data da Publicação":"2025-12-26"},{"Projeto":"TED-133-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de Equipamentos para o HC-UFG da EBSERH","Processo":"25000.217815/2025-13","Valor Aprovado - Final":500000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-26","Termino Atual":"2027-01-25","Data da Publicação":"2025-12-26"},{"Projeto":"TED-134-2025","Departamento":"DECAN","Coordenação":"CGCAN","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos para o HUCAM-UFES da EBSERH","Processo":"25000.215727/2025-87","Valor Aprovado - Final":1650000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-26","Termino Atual":"2027-01-25","Data da Publicação":"2025-12-26"},{"Projeto":"TED-136-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de Equipamentos para o HUB-UNB da EBSERH (TED-136)","Processo":"25000.214917/2025-87","Valor Aprovado - Final":3911528,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-26","Termino Atual":"2027-01-26","Data da Publicação":"2025-12-26"},{"Projeto":"TED-137-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos para o HUB-UNB da EBSERH (TED-137)","Processo":"25000.217528/2025-11","Valor Aprovado - Final":3046648.2,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-26","Termino Atual":"2027-01-25","Data da Publicação":"2025-12-26"},{"Projeto":"TED-138-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos para o CHC-UFPR da EBSERH","Processo":"25000.216569/2025-82","Valor Aprovado - Final":998652.66,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-26","Termino Atual":"2027-01-25","Data da Publicação":"2025-12-26"},{"Projeto":"TED-142-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos para HC-UFTM e HC-UFU da EBSERH","Processo":"25000.172948/2025-53","Valor Aprovado - Final":1499785.58,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-27","Termino Atual":"2027-01-26","Data da Publicação":"2025-12-27"},{"Projeto":"TED-144-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos para HULW-UFPB e HUAC-UFCG da EBSERH","Processo":"25000.218812/2025-05","Valor Aprovado - Final":1273018,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-27","Termino Atual":"2027-01-26","Data da Publicação":"2025-12-27"},{"Projeto":"TED-145-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-145)","Processo":"25000.181482/2025-87","Valor Aprovado - Final":999263.2,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-27","Termino Atual":"2027-01-26","Data da Publicação":"2025-12-27"},{"Projeto":"TED-131-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"HCPA","Tipo de Instituição":"Hospital Universitário Federal","Título do Projeto":"Aquisição de Aspirador Ultrassônico e Dispensário Eletrônico – HCPA","Processo":"25000.150564/2025-80","Valor Aprovado - Final":650000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-29","Termino Atual":"2026-12-29","Data da Publicação":"2025-12-29"},{"Projeto":"TED-143-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-143)","Processo":"25000.215131/2025-87","Valor Aprovado - Final":997627.84,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-29","Termino Atual":"2027-01-28","Data da Publicação":"2025-12-29"},{"Projeto":"TED-146-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-146)","Processo":"25000.215493/2025-78","Valor Aprovado - Final":998608.74,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-29","Termino Atual":"2027-01-28","Data da Publicação":"2025-12-29"},{"Projeto":"TED-139-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-139)","Processo":"25000.149881/2025-53","Valor Aprovado - Final":800000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-30","Termino Atual":"2027-01-29","Data da Publicação":"2025-12-30"},{"Projeto":"TED-141-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos para o HU-UFRR da EBSERH","Processo":"25000.181128/2025-52","Valor Aprovado - Final":999684.79,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-30","Termino Atual":"2027-01-29","Data da Publicação":"2025-12-30"},{"Projeto":"TED-148-2025","Departamento":"DESMAD","Coordenação":"CGCAD","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"UFSCAR","Tipo de Instituição":"Universidade Federal","Título do Projeto":"Capacitação e qualificação de gestores e equipes de saúde mental para inclusão social pelo trabalho – economia solidária","Processo":"25000.217796/2025-25","Valor Aprovado - Final":1000000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-30","Termino Atual":"2027-12-29","Data da Publicação":"2025-12-30"},{"Projeto":"TED-149-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de Equipamentos para o HU-UFJF da EBSERH","Processo":"25000.146877/2025-33","Valor Aprovado - Final":299143.4,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-30","Termino Atual":"2027-01-29","Data da Publicação":"2025-12-30"},{"Projeto":"TED-150-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-150)","Processo":"25000.146916/2025-01","Valor Aprovado - Final":17669650.39,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-30","Termino Atual":"2027-01-29","Data da Publicação":"2025-12-30"},{"Projeto":"TED-151-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-151)","Processo":"25000.166978/2025-21","Valor Aprovado - Final":419151.66,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-30","Termino Atual":"2027-01-29","Data da Publicação":"2025-12-30"},{"Projeto":"TED-152-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de Equipamentos para o HC-UFPE da EBSERH","Processo":"25000.146858/2025-15","Valor Aprovado - Final":249943,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-30","Termino Atual":"2027-01-29","Data da Publicação":"2025-12-30"},{"Projeto":"TED-153-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos para o CHC-UFPR da EBSERH (TED-153)","Processo":"25000.172880/2025-11","Valor Aprovado - Final":549667.5,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-30","Termino Atual":"2027-01-29","Data da Publicação":"2025-12-30"},{"Projeto":"TED-155-2025","Departamento":"DESMAD","Coordenação":"CGCAD","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"UFRN","Tipo de Instituição":"Universidade Federal","Título do Projeto":"Pesquisa-Formação-Intervenção em Saúde Mental com Foco nas Mudanças do Clima","Processo":"25000.218441/2025-53","Valor Aprovado - Final":2000000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-30","Termino Atual":"2028-12-30","Data da Publicação":"2025-12-30"},{"Projeto":"TED-156-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-156)","Processo":"25000.146950/2025-77","Valor Aprovado - Final":1567727,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-30","Termino Atual":"2027-01-29","Data da Publicação":"2025-12-30"},{"Projeto":"TED-157-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de Equipamentos para o HU-UFSCAR da EBSERH","Processo":"25000.218222/2025-74","Valor Aprovado - Final":519168.12,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-30","Termino Atual":"2027-01-29","Data da Publicação":"2025-12-30"},{"Projeto":"TED-158-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos para HUB-UNB e HFSE da EBSERH","Processo":"25000.147548/2025-18","Valor Aprovado - Final":7790889.78,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-30","Termino Atual":"2027-01-29","Data da Publicação":"2025-12-30"},{"Projeto":"TED-159-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-159)","Processo":"25000.215468/2025-94","Valor Aprovado - Final":1598993.21,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-30","Termino Atual":"2027-01-29","Data da Publicação":"2025-12-30"},{"Projeto":"TED-160-2025","Departamento":"DESMAD","Coordenação":"CGSMDH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"UFRJ","Tipo de Instituição":"Universidade Federal","Título do Projeto":"Construindo estratégias para o enfrentamento ao racismo no atendimento em saúde mental, álcool e outras drogas","Processo":"25000.217914/2025-03","Valor Aprovado - Final":1500000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-30","Termino Atual":"2027-10-08","Data da Publicação":"2025-12-30"},{"Projeto":"TED-162-2025","Departamento":"DESMAD","Coordenação":"CGSMDH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"IFRJ","Tipo de Instituição":"Hospital Universitário Federal","Título do Projeto":"Capacitar com Orgulho: Promoção da Saúde Mental da População LGBTQIA+ e qualificação dos CAPS","Processo":"25000217925/2025-85","Valor Aprovado - Final":579016,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-30","Termino Atual":"2027-12-30","Data da Publicação":"2025-12-30"},{"Projeto":"TED-165-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos para o HUB-UNB da EBSERH (TED-165)","Processo":"25000.147604/2025-14","Valor Aprovado - Final":4252392.32,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-31","Termino Atual":"2027-01-30","Data da Publicação":"2025-12-31"},{"Projeto":"TED-166-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de equipamentos para HUAP-UFF, HUGG-UNIRIO e outros HUF da EBSERH","Processo":"25000.147491/2025-49","Valor Aprovado - Final":15063114,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-31","Termino Atual":"2027-01-30","Data da Publicação":"2025-12-31"},{"Projeto":"TED-167-2025","Departamento":"DAET","Coordenação":"CGAE","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"EBSERH","Tipo de Instituição":"Empresa Pública Federal","Título do Projeto":"Aquisição de novos Equipamentos Médicos para HUF da EBSERH (TED-167)","Processo":"25000.149772/2025-36","Valor Aprovado - Final":3993235.34,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-31","Termino Atual":"2027-01-30","Data da Publicação":"2025-12-31"},{"Projeto":"TED-169-2025","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Emenda Parlamentar","Instituição Parceira":"UFMG","Tipo de Instituição":"Universidade Federal","Título do Projeto":"Aquisição de equipamentos para o Centro de Excelência em Impressão 3D – FAO UFMG","Processo":"25000.225746/2025-11","Valor Aprovado - Final":400000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2025-12-31","Termino Atual":"2026-12-30","Data da Publicação":"2025-12-31"},{"Projeto":"TED-135-2025","Departamento":"DESMAD","Coordenação":"CGCAD","Tipo de Projeto":"Finalístico","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Qualificação de profissionais da RAPS para o enfrentamento da medicalização e patologização da vida","Processo":"25000.217526/2025-14","Valor Aprovado - Final":2000000,"Valor Empenhado":0,"Valor Pago":0,"Início do Projeto":"2026-12-26","Termino Atual":"2027-12-07","Data da Publicação":"2026-12-26"},{"Projeto":"TED-086-2023","Departamento":"DESMAD","Coordenação":"CGSMDH","Tipo de Projeto":"Híbrido","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Fortalecimento da Rede de Atenção Psicossocial (RAPS) no SUS: Gestão, Formação e Pesquisa.","Processo":"25000.180350/2023-76","Valor Aprovado - Final":46838859,"Valor Empenhado":28973402,"Valor Pago":25973402,"Início do Projeto":"2023-12-15","Termino Atual":"2027-12-15","Data da Publicação":"2023-12-18"},{"Projeto":"TED-126-2024","Departamento":"DAHUD","Coordenação":"CGAH","Tipo de Projeto":"Híbrido","Fonte do Recurso":"Programa","Instituição Parceira":"FIOCRUZ","Tipo de Instituição":"Órgão Público Federal","Título do Projeto":"Apoio na implementação do Programa de Avaliação, Qualificação e Monitoramento da Atenção Especializada – PMAE-QUALIDADE.","Processo":"25000.165270/2024-71","Valor Aprovado - Final":52597643,"Valor Empenhado":7889646.45,"Valor Pago":2629882.15,"Início do Projeto":"2024-12-12","Termino Atual":"2029-11-11","Data da Publicação":"2024-12-11"}];
+
+// Fix duplicate project name
+DATA.forEach(d => {
+  if(d['Projeto'] === 'TED-112-2025-DAHUD') d['Projeto'] = 'TED-112-2025(B)';
+});
+
+// Colors
+const DEPT_COLORS = {
+  'DAET': '#3b82f6', 'DAHUD': '#0ea5e9', 'DESMAD': '#8b5cf6',
+  'DECAN': '#f59e0b', 'GAB. SAES': '#10b981', 'FNSUS': '#06b6d4',
+  'DEEQAE': '#f43f5e', 'INCA': '#ec4899', 'DRAC': '#84cc16'
+};
+const TIPO_COLORS = ['#3b82f6','#10b981','#f59e0b'];
+const FONTE_COLORS = ['#0ea5e9','#8b5cf6','#64748b'];
+
+// FORMAT
+function fmtBRL(v, short=false) {
+  if(v === null || v === undefined) return '—';
+  if(short) {
+    if(v >= 1e9) return 'R$ ' + (v/1e9).toFixed(2) + ' Bi';
+    if(v >= 1e6) return 'R$ ' + (v/1e6).toFixed(1) + ' Mi';
+    if(v >= 1e3) return 'R$ ' + (v/1e3).toFixed(0) + ' K';
+    return 'R$ ' + v.toFixed(0);
+  }
+  return 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function fmtDate(d) {
+  if(!d) return '—';
+  const parts = d.split('-');
+  return parts[2]+'/'+parts[1]+'/'+parts[0];
+}
+function pct(a, b) { return b > 0 ? Math.min(100, (a/b)*100) : 0; }
+
+// ----- KPI -----
+const totAprov = DATA.reduce((s,d)=>s+(d['Valor Aprovado - Final']||0),0);
+const totEmp = DATA.reduce((s,d)=>s+(d['Valor Empenhado']||0),0);
+const totPago = DATA.reduce((s,d)=>s+(d['Valor Pago']||0),0);
+const totSaldo = totEmp - totPago;
+document.getElementById('kpi-aprovado').textContent = fmtBRL(totAprov, true);
+document.getElementById('kpi-aprovado-full').textContent = fmtBRL(totAprov);
+document.getElementById('kpi-empenhado').textContent = fmtBRL(totEmp, true);
+document.getElementById('kpi-emp-pct').textContent = pct(totEmp,totAprov).toFixed(1)+'% do aprovado';
+document.getElementById('kpi-pago').textContent = fmtBRL(totPago, true);
+document.getElementById('kpi-pago-pct').textContent = pct(totPago,totAprov).toFixed(1)+'% do aprovado';
+document.getElementById('kpi-saldo').textContent = fmtBRL(totSaldo, true);
+
+// ----- DEPT BAR CHART -----
+const deptMap = {};
+DATA.forEach(d => {
+  const dept = d['Departamento']||'?';
+  if(!deptMap[dept]) deptMap[dept] = {aprov:0, emp:0, pago:0, n:0};
+  deptMap[dept].aprov += d['Valor Aprovado - Final']||0;
+  deptMap[dept].emp += d['Valor Empenhado']||0;
+  deptMap[dept].pago += d['Valor Pago']||0;
+  deptMap[dept].n++;
+});
+const deptArr = Object.entries(deptMap).sort((a,b)=>b[1].aprov-a[1].aprov);
+const maxAprov = deptArr[0][1].aprov;
+const deptChart = document.getElementById('dept-chart');
+deptArr.forEach(([dept, vals]) => {
+  const color = DEPT_COLORS[dept] || '#64748b';
+  const w = (vals.aprov/maxAprov*100).toFixed(1);
+  const wEmp = (vals.emp/maxAprov*100).toFixed(1);
+  const wPago = (vals.pago/maxAprov*100).toFixed(1);
+  deptChart.innerHTML += `
+    <div class="bar-row">
+      <div class="bar-label">${dept}</div>
+      <div class="bar-track" style="position:relative;height:14px">
+        <div class="bar-fill" style="width:${w}%;background:${color}22;height:100%"></div>
+        <div class="bar-fill" style="width:${wEmp}%;background:${color}88;height:100%;position:absolute;top:0;left:0"></div>
+        <div class="bar-fill" style="width:${wPago}%;background:${color};height:100%;position:absolute;top:0;left:0"></div>
+      </div>
+      <div class="bar-val" style="font-size:10px">${fmtBRL(vals.aprov, true)}</div>
+    </div>`;
+});
+// Legend
+deptChart.innerHTML += `<div style="display:flex;gap:14px;margin-top:6px;font-size:10px;color:var(--text-dim)">
+  <span>░ Aprovado</span><span style="color:var(--text-muted)">▒ Empenhado</span><span style="color:var(--text)">█ Pago</span>
+</div>`;
+
+// ----- DONUT: TIPO -----
+const tipoMap = {};
+DATA.forEach(d => {
+  const t = d['Tipo de Projeto']||'?';
+  tipoMap[t] = (tipoMap[t]||0) + 1;
+});
+const tipoArr = Object.entries(tipoMap).sort((a,b)=>b[1]-a[1]);
+const total = tipoArr.reduce((s,[,n])=>s+n,0);
+let angle = -Math.PI/2;
+const r=50, cx=65, cy=65;
+let svgPaths = '';
+const tipoColors = ['#3b82f6','#10b981','#f59e0b'];
+tipoArr.forEach(([name, count], i) => {
+  const sweep = (count/total)*2*Math.PI;
+  const x1 = cx + r*Math.cos(angle);
+  const y1 = cy + r*Math.sin(angle);
+  angle += sweep;
+  const x2 = cx + r*Math.cos(angle);
+  const y2 = cy + r*Math.sin(angle);
+  const large = sweep > Math.PI ? 1 : 0;
+  const innerR = 30;
+  const xi1 = cx + innerR*Math.cos(angle - sweep);
+  const yi1 = cy + innerR*Math.sin(angle - sweep);
+  const xi2 = cx + innerR*Math.cos(angle);
+  const yi2 = cy + innerR*Math.sin(angle);
+  svgPaths += `<path d="M${xi1},${yi1} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} L${xi2},${yi2} A${innerR},${innerR} 0 ${large},0 ${xi1},${yi1}" fill="${tipoColors[i]}" opacity="0.85"/>`;
+});
+document.getElementById('donut-tipo').innerHTML = svgPaths + `<text x="65" y="60" text-anchor="middle" fill="#e8edf5" font-size="18" font-family="Sora" font-weight="800">${total}</text><text x="65" y="76" text-anchor="middle" fill="#8899b4" font-size="9">projetos</text>`;
+let legendHTML = '';
+tipoArr.forEach(([name, count], i) => {
+  legendHTML += `<div class="donut-legend-item"><div class="legend-dot" style="background:${tipoColors[i]}"></div><div class="legend-name">${name}</div><div class="legend-pct">${count} (${(count/total*100).toFixed(0)}%)</div></div>`;
+});
+document.getElementById('donut-tipo-legend').innerHTML = legendHTML;
+
+// ----- EXECUTION PER DEPT -----
+const execChart = document.getElementById('exec-chart');
+deptArr.slice(0,6).forEach(([dept, vals]) => {
+  const color = DEPT_COLORS[dept] || '#64748b';
+  const empPct = pct(vals.emp, vals.aprov).toFixed(0);
+  const pagPct = pct(vals.pago, vals.aprov).toFixed(0);
+  execChart.innerHTML += `
+    <div class="exec-item">
+      <div class="exec-header">
+        <div class="exec-name">${dept} <span style="font-size:10px;color:var(--text-dim)">(${vals.n})</span></div>
+        <div class="exec-pct">${pagPct}% pago</div>
+      </div>
+      <div class="exec-track">
+        <div class="exec-fill" style="width:${empPct}%;background:${color}55"></div>
+      </div>
+      <div class="exec-track" style="margin-top:2px">
+        <div class="exec-fill" style="width:${pagPct}%;background:${color}"></div>
+      </div>
+      <div class="exec-subs">
+        <span>Emp: ${fmtBRL(vals.emp,true)}</span><span>Pago: ${fmtBRL(vals.pago,true)}</span>
+      </div>
+    </div>`;
+});
+
+// ----- FILTERS -----
+function unique(arr, key) {
+  return [...new Set(arr.map(d=>d[key]).filter(Boolean))].sort();
+}
+function populateSelect(id, values) {
+  const sel = document.getElementById(id);
+  values.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v; opt.textContent = v;
+    sel.appendChild(opt);
+  });
+}
+populateSelect('f-dept', unique(DATA, 'Departamento'));
+populateSelect('f-tipo', unique(DATA, 'Tipo de Projeto'));
+populateSelect('f-fonte', unique(DATA, 'Fonte do Recurso'));
+populateSelect('f-inst', unique(DATA, 'Instituição Parceira'));
+
+// ----- TABLE -----
+let filtered = [...DATA];
+let sortKey = 'Valor Aprovado - Final', sortDir = -1;
+let page = 1;
+const PAGE_SIZE = 20;
+
+function getFiltered() {
+  const search = document.getElementById('search').value.toLowerCase();
+  const dept = document.getElementById('f-dept').value;
+  const tipo = document.getElementById('f-tipo').value;
+  const fonte = document.getElementById('f-fonte').value;
+  const inst = document.getElementById('f-inst').value;
+  return DATA.filter(d => {
+    const text = [d['Projeto'],d['Título do Projeto'],d['Processo'],d['Instituição Parceira'],d['Coordenação'],d['Departamento']].join(' ').toLowerCase();
+    if(search && !text.includes(search)) return false;
+    if(dept && d['Departamento'] !== dept) return false;
+    if(tipo && d['Tipo de Projeto'] !== tipo) return false;
+    if(fonte && d['Fonte do Recurso'] !== fonte) return false;
+    if(inst && d['Instituição Parceira'] !== inst) return false;
+    return true;
+  });
+}
+
+function tipoPill(t) {
+  if(!t) return '<span class="pill pill-fin">—</span>';
+  if(t==='Finalístico') return '<span class="pill pill-fin">Finalístico</span>';
+  if(t==='Apoio à Gestão') return '<span class="pill pill-gest">Gestão</span>';
+  return '<span class="pill pill-hib">Híbrido</span>';
+}
+function fontePill(f) {
+  if(!f) return '<span class="pill" style="background:rgba(100,116,139,0.15);color:#94a3b8">—</span>';
+  if(f==='Programa') return '<span class="pill pill-prog">Programa</span>';
+  return '<span class="pill pill-emenda">Emenda</span>';
+}
+function execColor(pct) {
+  if(pct >= 80) return '#10b981';
+  if(pct >= 40) return '#f59e0b';
+  if(pct > 0) return '#3b82f6';
+  return '#4a5d78';
+}
+
+function renderTable() {
+  filtered = getFiltered();
+  filtered.sort((a,b) => {
+    const av = a[sortKey]??'', bv = b[sortKey]??'';
+    if(av < bv) return -sortDir;
+    if(av > bv) return sortDir;
+    return 0;
+  });
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total/PAGE_SIZE));
+  if(page > totalPages) page = totalPages;
+  const slice = filtered.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  const tbody = document.getElementById('table-body');
+  const noRes = document.getElementById('no-results');
+  document.getElementById('filter-count').textContent = `${total} projeto${total!==1?'s':''}`;
+
+  if(slice.length === 0) {
+    tbody.innerHTML = '';
+    noRes.style.display = 'block';
+  } else {
+    noRes.style.display = 'none';
+    tbody.innerHTML = slice.map(d => {
+      const aprov = d['Valor Aprovado - Final']||0;
+      const emp = d['Valor Empenhado']||0;
+      const pago = d['Valor Pago']||0;
+      const execPct = pct(pago, aprov);
+      const empPct = pct(emp, aprov);
+      const color = execColor(execPct);
+      const deptColor = DEPT_COLORS[d['Departamento']] || '#64748b';
+      return `<tr>
+        <td class="td-projeto">${d['Projeto']||'—'}</td>
+        <td class="td-dept" style="color:${deptColor}">${d['Departamento']||'—'}</td>
+        <td style="font-size:11px;color:var(--text-muted)">${d['Coordenação']||'—'}</td>
+        <td>${tipoPill(d['Tipo de Projeto'])}</td>
+        <td>${fontePill(d['Fonte do Recurso'])}</td>
+        <td style="font-size:11px;color:var(--text-muted)">${d['Instituição Parceira']||'—'}</td>
+        <td class="td-titulo" title="${d['Título do Projeto']||''}">${d['Título do Projeto']||d['Objeto']||'—'}</td>
+        <td class="td-num" style="color:var(--gold-light)">${fmtBRL(aprov, true)}</td>
+        <td class="td-num" style="color:var(--teal)">${fmtBRL(emp, true)}</td>
+        <td class="td-num" style="color:var(--green)">${fmtBRL(pago, true)}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="exec-bar-mini"><div class="exec-bar-mini-fill" style="width:${empPct.toFixed(0)}%;background:${color}44"></div></div>
+            <div class="exec-bar-mini" style="position:absolute;margin-left:0"><div class="exec-bar-mini-fill" style="width:${execPct.toFixed(0)}%;background:${color}"></div></div>
+            <span style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:${color}">${execPct.toFixed(0)}%</span>
+          </div>
+        </td>
+        <td style="font-size:11px;color:var(--text-muted);font-family:'IBM Plex Mono',monospace">${fmtDate(d['Termino Atual'])}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Pagination
+  document.getElementById('pag-info').textContent = `${(page-1)*PAGE_SIZE+1}–${Math.min(page*PAGE_SIZE, total)} de ${total}`;
+  let pagHTML = `<button class="pag-btn" onclick="goPage(${page-1})" ${page===1?'disabled':''}>← Ant</button>`;
+  const range = 3;
+  for(let p=1; p<=totalPages; p++) {
+    if(p===1 || p===totalPages || (p>=page-range && p<=page+range)) {
+      pagHTML += `<button class="pag-btn ${p===page?'active':''}" onclick="goPage(${p})">${p}</button>`;
+    } else if(p===page-range-1 || p===page+range+1) {
+      pagHTML += `<span style="color:var(--text-dim);padding:0 4px">…</span>`;
+    }
+  }
+  pagHTML += `<button class="pag-btn" onclick="goPage(${page+1})" ${page===totalPages?'disabled':''}>Próx →</button>`;
+  document.getElementById('pag-buttons').innerHTML = pagHTML;
+
+  // Sort header highlights
+  document.querySelectorAll('thead th').forEach(th => th.classList.remove('sorted'));
+  const cleanKey = sortKey.replace(/[^a-zA-Z]/g,'');
+  const th = document.getElementById('th-'+cleanKey);
+  if(th) th.classList.add('sorted');
+}
+
+function goPage(p) {
+  const f = getFiltered();
+  const max = Math.max(1, Math.ceil(f.length/PAGE_SIZE));
+  page = Math.max(1, Math.min(max, p));
+  renderTable();
+}
+
+function sortTable(key) {
+  if(sortKey === key) sortDir *= -1;
+  else { sortKey = key; sortDir = -1; }
+  page = 1;
+  renderTable();
+}
+
+function clearFilters() {
+  document.getElementById('search').value = '';
+  document.getElementById('f-dept').value = '';
+  document.getElementById('f-tipo').value = '';
+  document.getElementById('f-fonte').value = '';
+  document.getElementById('f-inst').value = '';
+  page = 1;
+  renderTable();
+}
+
+['search','f-dept','f-tipo','f-fonte','f-inst'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => { page=1; renderTable(); });
+  document.getElementById(id).addEventListener('change', () => { page=1; renderTable(); });
+});
+
+renderTable();
+</script>
+
+</body>
+</html>
