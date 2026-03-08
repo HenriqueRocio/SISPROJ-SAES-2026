@@ -248,312 +248,313 @@ const DEPTS  = ["GAB. SAES","DAET","DAHUD","DEEQAE","DESMAD","DRAC","DGH","DECAN
 const DEPT_NAMES = {"GAB. SAES":"Gabinete/SAES","DAET":"Depto de Atenção Especializada e Temática","DAHUD":"Depto de Atenção Hospitalar, Domiciliar e de Urgência","DEEQAE":"Depto de Estruturação, Especialização e Qualificação da AE","DESMAD":"Depto de Saúde Mental, Álcool e Drogas","DRAC":"Depto de Regulação, Avaliação e Controle","DGH":"Depto de Gestão Hospitalar","DECAN":"Depto de Certificação e Atenção","DCEBAS":"Depto de Certificação de Entidades Beneficentes","FNSUS":"Fundo Nacional de Saúde — SAES","INCA":"Instituto Nacional do Câncer"};
 const DEPT_PF = {"GAB. SAES":167,"DAET":147,"DRAC":78,"DEEQAE":69,"DAHUD":61,"DGH":52,"DCEBAS":36,"DECAN":34,"DESMAD":24,"FNSUS":19,"INCA":0};
 
-const BRL  = v => v>0?‘R$ ‘+v.toLocaleString(‘pt-BR’,{minimumFractionDigits:2,maximumFractionDigits:2}):’—’;
+
+const BRL  = v => v>0?'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
 const BRLk = v => {
-if(!v||v<=0) return ‘—’;
-if(v>=1e9) return ‘R$ ‘+(v/1e9).toFixed(2)+’ Bi’;
-if(v>=1e6) return ‘R$ ‘+(v/1e6).toFixed(1)+’ M’;
-if(v>=1e3) return ‘R$ ‘+(v/1e3).toFixed(0)+’ K’;
-return ‘R$ ‘+v.toFixed(0);
+  if(!v||v<=0) return '—';
+  if(v>=1e9) return 'R$ '+(v/1e9).toFixed(2)+' Bi';
+  if(v>=1e6) return 'R$ '+(v/1e6).toFixed(1)+' M';
+  if(v>=1e3) return 'R$ '+(v/1e3).toFixed(0)+' K';
+  return 'R$ '+v.toFixed(0);
 };
-const fd = s => { if(!s||s.length<10) return ‘—’; const p=s.slice(0,10).split(’-’); return p[2]+’/’+p[1]+’/’+p[0]; };
-const pc = p => p>=80?‘var(–orange)’:p>=40?‘var(–yellow)’:‘var(–green)’;
-const sCls = s => s===‘Ativo’?‘at’:s===‘Programado’?‘pg’:‘in’;
+const fd = s => { if(!s||s.length<10) return '—'; const p=s.slice(0,10).split('-'); return p[2]+'/'+p[1]+'/'+p[0]; };
+const pc = p => p>=80?'var(--orange)':p>=40?'var(--yellow)':'var(--green)';
+const sCls = s => s==='Ativo'?'at':s==='Programado'?'pg':'in';
 const sBadge = s => {
-if(s===‘Ativo’) return ‘<span class="b-tag t-g">● Ativo</span>’;
-if(s===‘Programado’) return ‘<span class="b-tag t-y">Programado</span>’;
-return ‘<span class="b-tag t-m">Inativo</span>’;
+  if(s==='Ativo') return '<span class="b-tag t-g">&#9679; Ativo</span>';
+  if(s==='Programado') return '<span class="b-tag t-y">Programado</span>';
+  return '<span class="b-tag t-m">Inativo</span>';
 };
-const CP = [’#1aa0ff’,’#00c97a’,’#f0b429’,’#8b5cf6’,’#f57c00’,’#e53935’,’#00acc1’,’#00bcd4’,’#e91e8c’,’#4caf50’,’#ff7043’];
-const GC = ‘rgba(20,40,70,.6)’;
-let currentDept = ‘TODOS’;
+const CP = ['#1aa0ff','#00c97a','#f0b429','#8b5cf6','#f57c00','#e53935','#00acc1','#00bcd4','#e91e8c','#4caf50','#ff7043'];
+const GC = 'rgba(20,40,70,.6)';
+let currentDept = 'TODOS';
 let _charts = {};
 let _cltView = [];
 
 function destroyCharts(){Object.values(_charts).forEach(c=>{try{c.destroy()}catch(e){}});_charts={};}
 
-// –– DEPT STRIP ––
+// ---- DEPT STRIP ----
 function buildStrip(){
-const s = document.getElementById(‘deptStrip’);
-s.innerHTML = [‘TODOS’,…DEPTS].map(d=>{
-if(d===‘TODOS’){
-const vg=PROJ.filter(r=>r[3]===‘VIGENTE’).length;
-return ‘<div class="ds-btn active" onclick="sw(this,\'TODOS\')">🏠 Todos <span class="ds-cnt">’+vg+’ vigentes</span></div>’;
-}
-const pf=DEPT_PF[d]||0;
-const pend=(DST[d]||{}).pd_pendente||0;
-const alrt=pend>50?’ alert’:’’;
-return ‘<div class="ds-btn'+alrt+'" onclick="sw(this,\''+d+'\')">’+d+’ <span class="ds-cnt">’+pf+’</span></div>’;
-}).join(’’);
+  const s = document.getElementById('deptStrip');
+  s.innerHTML = ['TODOS',...DEPTS].map(d=>{
+    if(d==='TODOS'){
+      const vg=PROJ.filter(r=>r[3]==='VIGENTE').length;
+      return '<div class="ds-btn active" onclick="sw(this,\'TODOS\')">&#127968; Todos <span class="ds-cnt">'+vg+' vigentes</span></div>';
+    }
+    const pf=DEPT_PF[d]||0;
+    const pend=(DST[d]||{}).pd_pendente||0;
+    const alrt=pend>50?' alert':'';
+    return '<div class="ds-btn'+alrt+'" onclick="sw(this,\''+d+'\')">'+d+' <span class="ds-cnt">'+pf+'</span></div>';
+  }).join('');
 }
 
 function sw(el,dept){
-document.querySelectorAll(’.ds-btn’).forEach(b=>b.classList.remove(‘active’));
-el.classList.add(‘active’);
-currentDept=dept;
-destroyCharts();
-document.getElementById(‘mainContent’).innerHTML=’’;
-renderContent(dept);
+  document.querySelectorAll('.ds-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  currentDept=dept;
+  destroyCharts();
+  document.getElementById('mainContent').innerHTML='';
+  renderContent(dept);
 }
 
 function renderContent(dept){
-const el=document.getElementById(‘mainContent’);
-if(dept===‘TODOS’) renderGlobal(el);
-else renderDept(el,dept);
+  const el=document.getElementById('mainContent');
+  if(dept==='TODOS') renderGlobal(el);
+  else renderDept(el,dept);
 }
 
-// –– GLOBAL ––
+// ---- GLOBAL ----
 function renderGlobal(el){
-const vg=PROJ.filter(r=>r[3]===‘VIGENTE’).length;
-const ta=PROJ.reduce((s,r)=>s+r[6],0),te=PROJ.reduce((s,r)=>s+r[7],0),tp=PROJ.reduce((s,r)=>s+r[8],0);
-const cltAt=CLT.filter(r=>r[6]===‘Ativo’).length;
-const bolAt=BOL.length;
-const pdPnd=DEPTS.reduce((s,d)=>s+((DST[d]||{}).pd_pendente||0),0);
-const pdPndV=DEPTS.reduce((s,d)=>s+((DST[d]||{}).pd_pend_valor||0),0);
-const pjV=PJ_D.reduce((s,r)=>s+r[7],0);
-el.innerHTML=
-‘<div class="kpi-row">’+
-kpi(‘kb’,‘Projetos Vigentes’,vg,‘de 232 históricos’)+
-kpi(‘kb’,‘Valor Aprovado’,BRLk(ta),‘carteira total’)+
-kpi(‘ky’,‘Empenhado’,BRLk(te),((te/ta)*100).toFixed(1)+’% aprovado’)+
-kpi(‘kg’,‘Pago’,BRLk(tp),((tp/ta)*100).toFixed(1)+’% aprovado’)+
-kpi(‘kg’,‘PF Ativos’,688,‘CLT ‘+cltAt+’ · BOL/RPA ‘+bolAt)+
-kpi(‘kr’,‘PC Pendente ⚠’,pdPnd,BRLk(pdPndV)+’ em aberto’)+
-kpi(‘ko’,‘Passagens Total’,‘3.811’,‘R$ 14,92 M’)+
-kpi(‘ky’,‘Contratos PJ’,‘206’,BRLk(pjV))+
-‘</div>’+
-‘<div class="g2">’+
-‘<div class="mcard"><div class="mhdr"><span>📊</span><span class="mhdr-t">Aprovado vs Pago por Departamento</span><span class="mhdr-s">R$ M</span></div><div style="height:210px"><canvas id="cG1"></canvas></div></div>’+
-‘<div class="mcard"><div class="mhdr"><span>👥</span><span class="mhdr-t">PF Ativos por Departamento</span><span class="mhdr-s">CLT + BOL</span></div><div style="height:210px"><canvas id="cG2"></canvas></div></div>’+
-‘</div>’+
-‘<div class="g2">’+
-‘<div class="mcard"><div class="mhdr"><span>⚠️</span><span class="mhdr-t">PC Pendente por Departamento</span></div><div style="height:190px"><canvas id="cG3"></canvas></div></div>’+
-‘<div class="mcard"><div class="mhdr"><span>📋</span><span class="mhdr-t">Resumo por Departamento</span><span class="mhdr-s">clique para abrir painel</span></div>’+
-‘<div class="tbl-wrap"><table class="t"><thead><tr><th>Depto</th><th>Vig.</th><th style="text-align:right">Aprovado</th><th style="text-align:right">Pago</th><th>%</th><th>CLT</th><th>BOL</th><th>PF Tot.</th><th style="color:var(--red)">PC Pend.</th></tr></thead><tbody id="gTbl"></tbody></table></div>’+
-‘</div>’+
-‘</div>’;
+  const vg=PROJ.filter(r=>r[3]==='VIGENTE').length;
+  const ta=PROJ.reduce((s,r)=>s+r[6],0),te=PROJ.reduce((s,r)=>s+r[7],0),tp=PROJ.reduce((s,r)=>s+r[8],0);
+  const cltAt=CLT.filter(r=>r[6]==='Ativo').length;
+  const bolAt=BOL.length;
+  const pdPnd=DEPTS.reduce((s,d)=>s+((DST[d]||{}).pd_pendente||0),0);
+  const pdPndV=DEPTS.reduce((s,d)=>s+((DST[d]||{}).pd_pend_valor||0),0);
+  const pjV=PJ_D.reduce((s,r)=>s+r[7],0);
+  el.innerHTML=
+    '<div class="kpi-row">'+
+      kpi('kb','Projetos Vigentes',vg,'de 232 históricos')+
+      kpi('kb','Valor Aprovado',BRLk(ta),'carteira total')+
+      kpi('ky','Empenhado',BRLk(te),((te/ta)*100).toFixed(1)+'% aprovado')+
+      kpi('kg','Pago',BRLk(tp),((tp/ta)*100).toFixed(1)+'% aprovado')+
+      kpi('kg','PF Ativos',688,'CLT '+cltAt+' · BOL/RPA '+bolAt)+
+      kpi('kr','PC Pendente &#9888;',pdPnd,BRLk(pdPndV)+' em aberto')+
+      kpi('ko','Passagens Total','3.811','R$ 14,92 M')+
+      kpi('ky','Contratos PJ','206',BRLk(pjV))+
+    '</div>'+
+    '<div class="g2">'+
+      '<div class="mcard"><div class="mhdr"><span>&#128202;</span><span class="mhdr-t">Aprovado vs Pago por Departamento</span><span class="mhdr-s">R$ M</span></div><div style="height:210px"><canvas id="cG1"></canvas></div></div>'+
+      '<div class="mcard"><div class="mhdr"><span>&#128101;</span><span class="mhdr-t">PF Ativos por Departamento</span><span class="mhdr-s">CLT + BOL</span></div><div style="height:210px"><canvas id="cG2"></canvas></div></div>'+
+    '</div>'+
+    '<div class="g2">'+
+      '<div class="mcard"><div class="mhdr"><span>&#9888;&#65039;</span><span class="mhdr-t">PC Pendente por Departamento</span></div><div style="height:190px"><canvas id="cG3"></canvas></div></div>'+
+      '<div class="mcard"><div class="mhdr"><span>&#128203;</span><span class="mhdr-t">Resumo por Departamento</span><span class="mhdr-s">clique para abrir painel</span></div>'+
+        '<div class="tbl-wrap"><table class="t"><thead><tr><th>Depto</th><th>Vig.</th><th style="text-align:right">Aprovado</th><th style="text-align:right">Pago</th><th>%</th><th>CLT</th><th>BOL</th><th>PF Tot.</th><th style="color:var(--red)">PC Pend.</th></tr></thead><tbody id="gTbl"></tbody></table></div>'+
+      '</div>'+
+    '</div>';
 
-const dv=DEPTS.map(d=>+((DST[d]||{val_aprov:0}).val_aprov/1e6).toFixed(1));
-const dp=DEPTS.map(d=>+((DST[d]||{val_pago:0}).val_pago/1e6).toFixed(1));
-const dpf=DEPTS.map(d=>DEPT_PF[d]||0);
-const dpnd=DEPTS.map(d=>(DST[d]||{}).pd_pendente||0);
+  const dv=DEPTS.map(d=>+((DST[d]||{val_aprov:0}).val_aprov/1e6).toFixed(1));
+  const dp=DEPTS.map(d=>+((DST[d]||{val_pago:0}).val_pago/1e6).toFixed(1));
+  const dpf=DEPTS.map(d=>DEPT_PF[d]||0);
+  const dpnd=DEPTS.map(d=>(DST[d]||{}).pd_pendente||0);
 
-_charts[‘g1’]=new Chart(document.getElementById(‘cG1’),{type:‘bar’,data:{labels:DEPTS,datasets:[{label:‘Aprovado’,data:dv,backgroundColor:’#1aa0ff’,borderRadius:3},{label:‘Pago’,data:dp,backgroundColor:’#00c97a’,borderRadius:3}]},options:{plugins:{legend:{labels:{color:’#6b8ab0’,boxWidth:8,font:{size:9}}}},scales:{x:{grid:{color:GC},ticks:{color:’#6b8ab0’,maxRotation:50,font:{size:9}}},y:{grid:{color:GC},ticks:{color:’#6b8ab0’,font:{size:9},callback:v=>‘R$’+v+‘M’}}},maintainAspectRatio:false}});
-_charts[‘g2’]=new Chart(document.getElementById(‘cG2’),{type:‘bar’,data:{labels:DEPTS,datasets:[{data:dpf,backgroundColor:CP,borderRadius:3,borderWidth:0}]},options:{indexAxis:‘y’,plugins:{legend:{display:false}},scales:{x:{grid:{color:GC},ticks:{color:’#6b8ab0’,font:{size:9}}},y:{grid:{display:false},ticks:{color:’#6b8ab0’,font:{size:9}}}},maintainAspectRatio:false}});
-_charts[‘g3’]=new Chart(document.getElementById(‘cG3’),{type:‘bar’,data:{labels:DEPTS,datasets:[{data:dpnd,backgroundColor:dpnd.map(v=>v>100?’#e53935’:v>50?’#f0b429’:’#1aa0ff’),borderRadius:3,borderWidth:0}]},options:{indexAxis:‘y’,plugins:{legend:{display:false}},scales:{x:{grid:{color:GC},ticks:{color:’#6b8ab0’,font:{size:9}}},y:{grid:{display:false},ticks:{color:’#6b8ab0’,font:{size:9}}}},maintainAspectRatio:false}});
+  _charts['g1']=new Chart(document.getElementById('cG1'),{type:'bar',data:{labels:DEPTS,datasets:[{label:'Aprovado',data:dv,backgroundColor:'#1aa0ff',borderRadius:3},{label:'Pago',data:dp,backgroundColor:'#00c97a',borderRadius:3}]},options:{plugins:{legend:{labels:{color:'#6b8ab0',boxWidth:8,font:{size:9}}}},scales:{x:{grid:{color:GC},ticks:{color:'#6b8ab0',maxRotation:50,font:{size:9}}},y:{grid:{color:GC},ticks:{color:'#6b8ab0',font:{size:9},callback:v=>'R$'+v+'M'}}},maintainAspectRatio:false}});
+  _charts['g2']=new Chart(document.getElementById('cG2'),{type:'bar',data:{labels:DEPTS,datasets:[{data:dpf,backgroundColor:CP,borderRadius:3,borderWidth:0}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:GC},ticks:{color:'#6b8ab0',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#6b8ab0',font:{size:9}}}},maintainAspectRatio:false}});
+  _charts['g3']=new Chart(document.getElementById('cG3'),{type:'bar',data:{labels:DEPTS,datasets:[{data:dpnd,backgroundColor:dpnd.map(v=>v>100?'#e53935':v>50?'#f0b429':'#1aa0ff'),borderRadius:3,borderWidth:0}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:GC},ticks:{color:'#6b8ab0',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#6b8ab0',font:{size:9}}}},maintainAspectRatio:false}});
 
-const dbolCLT={‘GAB. SAES’:[119,48],‘DAET’:[49,98],‘DRAC’:[26,52],‘DEEQAE’:[11,58],‘DAHUD’:[9,52],‘DGH’:[48,4],‘DCEBAS’:[16,20],‘DECAN’:[21,13],‘DESMAD’:[9,15],‘FNSUS’:[4,15],‘INCA’:[0,0]};
-document.getElementById(‘gTbl’).innerHTML=DEPTS.map(d=>{
-const st=DST[d]||{};
-const p=st.val_aprov>0?(st.val_pago/st.val_aprov*100):0;
-const cl=p>=60?‘var(–green)’:p>=30?‘var(–yellow)’:‘var(–orange)’;
-const cb=dbolCLT[d]||[0,0];
-return ‘<tr style="cursor:pointer" onclick="openDept(\''+d+'\')"><td><strong>’+d+’</strong></td><td><span class="b-tag t-a">’+(st.proj_vigentes||0)+’</span></td><td class="nr">’+BRLk(st.val_aprov||0)+’</td><td class="nr">’+BRLk(st.val_pago||0)+’</td><td style="font-family:var(--mono);font-size:10px;color:'+cl+'">’+p.toFixed(1)+’%</td><td><span class="b-tag t-g">’+cb[0]+’</span></td><td><span class="b-tag t-p">’+cb[1]+’</span></td><td><strong>’+(DEPT_PF[d]||0)+’</strong></td><td><span class="b-tag '+(st.pd_pendente>50?'t-r':'t-y')+'">’+(st.pd_pendente||0)+’</span></td></tr>’;
-}).join(’’);
+  const dbolCLT={'GAB. SAES':[119,48],'DAET':[49,98],'DRAC':[26,52],'DEEQAE':[11,58],'DAHUD':[9,52],'DGH':[48,4],'DCEBAS':[16,20],'DECAN':[21,13],'DESMAD':[9,15],'FNSUS':[4,15],'INCA':[0,0]};
+  document.getElementById('gTbl').innerHTML=DEPTS.map(d=>{
+    const st=DST[d]||{};
+    const p=st.val_aprov>0?(st.val_pago/st.val_aprov*100):0;
+    const cl=p>=60?'var(--green)':p>=30?'var(--yellow)':'var(--orange)';
+    const cb=dbolCLT[d]||[0,0];
+    return '<tr style="cursor:pointer" onclick="openDept(\''+d+'\')"><td><strong>'+d+'</strong></td><td><span class="b-tag t-a">'+(st.proj_vigentes||0)+'</span></td><td class="nr">'+BRLk(st.val_aprov||0)+'</td><td class="nr">'+BRLk(st.val_pago||0)+'</td><td style="font-family:var(--mono);font-size:10px;color:'+cl+'">'+p.toFixed(1)+'%</td><td><span class="b-tag t-g">'+cb[0]+'</span></td><td><span class="b-tag t-p">'+cb[1]+'</span></td><td><strong>'+(DEPT_PF[d]||0)+'</strong></td><td><span class="b-tag '+(st.pd_pendente>50?'t-r':'t-y')+'">'+(st.pd_pendente||0)+'</span></td></tr>';
+  }).join('');
 }
 
-function kpi(cls,lbl,val,sub){ return ‘<div class="kpi '+cls+'"><div class="kl">’+lbl+’</div><div class="kv">’+val+’</div><div class="ks">’+sub+’</div></div>’; }
+function kpi(cls,lbl,val,sub){ return '<div class="kpi '+cls+'"><div class="kl">'+lbl+'</div><div class="kv">'+val+'</div><div class="ks">'+sub+'</div></div>'; }
 
 function openDept(dept){
-const btn=[…document.querySelectorAll(’.ds-btn’)].find(b=>b.textContent.trim().startsWith(dept));
-if(btn) sw(btn,dept);
+  const btn=[...document.querySelectorAll('.ds-btn')].find(b=>b.textContent.trim().startsWith(dept));
+  if(btn) sw(btn,dept);
 }
 
-// –– DEPT VIEW ––
+// ---- DEPT VIEW ----
 function renderDept(el,dept){
-const st=DST[dept]||{};
-const clt_d=CLT.filter(r=>r[4]===dept);
-const bol_d=BOL.filter(r=>r[2]===dept);
-const pj_d=PJ_D.filter(r=>r[3]===dept);
-const proj_d=PROJ.filter(r=>r[2]===dept);
-const proj_v=proj_d.filter(r=>r[3]===‘VIGENTE’);
-const pend=PD_TOP[dept]||[];
-const bs=BOL_SUMM[dept]||{};
-const ps=PD_SUMM[dept]||{};
-const pfTot=(DEPT_PF[dept]||0);
-const pctFin=st.val_aprov>0?(st.val_pago/st.val_aprov*100):0;
-const pctCLT=st.clt_custo_est>0?(st.clt_custo_exec/st.clt_custo_est*100):0;
-const fullName=DEPT_NAMES[dept]||dept;
-const hasAlert=st.pd_pendente>30;
+  const st=DST[dept]||{};
+  const clt_d=CLT.filter(r=>r[4]===dept);
+  const bol_d=BOL.filter(r=>r[2]===dept);
+  const pj_d=PJ_D.filter(r=>r[3]===dept);
+  const proj_d=PROJ.filter(r=>r[2]===dept);
+  const proj_v=proj_d.filter(r=>r[3]==='VIGENTE');
+  const pend=PD_TOP[dept]||[];
+  const bs=BOL_SUMM[dept]||{};
+  const ps=PD_SUMM[dept]||{};
+  const pfTot=(DEPT_PF[dept]||0);
+  const pctFin=st.val_aprov>0?(st.val_pago/st.val_aprov*100):0;
+  const pctCLT=st.clt_custo_est>0?(st.clt_custo_exec/st.clt_custo_est*100):0;
+  const fullName=DEPT_NAMES[dept]||dept;
+  const hasAlert=st.pd_pendente>30;
 
-let h=’<div class="dept-header"><div class="dh-l"><div class="dh-name">’+dept+’</div><div class="dh-full">’+fullName+’</div></div><div class="dh-r">’+
-dhs(‘var(–accent3)’,st.proj_vigentes||0,‘Projetos Vig.’)+
-dhs(‘var(–green)’,pfTot,‘PF Ativos’)+
-dhs(‘var(–yellow)’,BRLk(st.val_aprov||0),‘Val. Aprovado’)+
-dhs(hasAlert?‘var(–red)’:‘var(–text)’,st.pd_pendente||0,‘PC Pendente’)+
-‘</div></div>’;
+  let h='<div class="dept-header"><div class="dh-l"><div class="dh-name">'+dept+'</div><div class="dh-full">'+fullName+'</div></div><div class="dh-r">'+
+    dhs('var(--accent3)',st.proj_vigentes||0,'Projetos Vig.')+
+    dhs('var(--green)',pfTot,'PF Ativos')+
+    dhs('var(--yellow)',BRLk(st.val_aprov||0),'Val. Aprovado')+
+    dhs(hasAlert?'var(--red)':'var(--text)',st.pd_pendente||0,'PC Pendente')+
+  '</div></div>';
 
-if(hasAlert) h+=’<div class="alert-box"><div><div class="ab-h">’+st.pd_pendente+’ prestações de contas pendentes — ‘+BRLk(st.pd_pend_valor||0)+’</div><div class="ab-p">Passagens e diárias aguardando comprovação. Ver tabela abaixo.</div></div></div>’;
+  if(hasAlert) h+='<div class="alert-box"><div><div class="ab-h">'+st.pd_pendente+' prestações de contas pendentes — '+BRLk(st.pd_pend_valor||0)+'</div><div class="ab-p">Passagens e diárias aguardando comprovação. Ver tabela abaixo.</div></div></div>';
 
-h+=’<div class="kpi-row">’+
-kpi(‘kb’,‘Val. Aprovado’,BRLk(st.val_aprov||0),(st.proj_total||0)+’ projetos’)+
-kpi(‘ky’,‘Empenhado’,BRLk(st.val_emp||0),(st.val_aprov>0?((st.val_emp/st.val_aprov)*100).toFixed(1):‘0’)+’%’)+
-kpi(‘kg’,‘Pago’,BRLk(st.val_pago||0),pctFin.toFixed(1)+’% aprovado’)+
-kpi(‘kg’,‘CLT Ativos’,st.clt_ativos||0,’Folha BT: ’+BRLk(st.clt_folha||0))+
-kpi(‘kp’,‘Bolsistas’,bs.total||0,’Total PF: ’+pfTot)+
-kpi(‘ko’,‘Passagens’,ps.total||0,BRLk(ps.total_valor||0))+
-kpi(hasAlert?‘kr’:‘ko’,‘PC Pendente’,st.pd_pendente||0,BRLk(st.pd_pend_valor||0))+
-kpi(‘kt’,‘Contratos PJ’,st.pj_total||0,BRLk(st.pj_valor||0))+
-‘</div>’;
+  h+='<div class="kpi-row">'+
+    kpi('kb','Val. Aprovado',BRLk(st.val_aprov||0),(st.proj_total||0)+' projetos')+
+    kpi('ky','Empenhado',BRLk(st.val_emp||0),(st.val_aprov>0?((st.val_emp/st.val_aprov)*100).toFixed(1):'0')+'%')+
+    kpi('kg','Pago',BRLk(st.val_pago||0),pctFin.toFixed(1)+'% aprovado')+
+    kpi('kg','CLT Ativos',st.clt_ativos||0,'Folha BT: '+BRLk(st.clt_folha||0))+
+    kpi('kp','Bolsistas',bs.total||0,'Total PF: '+pfTot)+
+    kpi('ko','Passagens',ps.total||0,BRLk(ps.total_valor||0))+
+    kpi(hasAlert?'kr':'ko','PC Pendente',st.pd_pendente||0,BRLk(st.pd_pend_valor||0))+
+    kpi('kt','Contratos PJ',st.pj_total||0,BRLk(st.pj_valor||0))+
+  '</div>';
 
-h+=’<div class="g2">’+
-‘<div class="mcard"><div class="mhdr"><span>📈</span><span class="mhdr-t">Execução Financeira</span></div>’+
-gauge(’% Pago / Aprovado’,pctFin,BRLk(st.val_pago||0),‘Aprov: ‘+BRLk(st.val_aprov||0))+
-(st.clt_custo_est>0?gauge(’% Custo CLT Exec.’,pctCLT,’Exec: ’+BRLk(st.clt_custo_exec||0),‘Est: ‘+BRLk(st.clt_custo_est||0)):’’)+
-‘</div>’+
-‘<div class="mcard"><div class="mhdr"><span>✈️</span><span class="mhdr-t">Passagens por Projeto</span></div><div style="height:180px"><canvas id="cDP"></canvas></div></div>’+
-‘</div>’;
+  h+='<div class="g2">'+
+    '<div class="mcard"><div class="mhdr"><span>&#128200;</span><span class="mhdr-t">Execução Financeira</span></div>'+
+      gauge('% Pago / Aprovado',pctFin,BRLk(st.val_pago||0),'Aprov: '+BRLk(st.val_aprov||0))+
+      (st.clt_custo_est>0?gauge('% Custo CLT Exec.',pctCLT,'Exec: '+BRLk(st.clt_custo_exec||0),'Est: '+BRLk(st.clt_custo_est||0)):'')+
+    '</div>'+
+    '<div class="mcard"><div class="mhdr"><span>&#9992;&#65039;</span><span class="mhdr-t">Passagens por Projeto</span></div><div style="height:180px"><canvas id="cDP"></canvas></div></div>'+
+  '</div>';
 
-if(proj_d.length) h+=’<div class="mcard"><div class="mhdr"><span>📁</span><span class="mhdr-t">Projetos TEDs</span><span class="mhdr-s">’+proj_v.length+’ vigentes · ‘+proj_d.length+’ totais</span></div><div class="scroll-wrap"><div class="prc-grid" id="projGrid"></div></div></div>’;
-if(clt_d.length) h+=’<div class="mcard"><div class="mhdr"><span>👤</span><span class="mhdr-t">CLT em Execução</span><span class="mhdr-s">clique para detalhar</span></div><div class="fbar"><input type="text" id="cltF" placeholder="Buscar nome, cargo..." oninput="filtCLT()"><select id="cltS" onchange="filtCLT()"><option value="">Todos status</option><option value="Ativo">Ativo</option><option value="Programado">Programado</option><option value="Inativo">Inativo</option></select><span class="fcnt" id="cltCnt">’+clt_d.length+’ contratos</span></div><div class="scroll-wrap"><div class="cc-grid" id="cltGrid"></div></div></div>’;
-if(bol_d.length) h+=’<div class="mcard"><div class="mhdr"><span>🎓</span><span class="mhdr-t">Bolsistas em Execução</span><span class="mhdr-s">’+bol_d.length+’ ativos · ‘+BRLk(bol_d.reduce((s,r)=>s+r[6],0))+’</span></div><div class="scroll-wrap"><div class="bol-grid" id="bolGrid"></div></div></div>’;
-if(pend.length) h+=’<div class="mcard"><div class="mhdr"><span>⚠️</span><span class="mhdr-t">PC PENDENTE — Top por Valor</span><span class="mhdr-s">’+(st.pd_pendente||0)+’ total · ‘+BRLk(st.pd_pend_valor||0)+’</span></div><div class="tbl-wrap"><table class="t"><thead><tr><th>ID</th><th>Tipo</th><th>Projeto</th><th>Nome</th><th>Destino</th><th style="text-align:right">Diárias</th><th style="text-align:right">Passagem</th><th style="text-align:right">Total</th></tr></thead><tbody>’+pend.map(r=>’<tr><td class="mc">’+r.id+’</td><td><span class="b-tag '+(r.tipo==='Extraordinária'?'t-p':'t-b')+'">’+r.tipo+’</span></td><td class="mc">’+(r.projeto||’—’)+’</td><td style="font-size:10px">’+(r.nome||’—’)+’</td><td class="mc" style="font-size:9.5px">’+(r.destino||’—’)+’</td><td class="nr">’+BRL(r.diarias)+’</td><td class="nr">’+BRL(r.passagem)+’</td><td class="nr" style="font-weight:700;color:var(--red)">’+BRL(r.total)+’</td></tr>’).join(’’)+’</tbody></table></div></div>’;
-if(pj_d.length) h+=’<div class="mcard"><div class="mhdr"><span>🏢</span><span class="mhdr-t">Contratos PJ</span><span class="mhdr-s">’+pj_d.length+’ contratos · ‘+BRLk(pj_d.reduce((s,r)=>s+r[7],0))+’</span></div><div class="scroll-wrap"><div class="pj-grid" id="pjGrid"></div></div></div>’;
+  if(proj_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#128193;</span><span class="mhdr-t">Projetos TEDs</span><span class="mhdr-s">'+proj_v.length+' vigentes · '+proj_d.length+' totais</span></div><div class="scroll-wrap"><div class="prc-grid" id="projGrid"></div></div></div>';
+  if(clt_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#128100;</span><span class="mhdr-t">CLT em Execução</span><span class="mhdr-s">clique para detalhar</span></div><div class="fbar"><input type="text" id="cltF" placeholder="Buscar nome, cargo..." oninput="filtCLT()"><select id="cltS" onchange="filtCLT()"><option value="">Todos status</option><option value="Ativo">Ativo</option><option value="Programado">Programado</option><option value="Inativo">Inativo</option></select><span class="fcnt" id="cltCnt">'+clt_d.length+' contratos</span></div><div class="scroll-wrap"><div class="cc-grid" id="cltGrid"></div></div></div>';
+  if(bol_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#127891;</span><span class="mhdr-t">Bolsistas em Execução</span><span class="mhdr-s">'+bol_d.length+' ativos · '+BRLk(bol_d.reduce((s,r)=>s+r[6],0))+'</span></div><div class="scroll-wrap"><div class="bol-grid" id="bolGrid"></div></div></div>';
+  if(pend.length) h+='<div class="mcard"><div class="mhdr"><span>&#9888;&#65039;</span><span class="mhdr-t">PC PENDENTE — Top por Valor</span><span class="mhdr-s">'+(st.pd_pendente||0)+' total · '+BRLk(st.pd_pend_valor||0)+'</span></div><div class="tbl-wrap"><table class="t"><thead><tr><th>ID</th><th>Tipo</th><th>Projeto</th><th>Nome</th><th>Destino</th><th style="text-align:right">Diárias</th><th style="text-align:right">Passagem</th><th style="text-align:right">Total</th></tr></thead><tbody>'+pend.map(r=>'<tr><td class="mc">'+r.id+'</td><td><span class="b-tag '+(r.tipo==='Extraordinária'?'t-p':'t-b')+'">'+r.tipo+'</span></td><td class="mc">'+(r.projeto||'—')+'</td><td style="font-size:10px">'+(r.nome||'—')+'</td><td class="mc" style="font-size:9.5px">'+(r.destino||'—')+'</td><td class="nr">'+BRL(r.diarias)+'</td><td class="nr">'+BRL(r.passagem)+'</td><td class="nr" style="font-weight:700;color:var(--red)">'+BRL(r.total)+'</td></tr>').join('')+'</tbody></table></div></div>';
+  if(pj_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#127970;</span><span class="mhdr-t">Contratos PJ</span><span class="mhdr-s">'+pj_d.length+' contratos · '+BRLk(pj_d.reduce((s,r)=>s+r[7],0))+'</span></div><div class="scroll-wrap"><div class="pj-grid" id="pjGrid"></div></div></div>';
 
-el.innerHTML=h;
+  el.innerHTML=h;
 
-if(proj_d.length && document.getElementById(‘projGrid’)) renderProj(proj_d);
-if(clt_d.length && document.getElementById(‘cltGrid’)){ _cltView=[…clt_d]; renderCLT(clt_d); }
-if(bol_d.length && document.getElementById(‘bolGrid’)) renderBol(bol_d);
-if(pj_d.length && document.getElementById(‘pjGrid’)) renderPJ(pj_d);
+  if(proj_d.length && document.getElementById('projGrid')) renderProj(proj_d);
+  if(clt_d.length && document.getElementById('cltGrid')){ _cltView=[...clt_d]; renderCLT(clt_d); }
+  if(bol_d.length && document.getElementById('bolGrid')) renderBol(bol_d);
+  if(pj_d.length && document.getElementById('pjGrid')) renderPJ(pj_d);
 
-const pdEl=document.getElementById(‘cDP’);
-if(pdEl){
-const pp=ps.por_projeto||{};
-const lbs=Object.keys(pp).filter(k=>k);
-const vals=lbs.map(k=>+(pp[k].val/1e3).toFixed(1));
-_charts[‘dp’]=new Chart(pdEl,{type:‘bar’,data:{labels:lbs,datasets:[{label:‘R$ K’,data:vals,backgroundColor:CP,borderRadius:3,borderWidth:0}]},options:{indexAxis:‘y’,plugins:{legend:{display:false}},scales:{x:{grid:{color:GC},ticks:{color:’#6b8ab0’,font:{size:9},callback:v=>‘R$’+v+‘K’}},y:{grid:{display:false},ticks:{color:’#6b8ab0’,font:{size:9}}}},maintainAspectRatio:false}});
+  const pdEl=document.getElementById('cDP');
+  if(pdEl){
+    const pp=ps.por_projeto||{};
+    const lbs=Object.keys(pp).filter(k=>k);
+    const vals=lbs.map(k=>+(pp[k].val/1e3).toFixed(1));
+    _charts['dp']=new Chart(pdEl,{type:'bar',data:{labels:lbs,datasets:[{label:'R$ K',data:vals,backgroundColor:CP,borderRadius:3,borderWidth:0}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:GC},ticks:{color:'#6b8ab0',font:{size:9},callback:v=>'R$'+v+'K'}},y:{grid:{display:false},ticks:{color:'#6b8ab0',font:{size:9}}}},maintainAspectRatio:false}});
+  }
 }
-}
 
-function dhs(col,val,lbl){ return ‘<div class="dh-st"><div class="dh-sv" style="color:'+col+'">’+val+’</div><div class="dh-sl">’+lbl+’</div></div>’; }
-function gauge(lbl,pct,v1,v2){ const c=pc(pct); return ‘<div class="gauge-wrap"><div class="gauge-top"><span class="gauge-lbl">’+lbl+’</span><span class="gauge-pct" style="color:'+c+'">’+pct.toFixed(1)+’%</span></div><div class="gauge-bar"><div class="gauge-fill" style="width:'+Math.min(pct,100)+'%;background:'+c+'"></div></div><div class="gauge-vals"><span>’+v1+’</span><span>’+v2+’</span></div></div>’; }
+function dhs(col,val,lbl){ return '<div class="dh-st"><div class="dh-sv" style="color:'+col+'">'+val+'</div><div class="dh-sl">'+lbl+'</div></div>'; }
+function gauge(lbl,pct,v1,v2){ const c=pc(pct); return '<div class="gauge-wrap"><div class="gauge-top"><span class="gauge-lbl">'+lbl+'</span><span class="gauge-pct" style="color:'+c+'">'+pct.toFixed(1)+'%</span></div><div class="gauge-bar"><div class="gauge-fill" style="width:'+Math.min(pct,100)+'%;background:'+c+'"></div></div><div class="gauge-vals"><span>'+v1+'</span><span>'+v2+'</span></div></div>'; }
 
-// –– RENDER PROJ ––
+// ---- RENDER PROJ ----
 function renderProj(list){
-document.getElementById(‘projGrid’).innerHTML=list.map(r=>{
-const pct=r[6]>0?(r[8]/r[6]*100):0;
-const sc=r[3]===‘VIGENTE’?‘t-g’:r[3]===‘ENCERRADO’?‘t-m’:‘t-y’;
-return ‘<div class="prc"><div class="prc-top"><span class="prc-cod">’+r[0]+’</span><span class="b-tag '+sc+'">’+r[3]+’</span></div>’+
-‘<div class="prc-title">’+(r[1]||r[9]||’—’)+’</div>’+
-‘<div class="prc-vals">’+
-‘<div class="prc-v"><div class="prc-vv">’+BRLk(r[6])+’</div><div class="prc-vl">Aprovado</div></div>’+
-‘<div class="prc-v"><div class="prc-vv" style="color:var(--yellow)">’+BRLk(r[7])+’</div><div class="prc-vl">Empenhado</div></div>’+
-‘<div class="prc-v"><div class="prc-vv" style="color:var(--green)">’+BRLk(r[8])+’</div><div class="prc-vl">Pago</div></div>’+
-‘</div>’+
-(pct>0?’<div class="prc-bar"><div class="prc-bf" style="width:'+Math.min(pct,100)+'%"></div></div>’:’’)+
-‘</div>’;
-}).join(’’);
+  document.getElementById('projGrid').innerHTML=list.map(r=>{
+    const pct=r[6]>0?(r[8]/r[6]*100):0;
+    const sc=r[3]==='VIGENTE'?'t-g':r[3]==='ENCERRADO'?'t-m':'t-y';
+    return '<div class="prc"><div class="prc-top"><span class="prc-cod">'+r[0]+'</span><span class="b-tag '+sc+'">'+r[3]+'</span></div>'+
+      '<div class="prc-title">'+(r[1]||r[9]||'—')+'</div>'+
+      '<div class="prc-vals">'+
+        '<div class="prc-v"><div class="prc-vv">'+BRLk(r[6])+'</div><div class="prc-vl">Aprovado</div></div>'+
+        '<div class="prc-v"><div class="prc-vv" style="color:var(--yellow)">'+BRLk(r[7])+'</div><div class="prc-vl">Empenhado</div></div>'+
+        '<div class="prc-v"><div class="prc-vv" style="color:var(--green)">'+BRLk(r[8])+'</div><div class="prc-vl">Pago</div></div>'+
+      '</div>'+
+      (pct>0?'<div class="prc-bar"><div class="prc-bf" style="width:'+Math.min(pct,100)+'%"></div></div>':'')+
+    '</div>';
+  }).join('');
 }
 
-// –– RENDER CLT ––
+// ---- RENDER CLT ----
 function renderCLT(list){
-const el=document.getElementById(‘cltGrid’); if(!el) return;
-if(document.getElementById(‘cltCnt’)) document.getElementById(‘cltCnt’).textContent=list.length+’ contratos’;
-el.innerHTML=list.map((r,i)=>{
-const sc=sCls(r[6]);
-const custo=r[11]>0?BRLk(r[11]):r[10]>0?BRLk(r[10])+’/mês’:’—’;
-const cargo=r[7].replace(/-TED-\d{2,3}-\d{4}/g,’’).trim();
-const dotColor=sc===‘at’?‘var(–green)’:sc===‘pg’?‘var(–yellow)’:’#3a4a60’;
-return ‘<div class="cc '+sc+'" onclick="openDW('+i+')">’+
-‘<div style="display:flex;align-items:flex-start;gap:5px;margin-bottom:3px">’+
-‘<div class="cc-nome" style="flex:1">’+r[0]+’</div>’+
-‘<div style="width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px;background:'+dotColor+'"></div>’+
-‘</div>’+
-‘<div class="cc-cargo">’+cargo+’</div>’+
-‘<div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px">’+
-‘<span style="background:var(--card2);border:1px solid var(--border);padding:1px 5px;border-radius:3px;font-size:9px;font-family:var(--mono);color:var(--text2)">’+r[2]+’</span>’+
-‘<span style="background:var(--card2);border:1px solid var(--border);padding:1px 5px;border-radius:3px;font-size:9px;font-family:var(--mono);color:var(--text2)">’+r[5]+’</span>’+
-‘</div>’+
-‘<div class="cc-foot"><div class="cc-dt">Até ‘+fd(r[15])+’</div><div class="cc-val">’+custo+’</div></div>’+
-(r[19]>0?’<div class="cc-bar"><div class="cc-bf" style="width:'+Math.min(r[19],100)+'%"></div></div>’:’’)+
-‘</div>’;
-}).join(’’);
-window._cltView=list;
+  const el=document.getElementById('cltGrid'); if(!el) return;
+  if(document.getElementById('cltCnt')) document.getElementById('cltCnt').textContent=list.length+' contratos';
+  el.innerHTML=list.map((r,i)=>{
+    const sc=sCls(r[6]);
+    const custo=r[11]>0?BRLk(r[11]):r[10]>0?BRLk(r[10])+'/mês':'—';
+    const cargo=r[7].replace(/-TED-\d{2,3}-\d{4}/g,'').trim();
+    const dotColor=sc==='at'?'var(--green)':sc==='pg'?'var(--yellow)':'#3a4a60';
+    return '<div class="cc '+sc+'" onclick="openDW('+i+')">'+
+      '<div style="display:flex;align-items:flex-start;gap:5px;margin-bottom:3px">'+
+        '<div class="cc-nome" style="flex:1">'+r[0]+'</div>'+
+        '<div style="width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px;background:'+dotColor+'"></div>'+
+      '</div>'+
+      '<div class="cc-cargo">'+cargo+'</div>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px">'+
+        '<span style="background:var(--card2);border:1px solid var(--border);padding:1px 5px;border-radius:3px;font-size:9px;font-family:var(--mono);color:var(--text2)">'+r[2]+'</span>'+
+        '<span style="background:var(--card2);border:1px solid var(--border);padding:1px 5px;border-radius:3px;font-size:9px;font-family:var(--mono);color:var(--text2)">'+r[5]+'</span>'+
+      '</div>'+
+      '<div class="cc-foot"><div class="cc-dt">Até '+fd(r[15])+'</div><div class="cc-val">'+custo+'</div></div>'+
+      (r[19]>0?'<div class="cc-bar"><div class="cc-bf" style="width:'+Math.min(r[19],100)+'%"></div></div>':'')+
+    '</div>';
+  }).join('');
+  window._cltView=list;
 }
 
 function filtCLT(){
-const q=(document.getElementById(‘cltF’)||{value:’’}).value.toLowerCase();
-const st=(document.getElementById(‘cltS’)||{value:’’}).value;
-const base=CLT.filter(r=>r[4]===currentDept);
-const res=base.filter(r=>(!q||(r[0]+r[7]+r[5]).toLowerCase().includes(q))&&(!st||r[6]===st));
-_cltView=res; renderCLT(res);
+  const q=(document.getElementById('cltF')||{value:''}).value.toLowerCase();
+  const st=(document.getElementById('cltS')||{value:''}).value;
+  const base=CLT.filter(r=>r[4]===currentDept);
+  const res=base.filter(r=>(!q||(r[0]+r[7]+r[5]).toLowerCase().includes(q))&&(!st||r[6]===st));
+  _cltView=res; renderCLT(res);
 }
 
-// –– RENDER BOL ––
+// ---- RENDER BOL ----
 function renderBol(list){
-const el=document.getElementById(‘bolGrid’); if(!el) return;
-el.innerHTML=list.sort((a,b)=>b[6]-a[6]).map(r=>
-‘<div class="bolc">’+
-‘<div class="bolc-nome">’+r[0]+’</div>’+
-‘<div class="bolc-meta"><span>’+r[1]+’</span><span>’+r[4]+’</span>’+(r[3]?’<span>’+r[3]+’</span>’:’’)+
-‘</div>’+
-‘<div class="bolc-val">’+BRLk(r[6])+’ executado</div>’+
-‘<div style="font-size:9px;color:var(--text3);margin-top:2px;font-family:var(--mono)">Até ‘+fd(r[7])+’</div>’+
-‘</div>’
-).join(’’);
+  const el=document.getElementById('bolGrid'); if(!el) return;
+  el.innerHTML=list.sort((a,b)=>b[6]-a[6]).map(r=>
+    '<div class="bolc">'+
+      '<div class="bolc-nome">'+r[0]+'</div>'+
+      '<div class="bolc-meta"><span>'+r[1]+'</span><span>'+r[4]+'</span>'+(r[3]?'<span>'+r[3]+'</span>':'')+
+      '</div>'+
+      '<div class="bolc-val">'+BRLk(r[6])+' executado</div>'+
+      '<div style="font-size:9px;color:var(--text3);margin-top:2px;font-family:var(--mono)">Até '+fd(r[7])+'</div>'+
+    '</div>'
+  ).join('');
 }
 
-// –– RENDER PJ ––
+// ---- RENDER PJ ----
 function renderPJ(list){
-const el=document.getElementById(‘pjGrid’); if(!el) return;
-el.innerHTML=list.sort((a,b)=>b[7]-a[7]).map(r=>
-‘<div class="pjc">’+
-‘<div class="pjc-h"><span class="pjc-id">’+r[0]+’</span><span class="pjc-val">’+BRLk(r[7])+’</span></div>’+
-‘<div class="pjc-obj">’+r[4]+’</div>’+
-‘<div class="pjc-meta"><span>’+r[2]+’</span><span>’+r[1].substring(0,18)+’</span><span>’+r[6]+’</span></div>’+
-‘<div style="font-size:9.5px;color:var(--text3);margin-top:4px">’+r[5]+’</div>’+
-‘</div>’
-).join(’’);
+  const el=document.getElementById('pjGrid'); if(!el) return;
+  el.innerHTML=list.sort((a,b)=>b[7]-a[7]).map(r=>
+    '<div class="pjc">'+
+      '<div class="pjc-h"><span class="pjc-id">'+r[0]+'</span><span class="pjc-val">'+BRLk(r[7])+'</span></div>'+
+      '<div class="pjc-obj">'+r[4]+'</div>'+
+      '<div class="pjc-meta"><span>'+r[2]+'</span><span>'+r[1].substring(0,18)+'</span><span>'+r[6]+'</span></div>'+
+      '<div style="font-size:9.5px;color:var(--text3);margin-top:4px">'+r[5]+'</div>'+
+    '</div>'
+  ).join('');
 }
 
-// –– DRAWER ––
+// ---- DRAWER ----
 function openDW(idx){
-const r=_cltView[idx]; if(!r) return;
-const today=‘2026-03-06’;
-const isA=r[13]&&r[13]<today, isP=r[14]&&r[14]<today;
-const pct=r[19]||0, dr=r[20]||0;
-const dbc=dr<90?‘d-cr’:dr<180?‘d-wn’:‘d-ok’;
-const dbl=dr>0?’+’+dr+’ dias’:dr===0?‘hoje’:Math.abs(dr)+’ vencido’;
-document.getElementById(‘dwSt’).innerHTML=sBadge(r[6])+(r[18]?’ <span class="b-tag t-b">’+r[18]+’</span>’:’’);
-document.getElementById(‘dwNome’).textContent=r[0];
-document.getElementById(‘dwMat’).textContent=‘Mat: ‘+(r[1]||’—’)+’  ·  PEP: ‘+(r[3]||’—’);
-document.getElementById(‘dwCargo’).textContent=r[7]||’—’;
-document.getElementById(‘dwBody’).innerHTML=
-‘<div><div class="dg-title">📋 Identificação</div>’+
-dr2(‘Departamento’,’<span class="drv hl">’+r[4]+’</span>’)+
-dr2(‘Coordenação’,r[5])+dr2(‘Projeto’,’<span class="b-tag t-b">’+r[2]+’</span>’)+
-dr2(‘PEP’,’<span style="font-size:9px">’+r[3]+’</span>’)+
-dr2(‘Rubrica’,r[17])+dr2(‘Duração’,r[16]>0?r[16]+’ meses’:’—’)+
-‘</div>’+
-‘<div><div class="dg-title">📅 Timeline</div>’+
-‘<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:10px;color:var(--text2)">Vigência restante</span><span class="dias-b '+dbc+'">’+dbl+’</span></div>’+
-‘<div class="tl-wrap">’+
-tli(‘Admissão’,fd(r[13]),isA)+tli(‘1º Pagamento’,fd(r[14]),isP)+tli(‘Término’,fd(r[15]),false)+
-‘</div></div>’+
-(r[11]>0||r[12]>0?’<div>’+gauge2(’% Custo Executado’,pct,BRLk(r[12]),BRLk(r[11]))+’</div>’:’’)+
-‘<div><div class="dg-title">💰 Valores</div>’+
-‘<div class="fin-g">’+
-fi2(‘Sal. Bruto’,‘av’,BRLk(r[8]))+fi2(‘Sal. Líquido’,’’,BRLk(r[9]))+
-fi2(‘Custo Efetivo’,‘yv’,BRLk(r[10]))+fi2(‘Custo Exec.’,‘gv’,BRLk(r[12]))+
-‘</div>’+
-(r[11]>0?’<div class="dr" style="margin-top:7px"><span class="drl">Custo Est. Total</span><span class="drv hl">’+BRL(r[11])+’</span></div>’:’’)+
-‘</div>’;
-document.getElementById(‘overlay’).classList.add(‘open’);
-document.body.style.overflow=‘hidden’;
+  const r=_cltView[idx]; if(!r) return;
+  const today='2026-03-06';
+  const isA=r[13]&&r[13]<today, isP=r[14]&&r[14]<today;
+  const pct=r[19]||0, dr=r[20]||0;
+  const dbc=dr<90?'d-cr':dr<180?'d-wn':'d-ok';
+  const dbl=dr>0?'+'+dr+' dias':dr===0?'hoje':Math.abs(dr)+' vencido';
+  document.getElementById('dwSt').innerHTML=sBadge(r[6])+(r[18]?' <span class="b-tag t-b">'+r[18]+'</span>':'');
+  document.getElementById('dwNome').textContent=r[0];
+  document.getElementById('dwMat').textContent='Mat: '+(r[1]||'—')+'  ·  PEP: '+(r[3]||'—');
+  document.getElementById('dwCargo').textContent=r[7]||'—';
+  document.getElementById('dwBody').innerHTML=
+    '<div><div class="dg-title">&#128203; Identificação</div>'+
+      dr2('Departamento','<span class="drv hl">'+r[4]+'</span>')+
+      dr2('Coordenação',r[5])+dr2('Projeto','<span class="b-tag t-b">'+r[2]+'</span>')+
+      dr2('PEP','<span style="font-size:9px">'+r[3]+'</span>')+
+      dr2('Rubrica',r[17])+dr2('Duração',r[16]>0?r[16]+' meses':'—')+
+    '</div>'+
+    '<div><div class="dg-title">&#128197; Timeline</div>'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:10px;color:var(--text2)">Vigência restante</span><span class="dias-b '+dbc+'">'+dbl+'</span></div>'+
+      '<div class="tl-wrap">'+
+        tli('Admissão',fd(r[13]),isA)+tli('1º Pagamento',fd(r[14]),isP)+tli('Término',fd(r[15]),false)+
+      '</div></div>'+
+    (r[11]>0||r[12]>0?'<div>'+gauge2('% Custo Executado',pct,BRLk(r[12]),BRLk(r[11]))+'</div>':'')+
+    '<div><div class="dg-title">&#128176; Valores</div>'+
+      '<div class="fin-g">'+
+        fi2('Sal. Bruto','av',BRLk(r[8]))+fi2('Sal. Líquido','',BRLk(r[9]))+
+        fi2('Custo Efetivo','yv',BRLk(r[10]))+fi2('Custo Exec.','gv',BRLk(r[12]))+
+      '</div>'+
+      (r[11]>0?'<div class="dr" style="margin-top:7px"><span class="drl">Custo Est. Total</span><span class="drv hl">'+BRL(r[11])+'</span></div>':'')+
+    '</div>';
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
 }
 
-function dr2(l,v){ return ‘<div class="dr"><span class="drl">’+l+’</span><span class="drv">’+v+’</span></div>’; }
-function tli(l,v,done){ return ‘<div class="tl-i'+(done?' done':'')+'"><span class="tl-lb">’+l+’</span><span class="tl-vl">’+v+’</span></div>’; }
-function gauge2(lbl,pct,v1,v2){ const c=pc(pct); return ‘<div class="dg-title">📈 Execução Financeira</div><div class="gauge-wrap"><div class="gauge-top"><span class="gauge-lbl">’+lbl+’</span><span class="gauge-pct" style="color:'+c+'">’+pct.toFixed(1)+’%</span></div><div class="gauge-bar"><div class="gauge-fill" style="width:'+Math.min(pct,100)+'%;background:'+c+'"></div></div><div class="gauge-vals"><span>Exec: ‘+v1+’</span><span>Est: ‘+v2+’</span></div></div>’; }
-function fi2(l,cls,v){ return ‘<div class="fi"><div class="fi-l">’+l+’</div><div class="fi-v '+cls+'">’+v+’</div></div>’; }
+function dr2(l,v){ return '<div class="dr"><span class="drl">'+l+'</span><span class="drv">'+v+'</span></div>'; }
+function tli(l,v,done){ return '<div class="tl-i'+(done?' done':'')+'"><span class="tl-lb">'+l+'</span><span class="tl-vl">'+v+'</span></div>'; }
+function gauge2(lbl,pct,v1,v2){ const c=pc(pct); return '<div class="dg-title">&#128200; Execução Financeira</div><div class="gauge-wrap"><div class="gauge-top"><span class="gauge-lbl">'+lbl+'</span><span class="gauge-pct" style="color:'+c+'">'+pct.toFixed(1)+'%</span></div><div class="gauge-bar"><div class="gauge-fill" style="width:'+Math.min(pct,100)+'%;background:'+c+'"></div></div><div class="gauge-vals"><span>Exec: '+v1+'</span><span>Est: '+v2+'</span></div></div>'; }
+function fi2(l,cls,v){ return '<div class="fi"><div class="fi-l">'+l+'</div><div class="fi-v '+cls+'">'+v+'</div></div>'; }
 
-function closeDW(){ document.getElementById(‘overlay’).classList.remove(‘open’); document.body.style.overflow=’’; }
-document.addEventListener(‘keydown’,e=>{ if(e.key===‘Escape’) closeDW(); });
+function closeDW(){ document.getElementById('overlay').classList.remove('open'); document.body.style.overflow=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDW(); });
 
-// –– BOOT ––
+// ---- BOOT ----
 buildStrip();
-renderContent(‘TODOS’);
+renderContent('TODOS');
 
 </script>
 </body>
