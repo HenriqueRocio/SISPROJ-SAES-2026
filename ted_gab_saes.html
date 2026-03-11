@@ -291,7 +291,7 @@ const sCls = s => s==='Ativo'?'at':s==='Programado'?'pg':'in';
 const sBadge = s => {
   if(s==='Ativo') return '<span class="b-tag t-g">&#9679; Ativo</span>';
   if(s==='Programado') return '<span class="b-tag t-y">Programado</span>';
-  return '<span class="b-tag t-m">Inativo</span>';
+  return '<span class="b-tag t-r">Inativo</span>';
 };
 const CP = ['#1aa0ff','#00c97a','#f0b429','#8b5cf6','#f57c00','#e53935','#00acc1','#00bcd4','#e91e8c','#4caf50','#ff7043'];
 const GC = 'rgba(20,40,70,.6)';
@@ -302,6 +302,8 @@ let _bolView = [];
 let _pjView = [];
 let _pdView = [];
 let _pdViewAll = [];
+let _cltSort = {col:'6',dir:'asc'};
+let _bolSort = {col:'6',dir:'desc'};
 
 function destroyCharts(){Object.values(_charts).forEach(c=>{try{c.destroy()}catch(e){}});_charts={};}
 
@@ -438,16 +440,28 @@ function renderDept(el,dept){
   '</div>';
 
   if(proj_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#128193;</span><span class="mhdr-t">Projetos TEDs</span><span class="mhdr-s">'+proj_v.length+' vigentes · '+proj_d.length+' totais</span></div><div class="scroll-wrap"><div class="prc-grid" id="projGrid"></div></div></div>';
-  if(clt_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#128100;</span><span class="mhdr-t">CLT em Execução</span><span class="mhdr-s">clique para detalhar</span></div><div class="fbar"><input type="text" id="cltF" placeholder="Buscar nome, cargo..." oninput="filtCLT()"><select id="cltS" onchange="filtCLT()"><option value="">Todos status</option><option value="Ativo">Ativo</option><option value="Programado">Programado</option><option value="Inativo">Inativo</option></select><span class="fcnt" id="cltCnt">'+clt_d.length+' contratos</span></div><div class="tbl-wrap" style="max-height:480px"><table class="t"><thead><tr><th>Nome</th><th>Cargo</th><th>Projeto</th><th>Coord.</th><th>Status</th><th>Término</th><th style="text-align:right">Custo Efetivo</th><th style="text-align:right">Custo Exec.</th></tr></thead><tbody id="cltGrid"></tbody></table></div></div>';
-  if(bol_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#127891;</span><span class="mhdr-t">Bolsistas em Execução</span><span class="mhdr-s">clique para detalhar</span></div><div class="fbar"><input type="text" id="bolF" placeholder="Buscar nome, projeto..." oninput="filtBOL()"><select id="bolS" onchange="filtBOL()"><option value="">Todos vínculos</option><option value="Bolsista">Bolsista</option><option value="RPA">RPA</option></select><span class="fcnt" id="bolCnt">'+bol_d.length+' contratos</span></div><div class="tbl-wrap" style="max-height:480px"><table class="t"><thead><tr><th>Nome</th><th>Projeto</th><th>Coord.</th><th>Vínculo</th><th>Término</th><th style="text-align:right">Val. Mensal</th><th style="text-align:right">Val. Executado</th></tr></thead><tbody id="bolGrid"></tbody></table></div></div>';
+  if(clt_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#128100;</span><span class="mhdr-t">CLT em Execução</span><span class="mhdr-s">clique para detalhar</span></div><div class="fbar"><input type="text" id="cltF" placeholder="Buscar nome, cargo, projeto..." oninput="filtCLT()"><select id="cltS" onchange="filtCLT()"><option value="">Todos status</option><option value="Ativo">Ativo</option><option value="Programado">Programado</option><option value="Inativo">Inativo</option></select><span class="fcnt" id="cltCnt">'+clt_d.length+' contratos</span></div><div class="tbl-wrap" style="max-height:480px"><table class="t" id="cltTbl"><thead><tr><th class="sortable" data-col="2">Projeto</th><th class="sortable" data-col="6">Status</th><th class="sortable" data-col="1">Matrícula</th><th class="sortable" data-col="4">Dep</th><th class="sortable" data-col="5">Coord</th><th class="sortable" data-col="0">Nome</th><th class="sortable" data-col="7">Cargo</th><th class="sortable" data-col="13">Admissão</th><th class="sortable" data-col="14">1º Pgto</th><th class="sortable" data-col="15">Último Pgto</th><th class="sortable" data-col="8" style="text-align:right">Sl Bruto</th><th class="sortable" data-col="9" style="text-align:right">Sl Líquido</th><th class="sortable" data-col="10" style="text-align:right">Custo Efetivo</th><th class="sortable" data-col="12" style="text-align:right">Custo Exec.</th></tr></thead><tbody id="cltGrid"></tbody></table></div></div>';
+  if(bol_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#127891;</span><span class="mhdr-t">Bolsas / RPA em Execução</span><span class="mhdr-s">clique para detalhar</span></div><div class="fbar"><input type="text" id="bolF" placeholder="Buscar nome, projeto..." oninput="filtBOL()"><select id="bolS" onchange="filtBOL()"><option value="">Todos vínculos</option><option value="Bolsista">Bolsista</option><option value="RPA">RPA</option></select><span class="fcnt" id="bolCnt">'+bol_d.length+' contratos</span></div><div class="tbl-wrap" style="max-height:480px"><table class="t" id="bolTbl"><thead><tr><th class="sortable" data-col="1">Projeto</th><th>Status</th><th class="sortable" data-col="4">Vínculo</th><th class="sortable" data-col="2">Dep</th><th class="sortable" data-col="3">Coord</th><th class="sortable" data-col="0">Nome</th><th class="sortable" data-col="7">Último Pgto</th><th class="sortable" data-col="6" style="text-align:right">Custo Exec.</th><th class="sortable" data-col="5" style="text-align:right">Val. Mensal</th></tr></thead><tbody id="bolGrid"></tbody></table></div></div>';
   if(pend.length) h+='<div class="mcard"><div class="mhdr"><span>&#9992;&#65039;</span><span class="mhdr-t">Passagens e Diárias — Top por Valor</span><span class="mhdr-s">clique para detalhar</span></div><div class="fbar"><input type="text" id="pdF" placeholder="Buscar nome, projeto, destino..." oninput="filtPD()"><select id="pdTipo" onchange="filtPD()"><option value="">Todos tipos</option><option value="Ordinária">Ordinária</option><option value="Extraordinária">Extraordinária</option></select><label style="font-size:9.5px;color:var(--text2);font-family:var(--mono);display:flex;align-items:center;gap:4px">De <input type="date" id="pdDtI" onchange="filtPD()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);border-radius:var(--r3);padding:4px 6px;font-size:10px;font-family:var(--mono);outline:none"></label><label style="font-size:9.5px;color:var(--text2);font-family:var(--mono);display:flex;align-items:center;gap:4px">Até <input type="date" id="pdDtF" onchange="filtPD()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);border-radius:var(--r3);padding:4px 6px;font-size:10px;font-family:var(--mono);outline:none"></label><span class="fcnt" id="pdCnt">'+pend.length+' registros</span></div><div class="tbl-wrap" style="max-height:480px"><table class="t" id="pdTbl"><thead><tr><th>ID</th><th class="sortable" data-col="tipo">Tipo</th><th class="sortable" data-col="projeto">Projeto</th><th class="sortable" data-col="nome">Nome</th><th class="sortable" data-col="departamento">Depto</th><th class="sortable" data-col="coord">Coord.</th><th class="sortable" data-col="origem">Origem</th><th class="sortable" data-col="destino">Destino</th><th class="sortable" data-col="diarias" style="text-align:right">Diárias</th><th class="sortable" data-col="passagem" style="text-align:right">Passagem</th><th class="sortable" data-col="total" style="text-align:right">Total</th></tr></thead><tbody id="pdGrid"></tbody></table></div></div>';
   if(pj_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#127970;</span><span class="mhdr-t">Contratos PJ</span><span class="mhdr-s">'+pj_d.length+' contratos · '+BRLk(pj_d.reduce((s,r)=>s+r[7],0))+'</span></div><div class="tbl-wrap" style="max-height:420px"><table class="t" id="pjTbl"><thead><tr><th>ID</th><th>Categoria</th><th>Projeto</th><th>Objeto</th><th>Fornecedor</th><th style="text-align:right">Valor</th></tr></thead><tbody id="pjGrid"></tbody></table></div></div>';
 
   el.innerHTML=h;
 
   if(proj_d.length && document.getElementById('projGrid')) renderProj(proj_d);
-  if(clt_d.length && document.getElementById('cltGrid')){ _cltView=[...clt_d]; renderCLT(clt_d); }
-  if(bol_d.length && document.getElementById('bolGrid')) renderBol(bol_d);
+  if(clt_d.length && document.getElementById('cltGrid')){
+    _cltSort={col:'6',dir:'asc'};
+    const cltSel=document.getElementById('cltS'); if(cltSel) cltSel.value='Ativo';
+    filtCLT();
+    const cltTbl=document.getElementById('cltTbl');
+    if(cltTbl) cltTbl.querySelector('thead').onclick=handleCltSort;
+  }
+  if(bol_d.length && document.getElementById('bolGrid')){
+    _bolSort={col:'6',dir:'desc'};
+    sortBOL(bol_d);
+    renderBol(bol_d);
+    const bolTbl=document.getElementById('bolTbl');
+    if(bolTbl) bolTbl.querySelector('thead').onclick=handleBolSort;
+  }
   if(pj_d.length && document.getElementById('pjGrid')) renderPJ(pj_d);
   if(pend.length && document.getElementById('pdGrid')){
     _pdSort={col:'total',dir:'desc'};
@@ -492,19 +506,28 @@ function renderCLT(list){
   if(document.getElementById('cltCnt')) document.getElementById('cltCnt').textContent=list.length+' contratos';
   el.innerHTML=list.map((r,i)=>{
     const cargo=r[7].replace(/-TED-\d{2,3}-\d{4}/g,'').trim();
-    const custo=r[10]>0?BRLk(r[10]):'—';
-    const exec=r[12]>0?BRLk(r[12]):'—';
     return '<tr style="cursor:pointer" onclick="openDW('+i+')">'+
+      '<td class="mc">'+r[2]+'</td>'+
+      '<td>'+sBadge(r[6])+'</td>'+
+      '<td class="mc">'+r[1]+'</td>'+
+      '<td class="mc" style="font-size:9.5px">'+r[4]+'</td>'+
+      '<td class="mc" style="font-size:9.5px">'+r[5]+'</td>'+
       '<td style="font-weight:600;color:var(--white)">'+r[0]+'</td>'+
       '<td style="font-size:9.5px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+cargo+'</td>'+
-      '<td class="mc">'+r[2]+'</td>'+
-      '<td class="mc">'+r[5]+'</td>'+
-      '<td>'+sBadge(r[6])+'</td>'+
+      '<td class="mc">'+fd(r[13])+'</td>'+
+      '<td class="mc">'+fd(r[14])+'</td>'+
       '<td class="mc">'+fd(r[15])+'</td>'+
-      '<td class="nr">'+custo+'</td>'+
-      '<td class="nr" style="font-weight:600;color:var(--green)">'+exec+'</td>'+
+      '<td class="nr">'+BRLk(r[8])+'</td>'+
+      '<td class="nr">'+BRLk(r[9])+'</td>'+
+      '<td class="nr">'+BRLk(r[10])+'</td>'+
+      '<td class="nr" style="font-weight:600;color:var(--green)">'+BRLk(r[12])+'</td>'+
     '</tr>';
   }).join('');
+  // update sort indicators
+  document.querySelectorAll('#cltTbl th.sortable').forEach(th=>{
+    th.classList.remove('asc','desc');
+    if(th.dataset.col===_cltSort.col) th.classList.add(_cltSort.dir);
+  });
   window._cltView=list;
 }
 
@@ -512,35 +535,73 @@ function filtCLT(){
   const q=(document.getElementById('cltF')||{value:''}).value.toLowerCase();
   const st=(document.getElementById('cltS')||{value:''}).value;
   const base=[...CLT];
-  const res=base.filter(r=>(!q||(r[0]+r[7]+r[5]).toLowerCase().includes(q))&&(!st||r[6]===st));
+  const res=base.filter(r=>(!q||(r[0]+r[7]+r[5]+r[2]+r[4]).toLowerCase().includes(q))&&(!st||r[6]===st));
+  sortCLT(res);
   _cltView=res; renderCLT(res);
+}
+function sortCLT(list){
+  const c=parseInt(_cltSort.col), d=_cltSort.dir==='asc'?1:-1;
+  list.sort((a,b)=>{
+    let va=a[c]||'', vb=b[c]||'';
+    if(typeof va==='number') return (va-vb)*d;
+    return String(va).localeCompare(String(vb))*d;
+  });
+}
+function handleCltSort(e){
+  const th=e.target.closest('th.sortable'); if(!th) return;
+  const col=th.dataset.col;
+  if(_cltSort.col===col) _cltSort.dir=_cltSort.dir==='asc'?'desc':'asc';
+  else{_cltSort.col=col;const n=parseInt(col);_cltSort.dir=[8,9,10,11,12].includes(n)?'desc':'asc';}
+  filtCLT();
 }
 
 function filtBOL(){
   const q=(document.getElementById('bolF')||{value:''}).value.toLowerCase();
   const v=(document.getElementById('bolS')||{value:''}).value;
   const base=[...BOL];
-  const res=base.filter(r=>(!q||(r[0]+r[1]+r[3]).toLowerCase().includes(q))&&(!v||r[4]===v));
+  const res=base.filter(r=>(!q||(r[0]+r[1]+r[3]+r[2]).toLowerCase().includes(q))&&(!v||r[4]===v));
+  sortBOL(res);
   _bolView=res; renderBol(res);
+}
+function sortBOL(list){
+  const c=parseInt(_bolSort.col), d=_bolSort.dir==='asc'?1:-1;
+  list.sort((a,b)=>{
+    let va=a[c]||'', vb=b[c]||'';
+    if(typeof va==='number') return (va-vb)*d;
+    return String(va).localeCompare(String(vb))*d;
+  });
+}
+function handleBolSort(e){
+  const th=e.target.closest('th.sortable'); if(!th) return;
+  const col=th.dataset.col;
+  if(_bolSort.col===col) _bolSort.dir=_bolSort.dir==='asc'?'desc':'asc';
+  else{_bolSort.col=col;const n=parseInt(col);_bolSort.dir=[5,6].includes(n)?'desc':'asc';}
+  filtBOL();
 }
 
 // ---- RENDER BOL ----
 function renderBol(list){
   const el=document.getElementById('bolGrid'); if(!el) return;
   if(document.getElementById('bolCnt')) document.getElementById('bolCnt').textContent=list.length+' contratos';
-  list.sort((a,b)=>b[6]-a[6]);
   _bolView=list;
   el.innerHTML=list.map((r,i)=>
     '<tr style="cursor:pointer" onclick="openBolDW('+i+')">'+
-      '<td style="font-weight:600;color:var(--white)">'+r[0]+'</td>'+
       '<td class="mc">'+r[1]+'</td>'+
-      '<td>'+(r[3]||'—')+'</td>'+
+      '<td>'+sBadge('Ativo')+'</td>'+
       '<td><span class="b-tag t-p">'+r[4]+'</span></td>'+
+      '<td class="mc" style="font-size:9.5px">'+(r[2]||'—')+'</td>'+
+      '<td class="mc" style="font-size:9.5px">'+(r[3]||'—')+'</td>'+
+      '<td style="font-weight:600;color:var(--white)">'+r[0]+'</td>'+
       '<td class="mc">'+fd(r[7])+'</td>'+
-      '<td class="nr">'+BRL(r[5])+'</td>'+
       '<td class="nr" style="font-weight:700;color:var(--purple)">'+BRLk(r[6])+'</td>'+
+      '<td class="nr">'+BRL(r[5])+'</td>'+
     '</tr>'
   ).join('');
+  // update sort indicators
+  document.querySelectorAll('#bolTbl th.sortable').forEach(th=>{
+    th.classList.remove('asc','desc');
+    if(th.dataset.col===_bolSort.col) th.classList.add(_bolSort.dir);
+  });
 }
 
 // ---- RENDER PJ ----
