@@ -96,6 +96,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 table.t{width:100%;border-collapse:collapse;font-size:10.5px;min-width:420px}
 table.t thead{position:sticky;top:0;z-index:5}
 table.t th{text-align:left;padding:7px 8px;font-size:9px;font-family:var(--mono);font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;background:var(--card2);border-bottom:1px solid var(--border2);white-space:nowrap}
+table.t th.sortable{cursor:pointer;user-select:none;transition:color .15s}
+table.t th.sortable:hover{color:var(--accent3)}
+table.t th.sortable::after{content:'';display:inline-block;margin-left:4px;opacity:.35}
+table.t th.sortable.asc::after{content:'\25B2';opacity:.8;color:var(--accent3)}
+table.t th.sortable.desc::after{content:'\25BC';opacity:.8;color:var(--accent3)}
 table.t td{padding:6px 8px;border-bottom:1px solid rgba(20,40,70,.4);vertical-align:middle;color:var(--text)}
 table.t tr:hover td{background:rgba(255,255,255,.02)}
 .mc{font-family:var(--mono);font-size:10px}
@@ -297,6 +302,7 @@ let _cltView = [];
 let _bolView = [];
 let _pjView = [];
 let _pdView = [];
+let _pdViewAll = [];
 
 function destroyCharts(){Object.values(_charts).forEach(c=>{try{c.destroy()}catch(e){}});_charts={};}
 
@@ -353,7 +359,7 @@ function renderGlobal(el){
       '<div class="mcard"><div class="mhdr"><span>&#128101;</span><span class="mhdr-t">PF Ativos por Departamento</span><span class="mhdr-s">CLT + BOL</span></div><div style="height:210px"><canvas id="cG2"></canvas></div></div>'+
     '</div>'+
     '<div class="g2">'+
-      '<div class="mcard"><div class="mhdr"><span>&#9888;&#65039;</span><span class="mhdr-t">Passagens e Diárias por Departamento</span></div><div style="height:190px"><canvas id="cG3"></canvas></div></div>'+
+      '<div class="mcard"><div class="mhdr"><span>&#9992;&#65039;</span><span class="mhdr-t">Passagens e Diárias por Departamento</span></div><div style="height:190px"><canvas id="cG3"></canvas></div></div>'+
       '<div class="mcard"><div class="mhdr"><span>&#128203;</span><span class="mhdr-t">Resumo por Departamento</span><span class="mhdr-s">clique para abrir painel</span></div>'+
         '<div class="tbl-wrap"><table class="t"><thead><tr><th>Depto</th><th>Vig.</th><th style="text-align:right">Aprovado</th><th style="text-align:right">Pago</th><th>%</th><th>CLT</th><th>BOL</th><th>PF Tot.</th><th style="color:var(--orange)">P/D Exec.</th></tr></thead><tbody id="gTbl"></tbody></table></div>'+
       '</div>'+
@@ -393,8 +399,9 @@ function renderDept(el,dept){
   const pj_d=PJ_D.filter(r=>r[3]===dept);
   const proj_d=PROJ.filter(r=>r[2]===dept);
   const proj_v=proj_d.filter(r=>r[3]==='VIGENTE');
-  const pend=PD_TOP[dept]||[];
+  const pend=(PD_TOP[dept]||[]).map(r=>Object.assign({},r,{_dept:dept}));
   _pdView=pend;
+  _pdViewAll=pend;
   const bs=BOL_SUMM[dept]||{};
   const ps=PD_SUMM[dept]||{};
   const pfTot=(DEPT_PF[dept]||0);
@@ -434,7 +441,7 @@ function renderDept(el,dept){
   if(proj_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#128193;</span><span class="mhdr-t">Projetos TEDs</span><span class="mhdr-s">'+proj_v.length+' vigentes · '+proj_d.length+' totais</span></div><div class="scroll-wrap"><div class="prc-grid" id="projGrid"></div></div></div>';
   if(clt_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#128100;</span><span class="mhdr-t">CLT em Execução</span><span class="mhdr-s">clique para detalhar</span></div><div class="fbar"><input type="text" id="cltF" placeholder="Buscar nome, cargo..." oninput="filtCLT()"><select id="cltS" onchange="filtCLT()"><option value="">Todos status</option><option value="Ativo">Ativo</option><option value="Programado">Programado</option><option value="Inativo">Inativo</option></select><span class="fcnt" id="cltCnt">'+clt_d.length+' contratos</span></div><div class="tbl-wrap" style="max-height:480px"><table class="t"><thead><tr><th>Nome</th><th>Cargo</th><th>Projeto</th><th>Coord.</th><th>Status</th><th>Término</th><th style="text-align:right">Custo Efetivo</th><th style="text-align:right">Custo Exec.</th></tr></thead><tbody id="cltGrid"></tbody></table></div></div>';
   if(bol_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#127891;</span><span class="mhdr-t">Bolsistas em Execução</span><span class="mhdr-s">clique para detalhar</span></div><div class="fbar"><input type="text" id="bolF" placeholder="Buscar nome, projeto..." oninput="filtBOL()"><select id="bolS" onchange="filtBOL()"><option value="">Todos vínculos</option><option value="Bolsista">Bolsista</option><option value="RPA">RPA</option></select><span class="fcnt" id="bolCnt">'+bol_d.length+' contratos</span></div><div class="tbl-wrap" style="max-height:480px"><table class="t"><thead><tr><th>Nome</th><th>Projeto</th><th>Coord.</th><th>Vínculo</th><th>Término</th><th style="text-align:right">Val. Mensal</th><th style="text-align:right">Val. Executado</th></tr></thead><tbody id="bolGrid"></tbody></table></div></div>';
-  if(pend.length) h+='<div class="mcard"><div class="mhdr"><span>&#9888;&#65039;</span><span class="mhdr-t">Passagens e Diárias — Top por Valor</span><span class="mhdr-s">'+(st.pd_pendente||0)+' total · '+BRLk(st.pd_pend_valor||0)+'</span></div><div class="tbl-wrap"><table class="t"><thead><tr><th>ID</th><th>Tipo</th><th>Projeto</th><th>Nome</th><th>Destino</th><th style="text-align:right">Diárias</th><th style="text-align:right">Passagem</th><th style="text-align:right">Total</th></tr></thead><tbody>'+pend.map((r,i)=>'<tr style="cursor:pointer" onclick="openPdDW(_pdView['+i+'])"><td class="mc">'+r.id+'</td><td><span class="b-tag '+(r.tipo==='Extraordinária'?'t-p':'t-b')+'">'+r.tipo+'</span></td><td class="mc">'+(r.projeto||'—')+'</td><td style="font-size:10px">'+(r.nome||'—')+'</td><td class="mc" style="font-size:9.5px">'+(r.destino||'—')+'</td><td class="nr">'+BRL(r.diarias)+'</td><td class="nr">'+BRL(r.passagem)+'</td><td class="nr" style="font-weight:700;color:var(--red)">'+BRL(r.total)+'</td></tr>').join('')+'</tbody></table></div></div>';
+  if(pend.length) h+='<div class="mcard"><div class="mhdr"><span>&#9992;&#65039;</span><span class="mhdr-t">Passagens e Diárias — Top por Valor</span><span class="mhdr-s">clique para detalhar</span></div><div class="fbar"><input type="text" id="pdF" placeholder="Buscar nome, projeto, destino..." oninput="filtPD()"><select id="pdTipo" onchange="filtPD()"><option value="">Todos tipos</option><option value="Ordinária">Ordinária</option><option value="Extraordinária">Extraordinária</option></select><span class="fcnt" id="pdCnt">'+pend.length+' registros</span></div><div class="tbl-wrap" style="max-height:480px"><table class="t" id="pdTbl"><thead><tr><th>ID</th><th class="sortable" data-col="tipo">Tipo</th><th class="sortable" data-col="projeto">Projeto</th><th class="sortable" data-col="nome">Nome</th><th class="sortable" data-col="departamento">Depto</th><th class="sortable" data-col="origem">Origem</th><th class="sortable" data-col="destino">Destino</th><th class="sortable" data-col="diarias" style="text-align:right">Diárias</th><th class="sortable" data-col="passagem" style="text-align:right">Passagem</th><th class="sortable" data-col="total" style="text-align:right">Total</th></tr></thead><tbody id="pdGrid"></tbody></table></div></div>';
   if(pj_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#127970;</span><span class="mhdr-t">Contratos PJ</span><span class="mhdr-s">'+pj_d.length+' contratos · '+BRLk(pj_d.reduce((s,r)=>s+r[7],0))+'</span></div><div class="tbl-wrap" style="max-height:420px"><table class="t" id="pjTbl"><thead><tr><th>ID</th><th>Categoria</th><th>Projeto</th><th>Objeto</th><th>Fornecedor</th><th style="text-align:right">Valor</th></tr></thead><tbody id="pjGrid"></tbody></table></div></div>';
 
   el.innerHTML=h;
@@ -443,6 +450,13 @@ function renderDept(el,dept){
   if(clt_d.length && document.getElementById('cltGrid')){ _cltView=[...clt_d]; renderCLT(clt_d); }
   if(bol_d.length && document.getElementById('bolGrid')) renderBol(bol_d);
   if(pj_d.length && document.getElementById('pjGrid')) renderPJ(pj_d);
+  if(pend.length && document.getElementById('pdGrid')){
+    _pdSort={col:'total',dir:'desc'};
+    sortPD(pend);
+    renderPD(pend);
+    const pdTbl=document.getElementById('pdTbl');
+    if(pdTbl) pdTbl.querySelector('thead').onclick=handlePdSort;
+  }
 
   const pdEl=document.getElementById('cDP');
   if(pdEl){
@@ -545,6 +559,60 @@ function renderPJ(list){
       '<td class="nr" style="font-weight:700;color:var(--yellow)">'+BRLk(r[7])+'</td>'+
     '</tr>'
   ).join('');
+}
+
+// ---- RENDER PD ----
+let _pdSort={col:'total',dir:'desc'};
+function renderPD(list){
+  const el=document.getElementById('pdGrid'); if(!el) return;
+  if(document.getElementById('pdCnt')) document.getElementById('pdCnt').textContent=list.length+' registros';
+  _pdView=list;
+  el.innerHTML=list.map((r,i)=>
+    '<tr style="cursor:pointer" onclick="openPdDW(_pdView['+i+'])">'+
+      '<td class="mc">'+r.id+'</td>'+
+      '<td><span class="b-tag '+(r.tipo==='Extraordinária'?'t-p':'t-b')+'">'+r.tipo+'</span></td>'+
+      '<td class="mc">'+(r.projeto||'—')+'</td>'+
+      '<td style="font-size:10px">'+(r.nome||'—')+'</td>'+
+      '<td class="mc" style="font-size:9.5px">'+(r._dept||'—')+'</td>'+
+      '<td class="mc" style="font-size:9.5px">'+(r.origem||'—')+'</td>'+
+      '<td class="mc" style="font-size:9.5px">'+(r.destino||'—')+'</td>'+
+      '<td class="nr">'+BRL(r.diarias)+'</td>'+
+      '<td class="nr">'+BRL(r.passagem)+'</td>'+
+      '<td class="nr" style="font-weight:700;color:var(--orange)">'+BRL(r.total)+'</td>'+
+    '</tr>'
+  ).join('');
+  // update header sort indicators
+  document.querySelectorAll('#pdTbl th.sortable').forEach(th=>{
+    th.classList.remove('asc','desc');
+    if(th.dataset.col===_pdSort.col) th.classList.add(_pdSort.dir);
+  });
+}
+
+function filtPD(){
+  const q=(document.getElementById('pdF')||{value:''}).value.toLowerCase();
+  const tp=(document.getElementById('pdTipo')||{value:''}).value;
+  const base=_pdViewAll||[];
+  const res=base.filter(r=>(!q||(r.nome+r.projeto+r.destino+r.origem+(r._dept||'')).toLowerCase().includes(q))&&(!tp||r.tipo===tp));
+  sortPD(res);
+  renderPD(res);
+}
+
+function sortPD(list){
+  const c=_pdSort.col, d=_pdSort.dir==='asc'?1:-1;
+  list.sort((a,b)=>{
+    let va=a[c]||'', vb=b[c]||'';
+    if(c==='departamento'){va=a._dept||'';vb=b._dept||'';}
+    if(typeof va==='number') return (va-vb)*d;
+    return String(va).localeCompare(String(vb))*d;
+  });
+}
+
+function handlePdSort(e){
+  const th=e.target.closest('th.sortable'); if(!th) return;
+  const col=th.dataset.col;
+  if(_pdSort.col===col) _pdSort.dir=_pdSort.dir==='asc'?'desc':'asc';
+  else{_pdSort.col=col;_pdSort.dir=col==='diarias'||col==='passagem'||col==='total'?'desc':'asc';}
+  filtPD();
 }
 
 // ---- DRAWER ----
