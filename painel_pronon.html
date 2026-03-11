@@ -79,6 +79,54 @@ const TooltipCustom=({active,payload,label,valuePrefix=''})=>{
   </div>);
 };
 
+/* ═══ DETAIL DRAWER ═══ */
+let _setDrawerGlobal=null;
+function openDetailDrawer(d){if(_setDrawerGlobal)_setDrawerGlobal(d);}
+
+const DRow=({l,v,hl})=>React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'5px 0',borderBottom:'1px solid rgba(20,40,70,.4)'}},
+  React.createElement('span',{style:{fontSize:10.5,color:'#6b7b8d'}},l),
+  React.createElement('span',{style:{fontSize:11,fontFamily:"'JetBrains Mono'",fontWeight:600,color:hl||'#c8d6e5',textAlign:'right',maxWidth:'60%',wordBreak:'break-word'}},v)
+);
+
+const DSec=({icon,title,children})=>React.createElement('div',null,
+  React.createElement('div',{style:{fontSize:9,fontFamily:"'JetBrains Mono'",color:'#5cb8ff',textTransform:'uppercase',letterSpacing:1,marginBottom:7,display:'flex',alignItems:'center',gap:6}},
+    icon+' '+title,
+    React.createElement('span',{style:{flex:1,height:1,background:'rgba(92,184,255,.12)'}})
+  ),children
+);
+
+const DFi=({l,v,color})=>React.createElement('div',{style:{background:'rgba(255,255,255,.035)',border:'1px solid rgba(255,255,255,.07)',borderRadius:8,padding:'8px 10px'}},
+  React.createElement('div',{style:{fontSize:9,fontFamily:"'JetBrains Mono'",color:'#6b7b8d',textTransform:'uppercase',letterSpacing:'.4px'}},l),
+  React.createElement('div',{style:{fontSize:13,fontWeight:700,fontFamily:"'JetBrains Mono'",marginTop:2,color:color||'#e8ecf1'}},v)
+);
+
+function DetailDrawer(){
+  const [data,setData]=useState(null);
+  React.useEffect(()=>{_setDrawerGlobal=setData;return()=>{_setDrawerGlobal=null};},[]);
+  React.useEffect(()=>{const esc=e=>{if(e.key==='Escape')setData(null);};document.addEventListener('keydown',esc);return()=>document.removeEventListener('keydown',esc);},[]);
+  React.useEffect(()=>{document.body.style.overflow=data?'hidden':'';},[data]);
+  if(!data) return null;
+  return React.createElement('div',{style:{position:'fixed',inset:0,background:'rgba(2,8,18,.72)',zIndex:600,display:'flex',alignItems:'flex-start',justifyContent:'flex-end',backdropFilter:'blur(4px)'},onClick:e=>{if(e.target===e.currentTarget)setData(null);}},
+    React.createElement('div',{style:{width:420,maxWidth:'96vw',height:'100vh',overflowY:'auto',background:'linear-gradient(180deg,#0c1a30,#08121e)',borderLeft:'1px solid rgba(30,48,80,.8)'}},
+      React.createElement('div',{style:{padding:'16px 18px 12px',borderBottom:'1px solid rgba(30,48,80,.6)',position:'sticky',top:0,background:'linear-gradient(180deg,#0c1a30,rgba(12,26,48,.96))',zIndex:10,backdropFilter:'blur(8px)'}},
+        React.createElement('button',{onClick:()=>setData(null),style:{position:'absolute',top:13,right:14,background:'rgba(255,255,255,.05)',border:'1px solid rgba(30,72,112,.6)',borderRadius:5,width:27,height:27,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:'#6b7b8d',fontSize:15}},'\u2715'),
+        React.createElement('div',{style:{fontSize:15,fontWeight:700,color:'#e8ecf1',lineHeight:1.3,marginTop:5,paddingRight:34}},data.title),
+        data.subtitle&&React.createElement('div',{style:{fontSize:10,fontFamily:"'JetBrains Mono'",color:'#6b7b8d',marginTop:2}},data.subtitle)
+      ),
+      React.createElement('div',{style:{padding:'14px 18px',display:'flex',flexDirection:'column',gap:14}},
+        (data.sections||[]).map((sec,si)=>
+          React.createElement(DSec,{key:si,icon:sec.icon||'📋',title:sec.title},
+            sec.rows&&sec.rows.map((r,ri)=>React.createElement(DRow,{key:ri,l:r.l,v:r.v,hl:r.hl})),
+            sec.grid&&React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:6}},
+              sec.grid.map((g,gi)=>React.createElement(DFi,{key:gi,...g}))
+            )
+          )
+        )
+      )
+    )
+  );
+}
+
 /* ═══ TAB 1: VISÃO GERAL ═══ */
 function TabOverview(){
   const [ed,setEd]=useState('all');
@@ -282,7 +330,21 @@ function TabEquipVal(){
             )}
           </tr></thead>
           <tbody>{valData.map(r=>(
-            <tr key={r.cat} style={{borderBottom:'1px solid rgba(255,255,255,.04)'}}>
+            <tr key={r.cat} style={{borderBottom:'1px solid rgba(255,255,255,.04)',cursor:'pointer'}} onClick={()=>openDetailDrawer({
+              title:r.cat,subtitle:'Equipamento · PRONON',
+              sections:[
+                {icon:'🔬',title:'Identificação',rows:[
+                  {l:'Tipo de Equipamento',v:r.cat,hl:'#e8ecf1'},
+                  {l:'Nº de Projetos',v:String(r.n),hl:'#5cb8ff'}
+                ]},
+                {icon:'💰',title:'Valores Financeiros',grid:[
+                  {l:'Val. Apresentado',v:fmt(r.valApres)},
+                  {l:'Val. Aprovado',v:fmt(r.valAprov),color:'#14b8a6'},
+                  {l:'Média por Projeto',v:fmt(r.media),color:'#5cb8ff'},
+                  {l:'% Aprovado',v:r.valApres>0?(r.valAprov/r.valApres*100).toFixed(1)+'%':'—',color:'#f59e0b'}
+                ]}
+              ]
+            })}>
               <td style={{padding:'8px 12px',fontWeight:600}}><span style={{display:'inline-block',width:10,height:10,borderRadius:3,background:EQUIP_COLORS[r.cat]||'#64748b',marginRight:8}}/>{r.cat}</td>
               <td className="mono" style={{padding:'8px 12px'}}>{r.n}</td>
               <td className="mono" style={{padding:'8px 12px'}}>{fmt(r.valApres)}</td>
@@ -305,7 +367,27 @@ function TabCiclos(){
   return(<div className="fade-in">
     <div className="resp-grid" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>
       {cycleData.map((c,i)=>(
-        <div key={c.ed} className="card fade-in" style={{animationDelay:`${i*.08}s`}}>
+        <div key={c.ed} className="card fade-in" style={{animationDelay:`${i*.08}s`,cursor:'pointer'}} onClick={()=>openDetailDrawer({
+          title:'Ciclo '+c.ed,subtitle:'Detalhamento do Edital · PRONON',
+          sections:[
+            {icon:'📋',title:'Quantitativos',rows:[
+              {l:'Total de Projetos',v:String(c.total),hl:'#e8ecf1'},
+              {l:'Aprov. para Captação',v:String(c.aprovCapt),hl:'#14b8a6'},
+              {l:'Reprovados',v:String(c.reprovado),hl:'#ef4444'}
+            ]},
+            {icon:'💰',title:'Valores Financeiros',grid:[
+              {l:'Apresentado',v:fmt(c.valApres)},
+              {l:'Aprovado',v:fmt(c.valAprov),color:'#14b8a6'},
+              {l:'Aprov. Captação',v:fmt(c.valAprovCapt),color:'#f59e0b'},
+              {l:'Captado',v:fmt(c.valCapt),color:'#8b5cf6'}
+            ]},
+            {icon:'📊',title:'Indicadores',rows:[
+              {l:'% Aprovado/Apresentado',v:c.valApres>0?(c.valAprov/c.valApres*100).toFixed(1)+'%':'—',hl:'#14b8a6'},
+              {l:'% Captado/Aprov. Captação',v:c.valAprovCapt>0?(c.valCapt/c.valAprovCapt*100).toFixed(1)+'%':'—',hl:'#8b5cf6'},
+              {l:'Média por Projeto',v:c.total>0?fmt(c.valAprov/c.total):'—'}
+            ]}
+          ]
+        })}>
           <div style={{fontSize:20,fontWeight:800,color:'#5cb8ff',marginBottom:8}}>{c.ed}</div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'6px 16px',fontSize:13}}>
             <span style={{color:'#6b7b8d'}}>Total</span><span className="mono" style={{fontWeight:700,fontSize:18,color:'#e8ecf1'}}>{c.total}</span>
@@ -405,7 +487,27 @@ function TabFinanceiro(){
             )}
           </tr></thead>
           <tbody>{pipeData.map(r=>(
-            <tr key={r.ed} style={{borderBottom:'1px solid rgba(255,255,255,.04)'}}>
+            <tr key={r.ed} style={{borderBottom:'1px solid rgba(255,255,255,.04)',cursor:'pointer'}} onClick={()=>openDetailDrawer({
+              title:'Ciclo '+r.ed,subtitle:'Pipeline Financeiro · PRONON',
+              sections:[
+                {icon:'📋',title:'Identificação',rows:[
+                  {l:'Ciclo/Edital',v:r.ed,hl:'#5cb8ff'},
+                  {l:'Projetos Aprovados',v:String(r.nAprovados)},
+                  {l:'Contemplados',v:String(r.nContemplados),hl:'#14b8a6'}
+                ]},
+                {icon:'💰',title:'Valores Financeiros',grid:[
+                  {l:'Apresentado',v:fmt(r.valApresentado)},
+                  {l:'Aprovado',v:fmt(r.valAprovado),color:'#3b82f6'},
+                  {l:'Aprov. Captação',v:fmt(r.valAprovCapt),color:'#f59e0b'},
+                  {l:'Captado',v:fmt(r.valCaptado),color:'#14b8a6'}
+                ]},
+                {icon:'📊',title:'Indicadores',rows:[
+                  {l:'% Captação',v:pct(r.valCaptado,r.valAprovCapt),hl:'#14b8a6'},
+                  {l:'% Aprovado/Apresentado',v:r.valApresentado>0?(r.valAprovado/r.valApresentado*100).toFixed(1)+'%':'—',hl:'#3b82f6'},
+                  {l:'Média por Projeto',v:r.nAprovados>0?fmt(r.valAprovado/r.nAprovados):'—'}
+                ]}
+              ]
+            })}>
               <td style={{padding:'8px 12px',fontWeight:700,color:'#5cb8ff',fontSize:14}}>{r.ed}</td>
               <td className="mono" style={{padding:'8px 12px'}}>{r.nAprovados}</td>
               <td className="mono" style={{padding:'8px 12px'}}>{r.nContemplados}</td>
@@ -661,7 +763,27 @@ function TabGeo(){
             <div style={{fontSize:15,fontWeight:700,color:'#e8ecf1',marginBottom:12}}>Ranking UF <span style={{fontSize:10,color:'#556677',fontWeight:400}}>· clique no mapa p/ detalhar</span></div>
             {Object.entries(UD).filter(([,d])=>d[metric]>0).sort((a,b)=>b[1][metric]-a[1][metric]).slice(0,12).map(([uf,d],i)=>{
               const pct2=(d[metric]/maxVal)*100;
-              return(<div key={uf} style={{marginBottom:8,cursor:'pointer',opacity:hover&&hover!==uf ? 0.5 : 1,transition:'opacity .2s'}} onMouseEnter={()=>setHover(uf)} onMouseLeave={()=>setHover(null)} onClick={()=>setSelectedUF(uf)}>
+              return(<div key={uf} style={{marginBottom:8,cursor:'pointer',opacity:hover&&hover!==uf ? 0.5 : 1,transition:'opacity .2s'}} onMouseEnter={()=>setHover(uf)} onMouseLeave={()=>setHover(null)} onClick={()=>{setSelectedUF(uf);openDetailDrawer({
+                title:uf,subtitle:'Estado · PRONON',
+                sections:[
+                  {icon:'📍',title:'Dados Gerais',grid:[
+                    {l:'Total Projetos',v:String(d.t||0),color:'#5cb8ff'},
+                    {l:'Aprovados',v:String(d.a||0),color:'#14b8a6'},
+                    {l:'Contemplados',v:String(d.c||0),color:'#f59e0b'},
+                    {l:'Nº Equipamentos',v:String(d.eN||0)}
+                  ]},
+                  {icon:'💰',title:'Valores Financeiros',grid:[
+                    {l:'Apresentado',v:fmt(d.vP||0)},
+                    {l:'Aprovado',v:fmt(d.vA||0),color:'#3b82f6'},
+                    {l:'Aprov. Captação',v:fmt(d.vApC||0),color:'#f59e0b'},
+                    {l:'Captado',v:fmt(d.vC||0),color:'#14b8a6'}
+                  ]},
+                  ...(d.eV>0?[{icon:'🔬',title:'Equipamentos',rows:[
+                    {l:'Valor em Equipamentos',v:fmt(d.eV),hl:'#14b8a6'},
+                    ...(d.tE||[]).map(([k,v])=>({l:k,v:String(v)}))
+                  ]}]:[])
+                ]
+              });}}>
                 <div style={{display:'flex',justifyContent:'space-between',marginBottom:2}}>
                   <span style={{fontSize:12}}><span style={{color:'#556677',fontFamily:"'JetBrains Mono'",fontSize:11,marginRight:6}}>{i+1}.</span><span style={{fontWeight:700,color:i<3?'#5cb8ff':'#a0b4c8'}}>{uf}</span></span>
                   <span className="mono" style={{fontSize:12,fontWeight:700}}>{metric.startsWith('v')?fmt(d[metric]):d[metric]}</span>
@@ -683,7 +805,24 @@ function TabGeo(){
             {munRanking&&munRanking.length>0&&(()=>{
               const maxE=munRanking[0].equip;
               return munRanking.map((p,i)=>(
-                <div key={p.mun+i} style={{marginBottom:9,cursor:'pointer',opacity:hover&&hover!==('pin_'+visiblePins.findIndex(vp=>vp.mun===p.mun&&vp.uf===p.uf)) ? 0.6 : 1,transition:'opacity .2s'}}>
+                <div key={p.mun+i} style={{marginBottom:9,cursor:'pointer',opacity:hover&&hover!==('pin_'+visiblePins.findIndex(vp=>vp.mun===p.mun&&vp.uf===p.uf)) ? 0.6 : 1,transition:'opacity .2s'}} onClick={()=>openDetailDrawer({
+                  title:p.mun,subtitle:selectedUF+' · Município',
+                  sections:[
+                    {icon:'📍',title:'Localização',rows:[
+                      {l:'Município',v:p.mun,hl:'#f59e0b'},
+                      {l:'UF',v:selectedUF,hl:'#5cb8ff'},
+                      {l:'Latitude',v:p.lat?.toFixed(4)||'—'},
+                      {l:'Longitude',v:p.lng?.toFixed(4)||'—'}
+                    ]},
+                    {icon:'🔬',title:'Projetos e Equipamentos',grid:[
+                      {l:'Total Projetos',v:String(p.total||0),color:'#5cb8ff'},
+                      {l:'Equipamentos',v:String(p.equip||0),color:'#14b8a6'},
+                      {l:'Val. Aprovado',v:fmt(p.valAprov||0),color:'#3b82f6'},
+                      {l:'Val. Captado',v:fmt(p.valCaptado||0),color:'#f59e0b'}
+                    ]},
+                    ...(p.eqTypes&&Object.keys(p.eqTypes).length>0?[{icon:'📋',title:'Tipos de Equipamento',rows:Object.entries(p.eqTypes).sort((a,b)=>b[1]-a[1]).map(([k,v])=>({l:k,v:String(v)}))}]:[])
+                  ]
+                })}>
                   <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:2}}>
                     <div style={{display:'flex',alignItems:'center',gap:6}}>
                       <span style={{color:'#556677',fontFamily:"'JetBrains Mono'",fontSize:10}}>{i+1}.</span>
@@ -821,7 +960,7 @@ function App(){
   );
 }
 
-ReactDOM.render(<App/>,document.getElementById('root'));
+ReactDOM.render(<><App/><DetailDrawer/></>,document.getElementById('root'));
 </script>
 </body>
 </html>

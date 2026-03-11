@@ -199,6 +199,30 @@ footer span{font-family:'DM Mono',monospace;font-size:10px;color:var(--td);}
 
 /* Main expands when sidebar collapses */
 .layout{transition:none;}
+
+/* Detail overlay */
+.loc-overlay{position:fixed;inset:0;background:rgba(2,8,18,.72);z-index:600;display:none;align-items:flex-start;justify-content:flex-end;backdrop-filter:blur(4px)}
+.loc-overlay.open{display:flex}
+.loc-drawer{width:400px;max-width:96vw;height:100vh;overflow-y:auto;background:linear-gradient(180deg,var(--s1),var(--bg));border-left:1px solid var(--bd);transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1)}
+.loc-drawer::-webkit-scrollbar{width:3px}
+.loc-drawer::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+.loc-overlay.open .loc-drawer{transform:translateX(0)}
+.ldw-hdr{padding:16px 18px 12px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:linear-gradient(180deg,var(--s1),rgba(19,24,32,.96));z-index:10;backdrop-filter:blur(8px)}
+.ldw-close{position:absolute;top:13px;right:14px;background:rgba(255,255,255,.05);border:1px solid var(--bd);border-radius:5px;width:27px;height:27px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tm);font-size:15px;transition:all .15s}
+.ldw-close:hover{background:rgba(255,75,87,.15);border-color:rgba(255,75,87,.4);color:var(--red)}
+.ldw-nome{font-size:15px;font-weight:700;color:var(--tx);line-height:1.3;margin:5px 0 2px;padding-right:34px}
+.ldw-sub{font-size:10px;font-family:'DM Mono',monospace;color:var(--tm)}
+.ldw-body{padding:14px 18px;display:flex;flex-direction:column;gap:14px}
+.ldw-sec{font-size:9px;font-family:'DM Mono',monospace;color:var(--ac);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.ldw-sec::after{content:'';flex:1;height:1px;background:rgba(0,229,160,.12)}
+.ldw-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(31,45,61,.4)}
+.ldw-row:last-child{border-bottom:none}
+.ldw-rl{font-size:10.5px;color:var(--tm)}
+.ldw-rv{font-size:11px;font-family:'DM Mono',monospace;font-weight:600;color:var(--tx);text-align:right;max-width:60%;word-break:break-word}
+.ldw-fg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ldw-fi{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:8px 10px}
+.ldw-fil{font-size:9px;font-family:'DM Mono',monospace;color:var(--td);text-transform:uppercase;letter-spacing:.4px}
+.ldw-fiv{font-size:13px;font-weight:700;font-family:'DM Mono',monospace;margin-top:2px;color:var(--tx)}
 </style>
 </head>
 <body>
@@ -801,12 +825,15 @@ function renderLocTable(){
     tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--td);">Nenhum registro encontrado.</td></tr>';
     return;
   }
-  rows.forEach(function(r){
+  _locCurrentRows=rows;
+  rows.forEach(function(r,idx){
     var col=locCatColor(r.cat);
     var cls=locCatClass(r.cat);
     var lbl=locCatLabel(r.cat);
     var addrDisplay=r.addr?r.addr.substring(0,65)+(r.addr.length>65?'...':''):'<span style="color:var(--td)">n\u00e3o detectada</span>';
     var tr=document.createElement('tr');
+    tr.style.cursor='pointer';
+    tr.onclick=(function(i){return function(){openLocDetail(i);};})(idx);
     tr.innerHTML='<td class="lc-mono">'+r.date+'</td>'
       +'<td style="color:var(--tm);font-size:10px;">'+r.wd+'</td>'
       +'<td style="color:'+hColor(r.h)+';font-family:\'DM Mono\',monospace;">'+r.hm+'h</td>'
@@ -827,6 +854,72 @@ function gerarPDF(){
   setTimeout(function(){ if(ph) ph.style.display='none'; },800);
 }
 
+// ---- LOCATION DETAIL DRAWER ----
+var _locCurrentRows=[];
+function ldwRow(l,v){return '<div class="ldw-row"><span class="ldw-rl">'+l+'</span><span class="ldw-rv">'+v+'</span></div>';}
+function ldwFi(l,v,c){return '<div class="ldw-fi"><div class="ldw-fil">'+l+'</div><div class="ldw-fiv" style="'+(c?'color:'+c:'')+'">'+v+'</div></div>';}
+
+function openLocDetail(idx){
+  var r=_locCurrentRows[idx]; if(!r) return;
+  var d=EMP[currentEmp];
+  var dayData=null;
+  if(d&&d.dl){
+    dayData=d.dl.find(function(dd){return dd.d===r.date;});
+  }
+  var punches=(dayData&&dayData.p)||[];
+  var col=locCatColor(r.cat);
+  var lbl=locCatLabel(r.cat);
+  var hColor=r.h>10?'var(--ac3)':r.h>8?'var(--ac)':r.h<6&&r.h>0?'var(--ac4)':'var(--tm)';
+
+  document.getElementById('ldwNome').textContent=r.date+' — '+r.wd;
+  document.getElementById('ldwSub').textContent=(currentEmp||'—');
+
+  var html='<div><div class="ldw-sec">📅 Jornada</div>'+
+    '<div class="ldw-fg">'+
+      ldwFi('Data',r.date)+
+      ldwFi('Dia da Semana',r.wd)+
+      ldwFi('Horas Trabalhadas',r.hm+'h',hColor)+
+      ldwFi('Categoria',lbl,col)+
+    '</div></div>';
+
+  html+='<div><div class="ldw-sec">🕐 Registros de Ponto</div>';
+  if(punches.length>0){
+    punches.forEach(function(p,i){
+      var tipo=i===0?'Entrada':i===punches.length-1?'Saída':i%2===1?'Saída almoço':'Retorno almoço';
+      html+=ldwRow(tipo,'<span style="color:var(--ac);font-size:12px;font-weight:700">'+p+'</span>');
+    });
+  } else {
+    html+=ldwRow('Registros','<span style="color:var(--td)">Nenhum ponto registrado</span>');
+  }
+  html+='</div>';
+
+  html+='<div><div class="ldw-sec">📍 Localização</div>';
+  var el=dayData?dayData.el:'';
+  var xl=dayData?dayData.xl:'';
+  html+=ldwRow('Local de Entrada',el?'<span style="font-size:10px">'+el+'</span>':'<span style="color:var(--td)">Não detectada</span>');
+  html+=ldwRow('Local de Saída',xl?'<span style="font-size:10px">'+xl+'</span>':'<span style="color:var(--td)">Não detectada</span>');
+  html+='</div>';
+
+  document.getElementById('ldwBody').innerHTML=html;
+  document.getElementById('locOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeLocDetail(){document.getElementById('locOverlay').classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLocDetail();});
+
 </script>
+
+<div class="loc-overlay" id="locOverlay" onclick="if(event.target===this)closeLocDetail()">
+  <div class="loc-drawer">
+    <div class="ldw-hdr">
+      <button class="ldw-close" onclick="closeLocDetail()">&#10005;</button>
+      <div class="ldw-nome" id="ldwNome">—</div>
+      <div class="ldw-sub" id="ldwSub">—</div>
+    </div>
+    <div class="ldw-body" id="ldwBody"></div>
+  </div>
+</div>
+
 </body>
 </html>

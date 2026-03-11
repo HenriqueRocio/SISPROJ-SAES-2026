@@ -342,6 +342,33 @@ display:flex; gap:6px; align-items:center;
 .tag-status-prest-n { background:rgba(244,63,94,.12); color:var(–red); font-size:9px; padding:2px 6px; border-radius:10px; }
 .no-data { text-align:center; padding:40px; color:var(–text3); font-size:13px; }
 
+.exec-overlay{position:fixed;inset:0;background:rgba(2,8,18,.72);z-index:600;display:none;align-items:flex-start;justify-content:flex-end;backdrop-filter:blur(4px)}
+.exec-overlay.open{display:flex}
+.exec-drawer{width:420px;max-width:96vw;height:100vh;overflow-y:auto;background:linear-gradient(180deg,#0a1a30,#07121e);border-left:1px solid var(--border2);transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1)}
+.exec-drawer::-webkit-scrollbar{width:3px}
+.exec-drawer::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.exec-overlay.open .exec-drawer{transform:translateX(0)}
+.edw-hdr{padding:16px 18px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:linear-gradient(180deg,#0a1a30,rgba(10,26,48,.96));z-index:10;backdrop-filter:blur(8px)}
+.edw-close{position:absolute;top:13px;right:14px;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:5px;width:27px;height:27px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:15px;transition:all .15s}
+.edw-close:hover{background:rgba(244,63,94,.15);border-color:rgba(244,63,94,.4);color:var(--red)}
+.edw-nome{font-size:15px;font-weight:700;color:#ddeeff;line-height:1.3;margin:5px 0 2px;padding-right:34px}
+.edw-sub{font-size:10px;font-family:var(--mono);color:var(--text2)}
+.edw-body{padding:14px 18px;display:flex;flex-direction:column;gap:14px}
+.edw-sec{font-size:9px;font-family:var(--mono);color:var(--accent2);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.edw-sec::after{content:'';flex:1;height:1px;background:rgba(56,189,248,.12)}
+.edw-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(20,40,70,.4)}
+.edw-row:last-child{border-bottom:none}
+.edw-rl{font-size:10.5px;color:var(--text2)}
+.edw-rv{font-size:11px;font-family:var(--mono);font-weight:600;color:var(--text);text-align:right;max-width:60%;word-break:break-word}
+.edw-rv.hl{color:#ddeeff;font-size:12.5px}
+.edw-rv.gv{color:var(--green)}
+.edw-rv.rv{color:var(--red)}
+.edw-fg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.edw-fi{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px}
+.edw-fil{font-size:9px;font-family:var(--mono);color:var(--text2);text-transform:uppercase;letter-spacing:.4px}
+.edw-fiv{font-size:13px;font-weight:700;font-family:var(--mono);margin-top:2px;color:#ddeeff}
+.edw-desc{font-size:11px;color:var(--text);line-height:1.5;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px}
+
 </style>
 </head>
 <body>
@@ -1702,6 +1729,7 @@ display:flex; gap:6px; align-items:center;
   };
 
   let _execType = 'pf';
+  let _execFiltered = [];
   let _execTAFilter = '';   // '' = todos
 
   function switchExecTA(ta, btn) {
@@ -1874,6 +1902,7 @@ display:flex; gap:6px; align-items:center;
       ? data.reduce((a,r)=>a+(r.vtot||0),0)
       : data.reduce((a,r)=>a+(r.vexec||0),0);
 
+    _execFiltered = data;
     document.getElementById('exec-count-lbl').textContent = `${data.length} registro(s)`;
     document.getElementById('exec-total-lbl').textContent = fmtBRL(total);
 
@@ -1888,7 +1917,7 @@ display:flex; gap:6px; align-items:center;
         <th style="text-align:right">Comprometido</th><th style="text-align:right">Executado</th>
       </tr>`;
       tbody.innerHTML = !data.length ? noData :
-        data.map(r=>`<tr>
+        data.map((r,i)=>`<tr style="cursor:pointer" onclick="openExecDetail('pf',${i})">
           <td>${taTag(r.ta)}</td>
           <td>${reTag(r.re)}</td>
           <td><span class="pill p-blue" style="font-size:9px">${r.dept||'?'}</span></td>
@@ -1909,7 +1938,7 @@ display:flex; gap:6px; align-items:center;
         <th style="text-align:right">Comprometido</th><th style="text-align:right">Executado</th><th>SEI</th>
       </tr>`;
       tbody.innerHTML = !data.length ? noData :
-        data.map(r=>`<tr>
+        data.map((r,i)=>`<tr style="cursor:pointer" onclick="openExecDetail('pj',${i})">
           <td>${taTag(r.ta)}</td>
           <td>${reTag(r.re)}</td>
           <td><span class="pill p-blue" style="font-size:9px">${r.dept||'?'}</span></td>
@@ -1932,7 +1961,7 @@ display:flex; gap:6px; align-items:center;
         <th style="text-align:right">Total</th><th>Prest.</th>
       </tr>`;
       tbody.innerHTML = !data.length ? noData :
-        data.map(r=>`<tr>
+        data.map((r,i)=>`<tr style="cursor:pointer" onclick="openExecDetail('pd',${i})">
           <td>${taTag(r.ta)}</td>
           <td>${reTag(r.re)}</td>
           <td><span class="pill p-blue" style="font-size:9px">${r.dept||'?'}</span></td>
@@ -1995,7 +2024,121 @@ display:flex; gap:6px; align-items:center;
     }
   }
 
+  // ---- DETAIL DRAWER ----
+  function edwRow(l,v){ return `<div class="edw-row"><span class="edw-rl">${l}</span><span class="edw-rv">${v}</span></div>`; }
+  function edwFi(l,cls,v){ return `<div class="edw-fi"><div class="edw-fil">${l}</div><div class="edw-fiv" style="${cls?'color:'+cls:''}">${v}</div></div>`; }
+
+  function openExecDetail(type, idx){
+    const r = _execFiltered[idx]; if(!r) return;
+    let html = '';
+
+    if(type==='pf'){
+      document.getElementById('edwSt').innerHTML = taTag(r.ta)+' '+reTag(r.re)+' '+statusTag(r.status);
+      document.getElementById('edwNome').textContent = r.nome||'—';
+      document.getElementById('edwSub').textContent = 'Pessoa Física · '+(r.dept||'—');
+      html += `<div><div class="edw-sec">&#128203; Identificação</div>`+
+        edwRow('Consultor',`<span class="edw-rv hl">${r.nome||'—'}</span>`)+
+        edwRow('Contrato',`<span style="font-family:var(--mono);font-size:10px">${r.num||'—'}</span>`)+
+        edwRow('Departamento',r.dept||'—')+
+        edwRow('Resultado Esperado',reTag(r.re))+
+        edwRow('Termo Aditivo',taTag(r.ta))+
+        edwRow('PTA',r.pta||'—')+
+        edwRow('Tipo',r.tipo||'—')+
+        edwRow('SEI',r.sei?`<a class="sei-link" href="https://sei.saude.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_protocolo=${encodeURIComponent(r.sei)}" target="_blank" style="font-size:10px">${r.sei}</a>`:'—')+
+      `</div>`;
+      html += `<div><div class="edw-sec">&#128197; Período</div>`+
+        edwRow('Início',r.ini||'—')+
+        edwRow('Fim',r.fim||'—')+
+        edwRow('Status',statusTag(r.status))+
+      `</div>`;
+      html += `<div><div class="edw-sec">&#128176; Valores</div>`+
+        `<div class="edw-fg">`+
+          edwFi('Comprometido','var(--text)',fmtBRL(r.vfinal))+
+          edwFi('Executado','var(--green)',fmtBRL(r.vexec))+
+        `</div>`+
+        (r.vfinal>0?edwRow('% Executado',`<span style="color:${r.vexec/r.vfinal>=0.8?'var(--green)':'var(--amber)'}; font-weight:700">${(r.vexec/r.vfinal*100).toFixed(1)}%</span>`):'')+
+      `</div>`;
+
+    } else if(type==='pj'){
+      document.getElementById('edwSt').innerHTML = taTag(r.ta)+' '+reTag(r.re)+' '+statusTag(r.status);
+      document.getElementById('edwNome').textContent = r.modalid||'Contrato PJ';
+      document.getElementById('edwSub').textContent = 'Pessoa Jurídica · '+(r.dept||'—');
+      html += `<div><div class="edw-sec">&#128203; Identificação</div>`+
+        edwRow('Modalidade',r.modalid||'—')+
+        edwRow('Departamento',r.dept||'—')+
+        edwRow('Resultado Esperado',reTag(r.re))+
+        edwRow('Termo Aditivo',taTag(r.ta))+
+        edwRow('PTA',r.pta||'—')+
+        edwRow('SEI',r.sei?`<a class="sei-link" href="https://sei.saude.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_protocolo=${encodeURIComponent(r.sei)}" target="_blank" style="font-size:10px">${r.sei}</a>`:'—')+
+      `</div>`;
+      html += `<div><div class="edw-sec">&#128196; Descrição / Objeto</div>`+
+        `<div class="edw-desc">${r.descr||'—'}</div>`+
+      `</div>`;
+      html += `<div><div class="edw-sec">&#128197; Período</div>`+
+        edwRow('Início',r.ini||'—')+
+        edwRow('Fim',r.fim||'—')+
+        edwRow('Status',statusTag(r.status))+
+      `</div>`;
+      html += `<div><div class="edw-sec">&#128176; Valores</div>`+
+        `<div class="edw-fg">`+
+          edwFi('Comprometido','var(--text)',fmtBRL(r.vcomp))+
+          edwFi('Executado','var(--green)',fmtBRL(r.vexec))+
+        `</div>`+
+        (r.vcomp>0?edwRow('% Executado',`<span style="color:${r.vexec/r.vcomp>=0.8?'var(--green)':'var(--amber)'}; font-weight:700">${(r.vexec/r.vcomp*100).toFixed(1)}%</span>`):'')+
+      `</div>`;
+
+    } else { // pd
+      document.getElementById('edwSt').innerHTML = taTag(r.ta)+' '+reTag(r.re)+' '+statusTag(r.prest);
+      document.getElementById('edwNome').textContent = r.nome||'—';
+      document.getElementById('edwSub').textContent = 'Passagem/Diária · '+(r.dept||'—');
+      html += `<div><div class="edw-sec">&#128203; Identificação</div>`+
+        edwRow('Beneficiário',`<span class="edw-rv hl">${r.nome||'—'}</span>`)+
+        edwRow('Departamento',r.dept||'—')+
+        edwRow('Resultado Esperado',reTag(r.re))+
+        edwRow('Termo Aditivo',taTag(r.ta))+
+        edwRow('PTA',r.pta||'—')+
+        edwRow('Processo',r.proc||'—')+
+      `</div>`;
+      html += `<div><div class="edw-sec">&#9992; Viagem</div>`+
+        edwRow('Motivo',r.motivo||'—')+
+        edwRow('Destino',`<strong>${r.dest||'—'}</strong>`)+
+        edwRow('Mês/Ano',`${r.mes||'?'}/${r.ano||'?'}`)+
+        edwRow('Prestação de Contas',statusTag(r.prest))+
+      `</div>`;
+      html += `<div><div class="edw-sec">&#128176; Valores</div>`+
+        `<div class="edw-fg">`+
+          edwFi('Diárias','var(--teal)',fmtBRL(r.vdiar))+
+          edwFi('Passagens','var(--accent)',fmtBRL(r.vpass))+
+        `</div>`+
+        edwRow('Valor Total',`<span class="edw-rv hl" style="color:var(--green)">${fmtBRL(r.vtot)}</span>`)+
+      `</div>`;
+    }
+
+    document.getElementById('edwBody').innerHTML = html;
+    document.getElementById('execOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeExecDetail(){
+    document.getElementById('execOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeExecDetail(); });
+
 </script>
+
+<div class="exec-overlay" id="execOverlay" onclick="if(event.target===this)closeExecDetail()">
+  <div class="exec-drawer">
+    <div class="edw-hdr">
+      <button class="edw-close" onclick="closeExecDetail()">&#10005;</button>
+      <div id="edwSt"></div>
+      <div class="edw-nome" id="edwNome">—</div>
+      <div class="edw-sub" id="edwSub">—</div>
+    </div>
+    <div class="edw-body" id="edwBody"></div>
+  </div>
+</div>
 
 </body>
 </html>
