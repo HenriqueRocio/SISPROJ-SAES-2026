@@ -309,9 +309,7 @@ function buildStrip(){
       return '<div class="ds-btn active" onclick="sw(this,\'TODOS\')">&#127968; Todos <span class="ds-cnt">'+vg+' vigentes</span></div>';
     }
     const pf=DEPT_PF[d]||0;
-    const pend=(DST[d]||{}).pd_pendente||0;
-    const alrt=pend>50?' alert':'';
-    return '<div class="ds-btn'+alrt+'" onclick="sw(this,\''+d+'\')">'+d+' <span class="ds-cnt">'+pf+'</span></div>';
+    return '<div class="ds-btn" onclick="sw(this,\''+d+'\')">'+d+' <span class="ds-cnt">'+pf+'</span></div>';
   }).join('');
 }
 
@@ -346,7 +344,7 @@ function renderGlobal(el){
       kpi('ky','Empenhado',BRLk(te),((te/ta)*100).toFixed(1)+'% aprovado')+
       kpi('kg','Pago',BRLk(tp),((tp/ta)*100).toFixed(1)+'% aprovado')+
       kpi('kg','PF Ativos',688,'CLT '+cltAt+' · BOL/RPA '+bolAt)+
-      kpi('kr','PC Pendente &#9888;',pdPnd,BRLk(pdPndV)+' em aberto')+
+      kpi('ko','Passagens/Diárias',pdPnd,BRLk(pdPndV)+' executadas')+
       kpi('ko','Passagens Total','3.811','R$ 14,92 M')+
       kpi('ky','Contratos PJ','206',BRLk(pjV))+
     '</div>'+
@@ -355,9 +353,9 @@ function renderGlobal(el){
       '<div class="mcard"><div class="mhdr"><span>&#128101;</span><span class="mhdr-t">PF Ativos por Departamento</span><span class="mhdr-s">CLT + BOL</span></div><div style="height:210px"><canvas id="cG2"></canvas></div></div>'+
     '</div>'+
     '<div class="g2">'+
-      '<div class="mcard"><div class="mhdr"><span>&#9888;&#65039;</span><span class="mhdr-t">PC Pendente por Departamento</span></div><div style="height:190px"><canvas id="cG3"></canvas></div></div>'+
+      '<div class="mcard"><div class="mhdr"><span>&#9888;&#65039;</span><span class="mhdr-t">Passagens e Diárias por Departamento</span></div><div style="height:190px"><canvas id="cG3"></canvas></div></div>'+
       '<div class="mcard"><div class="mhdr"><span>&#128203;</span><span class="mhdr-t">Resumo por Departamento</span><span class="mhdr-s">clique para abrir painel</span></div>'+
-        '<div class="tbl-wrap"><table class="t"><thead><tr><th>Depto</th><th>Vig.</th><th style="text-align:right">Aprovado</th><th style="text-align:right">Pago</th><th>%</th><th>CLT</th><th>BOL</th><th>PF Tot.</th><th style="color:var(--red)">PC Pend.</th></tr></thead><tbody id="gTbl"></tbody></table></div>'+
+        '<div class="tbl-wrap"><table class="t"><thead><tr><th>Depto</th><th>Vig.</th><th style="text-align:right">Aprovado</th><th style="text-align:right">Pago</th><th>%</th><th>CLT</th><th>BOL</th><th>PF Tot.</th><th style="color:var(--orange)">P/D Exec.</th></tr></thead><tbody id="gTbl"></tbody></table></div>'+
       '</div>'+
     '</div>';
 
@@ -368,7 +366,7 @@ function renderGlobal(el){
 
   _charts['g1']=new Chart(document.getElementById('cG1'),{type:'bar',data:{labels:DEPTS,datasets:[{label:'Aprovado',data:dv,backgroundColor:'#1aa0ff',borderRadius:3},{label:'Pago',data:dp,backgroundColor:'#00c97a',borderRadius:3}]},options:{plugins:{legend:{labels:{color:'#6b8ab0',boxWidth:8,font:{size:9}}}},scales:{x:{grid:{color:GC},ticks:{color:'#6b8ab0',maxRotation:50,font:{size:9}}},y:{grid:{color:GC},ticks:{color:'#6b8ab0',font:{size:9},callback:v=>'R$'+v+'M'}}},maintainAspectRatio:false}});
   _charts['g2']=new Chart(document.getElementById('cG2'),{type:'bar',data:{labels:DEPTS,datasets:[{data:dpf,backgroundColor:CP,borderRadius:3,borderWidth:0}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:GC},ticks:{color:'#6b8ab0',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#6b8ab0',font:{size:9}}}},maintainAspectRatio:false}});
-  _charts['g3']=new Chart(document.getElementById('cG3'),{type:'bar',data:{labels:DEPTS,datasets:[{data:dpnd,backgroundColor:dpnd.map(v=>v>100?'#e53935':v>50?'#f0b429':'#1aa0ff'),borderRadius:3,borderWidth:0}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:GC},ticks:{color:'#6b8ab0',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#6b8ab0',font:{size:9}}}},maintainAspectRatio:false}});
+  _charts['g3']=new Chart(document.getElementById('cG3'),{type:'bar',data:{labels:DEPTS,datasets:[{data:dpnd,backgroundColor:'#f57c00',borderRadius:3,borderWidth:0}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:GC},ticks:{color:'#6b8ab0',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#6b8ab0',font:{size:9}}}},maintainAspectRatio:false}});
 
   const dbolCLT={'GAB. SAES':[119,48],'DAET':[49,98],'DRAC':[26,52],'DEEQAE':[11,58],'DAHUD':[9,52],'DGH':[48,4],'DCEBAS':[16,20],'DECAN':[21,13],'DESMAD':[9,15],'FNSUS':[4,15],'INCA':[0,0]};
   document.getElementById('gTbl').innerHTML=DEPTS.map(d=>{
@@ -376,7 +374,7 @@ function renderGlobal(el){
     const p=st.val_aprov>0?(st.val_pago/st.val_aprov*100):0;
     const cl=p>=60?'var(--green)':p>=30?'var(--yellow)':'var(--orange)';
     const cb=dbolCLT[d]||[0,0];
-    return '<tr style="cursor:pointer" onclick="openDept(\''+d+'\')"><td><strong>'+d+'</strong></td><td><span class="b-tag t-a">'+(st.proj_vigentes||0)+'</span></td><td class="nr">'+BRLk(st.val_aprov||0)+'</td><td class="nr">'+BRLk(st.val_pago||0)+'</td><td style="font-family:var(--mono);font-size:10px;color:'+cl+'">'+p.toFixed(1)+'%</td><td><span class="b-tag t-g">'+cb[0]+'</span></td><td><span class="b-tag t-p">'+cb[1]+'</span></td><td><strong>'+(DEPT_PF[d]||0)+'</strong></td><td><span class="b-tag '+(st.pd_pendente>50?'t-r':'t-y')+'">'+(st.pd_pendente||0)+'</span></td></tr>';
+    return '<tr style="cursor:pointer" onclick="openDept(\''+d+'\')"><td><strong>'+d+'</strong></td><td><span class="b-tag t-a">'+(st.proj_vigentes||0)+'</span></td><td class="nr">'+BRLk(st.val_aprov||0)+'</td><td class="nr">'+BRLk(st.val_pago||0)+'</td><td style="font-family:var(--mono);font-size:10px;color:'+cl+'">'+p.toFixed(1)+'%</td><td><span class="b-tag t-g">'+cb[0]+'</span></td><td><span class="b-tag t-p">'+cb[1]+'</span></td><td><strong>'+(DEPT_PF[d]||0)+'</strong></td><td><span class="b-tag t-y">'+(st.pd_pendente||0)+'</span></td></tr>';
   }).join('');
 }
 
@@ -409,10 +407,10 @@ function renderDept(el,dept){
     dhs('var(--accent3)',st.proj_vigentes||0,'Projetos Vig.')+
     dhs('var(--green)',pfTot,'PF Ativos')+
     dhs('var(--yellow)',BRLk(st.val_aprov||0),'Val. Aprovado')+
-    dhs(hasAlert?'var(--red)':'var(--text)',st.pd_pendente||0,'PC Pendente')+
+    dhs('var(--orange)',st.pd_pendente||0,'P/D Executadas')+
   '</div></div>';
 
-  if(hasAlert) h+='<div class="alert-box"><div><div class="ab-h">'+st.pd_pendente+' prestações de contas pendentes — '+BRLk(st.pd_pend_valor||0)+'</div><div class="ab-p">Passagens e diárias aguardando comprovação. Ver tabela abaixo.</div></div></div>';
+  if(hasAlert) h+='<div class="alert-box warn"><div><div class="ab-h">'+st.pd_pendente+' passagens e diárias executadas — '+BRLk(st.pd_pend_valor||0)+'</div><div class="ab-p">Registros de passagens e diárias com execução registrada. Ver tabela abaixo.</div></div></div>';
 
   h+='<div class="kpi-row">'+
     kpi('kb','Val. Aprovado',BRLk(st.val_aprov||0),(st.proj_total||0)+' projetos')+
@@ -421,7 +419,7 @@ function renderDept(el,dept){
     kpi('kg','CLT Ativos',st.clt_ativos||0,'Folha BT: '+BRLk(st.clt_folha||0))+
     kpi('kp','Bolsistas',bs.total||0,'Total PF: '+pfTot)+
     kpi('ko','Passagens',ps.total||0,BRLk(ps.total_valor||0))+
-    kpi(hasAlert?'kr':'ko','PC Pendente',st.pd_pendente||0,BRLk(st.pd_pend_valor||0))+
+    kpi('ko','Passagens/Diárias',st.pd_pendente||0,BRLk(st.pd_pend_valor||0))+
     kpi('kt','Contratos PJ',st.pj_total||0,BRLk(st.pj_valor||0))+
   '</div>';
 
@@ -436,7 +434,7 @@ function renderDept(el,dept){
   if(proj_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#128193;</span><span class="mhdr-t">Projetos TEDs</span><span class="mhdr-s">'+proj_v.length+' vigentes · '+proj_d.length+' totais</span></div><div class="scroll-wrap"><div class="prc-grid" id="projGrid"></div></div></div>';
   if(clt_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#128100;</span><span class="mhdr-t">CLT em Execução</span><span class="mhdr-s">clique para detalhar</span></div><div class="fbar"><input type="text" id="cltF" placeholder="Buscar nome, cargo..." oninput="filtCLT()"><select id="cltS" onchange="filtCLT()"><option value="">Todos status</option><option value="Ativo">Ativo</option><option value="Programado">Programado</option><option value="Inativo">Inativo</option></select><span class="fcnt" id="cltCnt">'+clt_d.length+' contratos</span></div><div class="tbl-wrap" style="max-height:480px"><table class="t"><thead><tr><th>Nome</th><th>Cargo</th><th>Projeto</th><th>Coord.</th><th>Status</th><th>Término</th><th style="text-align:right">Custo Efetivo</th><th style="text-align:right">Custo Exec.</th></tr></thead><tbody id="cltGrid"></tbody></table></div></div>';
   if(bol_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#127891;</span><span class="mhdr-t">Bolsistas em Execução</span><span class="mhdr-s">'+bol_d.length+' ativos · '+BRLk(bol_d.reduce((s,r)=>s+r[6],0))+'</span></div><div class="tbl-wrap" style="max-height:420px"><table class="t" id="bolTbl"><thead><tr><th>Nome</th><th>Projeto</th><th>Coordenação</th><th>Vínculo</th><th style="text-align:right">Val. Mensal</th><th style="text-align:right">Val. Executado</th><th>Término</th></tr></thead><tbody id="bolGrid"></tbody></table></div></div>';
-  if(pend.length) h+='<div class="mcard"><div class="mhdr"><span>&#9888;&#65039;</span><span class="mhdr-t">PC PENDENTE — Top por Valor</span><span class="mhdr-s">'+(st.pd_pendente||0)+' total · '+BRLk(st.pd_pend_valor||0)+'</span></div><div class="tbl-wrap"><table class="t"><thead><tr><th>ID</th><th>Tipo</th><th>Projeto</th><th>Nome</th><th>Destino</th><th style="text-align:right">Diárias</th><th style="text-align:right">Passagem</th><th style="text-align:right">Total</th></tr></thead><tbody>'+pend.map((r,i)=>'<tr style="cursor:pointer" onclick="openPdDW(_pdView['+i+'])"><td class="mc">'+r.id+'</td><td><span class="b-tag '+(r.tipo==='Extraordinária'?'t-p':'t-b')+'">'+r.tipo+'</span></td><td class="mc">'+(r.projeto||'—')+'</td><td style="font-size:10px">'+(r.nome||'—')+'</td><td class="mc" style="font-size:9.5px">'+(r.destino||'—')+'</td><td class="nr">'+BRL(r.diarias)+'</td><td class="nr">'+BRL(r.passagem)+'</td><td class="nr" style="font-weight:700;color:var(--red)">'+BRL(r.total)+'</td></tr>').join('')+'</tbody></table></div></div>';
+  if(pend.length) h+='<div class="mcard"><div class="mhdr"><span>&#9888;&#65039;</span><span class="mhdr-t">Passagens e Diárias — Top por Valor</span><span class="mhdr-s">'+(st.pd_pendente||0)+' total · '+BRLk(st.pd_pend_valor||0)+'</span></div><div class="tbl-wrap"><table class="t"><thead><tr><th>ID</th><th>Tipo</th><th>Projeto</th><th>Nome</th><th>Destino</th><th style="text-align:right">Diárias</th><th style="text-align:right">Passagem</th><th style="text-align:right">Total</th></tr></thead><tbody>'+pend.map((r,i)=>'<tr style="cursor:pointer" onclick="openPdDW(_pdView['+i+'])"><td class="mc">'+r.id+'</td><td><span class="b-tag '+(r.tipo==='Extraordinária'?'t-p':'t-b')+'">'+r.tipo+'</span></td><td class="mc">'+(r.projeto||'—')+'</td><td style="font-size:10px">'+(r.nome||'—')+'</td><td class="mc" style="font-size:9.5px">'+(r.destino||'—')+'</td><td class="nr">'+BRL(r.diarias)+'</td><td class="nr">'+BRL(r.passagem)+'</td><td class="nr" style="font-weight:700;color:var(--red)">'+BRL(r.total)+'</td></tr>').join('')+'</tbody></table></div></div>';
   if(pj_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#127970;</span><span class="mhdr-t">Contratos PJ</span><span class="mhdr-s">'+pj_d.length+' contratos · '+BRLk(pj_d.reduce((s,r)=>s+r[7],0))+'</span></div><div class="tbl-wrap" style="max-height:420px"><table class="t" id="pjTbl"><thead><tr><th>ID</th><th>Categoria</th><th>Projeto</th><th>Objeto</th><th>Fornecedor</th><th style="text-align:right">Valor</th></tr></thead><tbody id="pjGrid"></tbody></table></div></div>';
 
   el.innerHTML=h;
