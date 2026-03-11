@@ -222,6 +222,18 @@ footer{text-align:center;padding:12px;font-size:9.5px;color:var(--text3);font-fa
 <nav class="dept-strip" id="deptStrip"></nav>
 <div class="content" id="mainContent"></div>
 <footer>CGPROJ · SAES · Ministério da Saúde · Painel Integrado TED v3.1 · mar/2026</footer>
+<div class="overlay" id="projOverlay" onclick="if(event.target===this)closeProjDW()">
+  <div class="drawer" id="projDrawer">
+    <div class="dw-hdr">
+      <button class="dw-close" onclick="closeProjDW()">&#10005;</button>
+      <div id="projDwSt"></div>
+      <div class="dw-nome" id="projDwNome">—</div>
+      <div class="dw-mat" id="projDwSub">—</div>
+    </div>
+    <div class="dw-body" id="projDwBody"></div>
+  </div>
+</div>
+
 <div class="overlay" id="overlay" onclick="if(event.target===this)closeDW()">
   <div class="drawer" id="drawer">
     <div class="dw-hdr">
@@ -435,7 +447,7 @@ function renderProj(list){
   document.getElementById('projGrid').innerHTML=list.map(r=>{
     const pct=r[6]>0?(r[8]/r[6]*100):0;
     const sc=r[3]==='VIGENTE'?'t-g':r[3]==='ENCERRADO'?'t-m':'t-y';
-    return '<div class="prc"><div class="prc-top"><span class="prc-cod">'+r[0]+'</span><span class="b-tag '+sc+'">'+r[3]+'</span></div>'+
+    return '<div class="prc" style="cursor:pointer" onclick="openProjDW(\''+r[0]+'\')"><div class="prc-top"><span class="prc-cod">'+r[0]+'</span><span class="b-tag '+sc+'">'+r[3]+'</span></div>'+
       '<div class="prc-title">'+(r[1]||r[9]||'—')+'</div>'+
       '<div class="prc-vals">'+
         '<div class="prc-v"><div class="prc-vv">'+BRLk(r[6])+'</div><div class="prc-vl">Aprovado</div></div>'+
@@ -550,7 +562,127 @@ function gauge2(lbl,pct,v1,v2){ const c=pc(pct); return '<div class="dg-title">&
 function fi2(l,cls,v){ return '<div class="fi"><div class="fi-l">'+l+'</div><div class="fi-v '+cls+'">'+v+'</div></div>'; }
 
 function closeDW(){ document.getElementById('overlay').classList.remove('open'); document.body.style.overflow=''; }
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDW(); });
+
+// ---- PROJECT DRAWER ----
+function openProjDW(projId){
+  const r=PROJ.find(p=>p[0]===projId); if(!r) return;
+  const sc=r[3]==='VIGENTE'?'t-g':r[3]==='ENCERRADO'?'t-m':'t-y';
+  const pctEmp=r[6]>0?(r[7]/r[6]*100):0;
+  const pctPago=r[6]>0?(r[8]/r[6]*100):0;
+  const pctExec=r[7]>0?(r[8]/r[7]*100):0;
+  const cltProj=CLT.filter(c=>c[2]===projId);
+  const cltAtivos=cltProj.filter(c=>c[6]==='Ativo');
+  const bolProj=BOL.filter(b=>b[1]===projId);
+  const pjProj=PJ_D.filter(p=>p[2]===projId);
+  const pdProj=[];
+  DEPTS.forEach(d=>{ const tops=PD_TOP[d]||[]; tops.forEach(p=>{ if(p.projeto===projId) pdProj.push(p); }); });
+  const folhaTotal=cltAtivos.reduce((s,c)=>s+(c[10]||0),0);
+
+  document.getElementById('projDwSt').innerHTML='<span class="b-tag '+sc+'">'+r[3]+'</span>'+(r[4]?' <span class="b-tag t-b">'+r[4]+'</span>':'');
+  document.getElementById('projDwNome').textContent=r[0];
+  document.getElementById('projDwSub').textContent=(r[5]||'—')+' · '+(r[2]||'—');
+
+  let html='';
+
+  // Identificação
+  html+='<div><div class="dg-title">&#128203; Identificação</div>'+
+    dr2('Número/ID','<span class="drv hl">'+r[0]+'</span>')+
+    dr2('Objeto',(r[1]||'—'))+
+    dr2('Nome Curto',(r[9]||'—'))+
+    dr2('Secretaria','<span class="b-tag t-a">'+r[2]+'</span>')+
+    dr2('Tipo',r[4]||'—')+
+    dr2('Parceiro/Convenente','<strong>'+r[5]+'</strong>')+
+    dr2('Status','<span class="b-tag '+sc+'">'+r[3]+'</span>')+
+  '</div>';
+
+  // Valores financeiros
+  const cEmp=pc(pctEmp), cPago=pc(pctPago);
+  html+='<div><div class="dg-title">&#128176; Execução Financeira</div>'+
+    '<div class="fin-g">'+
+      fi2('Aprovado','av',BRL(r[6]))+
+      fi2('Empenhado','yv',BRL(r[7]))+
+      fi2('Pago','gv',BRL(r[8]))+
+      fi2('Folha Mensal','',BRL(folhaTotal))+
+    '</div>'+
+    '<div style="margin-top:10px">'+
+      '<div class="gauge-wrap"><div class="gauge-top"><span class="gauge-lbl">% Empenhado</span><span class="gauge-pct" style="color:'+cEmp+'">'+pctEmp.toFixed(1)+'%</span></div><div class="gauge-bar"><div class="gauge-fill" style="width:'+Math.min(pctEmp,100)+'%;background:'+cEmp+'"></div></div><div class="gauge-vals"><span>Emp: '+BRLk(r[7])+'</span><span>Aprov: '+BRLk(r[6])+'</span></div></div>'+
+      '<div class="gauge-wrap" style="margin-top:6px"><div class="gauge-top"><span class="gauge-lbl">% Pago / Aprovado</span><span class="gauge-pct" style="color:'+cPago+'">'+pctPago.toFixed(1)+'%</span></div><div class="gauge-bar"><div class="gauge-fill" style="width:'+Math.min(pctPago,100)+'%;background:'+cPago+'"></div></div><div class="gauge-vals"><span>Pago: '+BRLk(r[8])+'</span><span>Aprov: '+BRLk(r[6])+'</span></div></div>'+
+    (pctExec>0?'<div class="gauge-wrap" style="margin-top:6px"><div class="gauge-top"><span class="gauge-lbl">% Pago / Empenhado</span><span class="gauge-pct" style="color:'+pc(pctExec)+'">'+pctExec.toFixed(1)+'%</span></div><div class="gauge-bar"><div class="gauge-fill" style="width:'+Math.min(pctExec,100)+'%;background:'+pc(pctExec)+'"></div></div><div class="gauge-vals"><span>Pago: '+BRLk(r[8])+'</span><span>Emp: '+BRLk(r[7])+'</span></div></div>':'')+
+    '</div></div>';
+
+  // Cronograma de desembolso (derivado dos CLTs do projeto)
+  if(cltProj.length>0){
+    const admDates=cltProj.filter(c=>c[13]).map(c=>c[13]).sort();
+    const fimDates=cltProj.filter(c=>c[15]).map(c=>c[15]).sort();
+    const inicio=admDates.length>0?fd(admDates[0]):'—';
+    const fim=fimDates.length>0?fd(fimDates[fimDates.length-1]):'—';
+    const today='2026-03-06';
+    const ultimaData=fimDates.length>0?fimDates[fimDates.length-1]:null;
+    let diasRest='—', dbc='d-ok';
+    if(ultimaData){
+      const dr=Math.round((new Date(ultimaData)-new Date(today))/(86400000));
+      diasRest=dr>0?'+'+dr+' dias':dr===0?'hoje':Math.abs(dr)+' dias vencido';
+      dbc=dr<90?'d-cr':dr<180?'d-wn':'d-ok';
+    }
+    html+='<div><div class="dg-title">&#128197; Vigência e Cronograma</div>'+
+      dr2('Início (1ª admissão)',inicio)+
+      dr2('Término (último contrato)',fim)+
+      '<div class="dr"><span class="drl">Prazo restante</span><span class="dias-b '+dbc+'">'+diasRest+'</span></div>'+
+    '</div>';
+  }
+
+  // Equipe CLT
+  html+='<div><div class="dg-title">&#128101; Equipe</div>'+
+    '<div class="fin-g">'+
+      fi2('CLT Ativos','av',cltAtivos.length)+
+      fi2('CLT Total','',cltProj.length)+
+      fi2('Bolsistas','',bolProj.length)+
+      fi2('Contratos PJ','',pjProj.length)+
+    '</div>';
+  if(cltAtivos.length>0){
+    html+='<div style="margin-top:10px;max-height:200px;overflow-y:auto" class="scroll-wrap"><table class="t"><thead><tr><th>Nome</th><th>Depto</th><th>Custo Efetivo</th></tr></thead><tbody>';
+    cltAtivos.sort((a,b)=>(b[10]||0)-(a[10]||0)).slice(0,20).forEach(c=>{
+      html+='<tr><td>'+c[0]+'</td><td>'+c[4]+'</td><td class="nr">'+BRLk(c[10])+'</td></tr>';
+    });
+    if(cltAtivos.length>20) html+='<tr><td colspan="3" style="color:var(--text3);font-style:italic">… e mais '+(cltAtivos.length-20)+' colaboradores</td></tr>';
+    html+='</tbody></table></div>';
+  }
+  html+='</div>';
+
+  // Passagens e Diárias
+  if(pdProj.length>0){
+    const pdTotal=pdProj.reduce((s,p)=>s+p.total,0);
+    html+='<div><div class="dg-title">&#9992; Passagens e Diárias</div>'+
+      dr2('Total de PDs',pdProj.length)+
+      dr2('Valor Total','<span class="drv hl">'+BRL(pdTotal)+'</span>')+
+      '<div style="margin-top:8px;max-height:160px;overflow-y:auto" class="scroll-wrap"><table class="t"><thead><tr><th>ID</th><th>Nome</th><th>Valor</th></tr></thead><tbody>';
+    pdProj.sort((a,b)=>b.total-a.total).slice(0,10).forEach(p=>{
+      html+='<tr><td class="mc">'+p.id+'</td><td>'+p.nome+'</td><td class="nr">'+BRLk(p.total)+'</td></tr>';
+    });
+    html+='</tbody></table></div></div>';
+  }
+
+  // Contratos PJ
+  if(pjProj.length>0){
+    const pjTotal=pjProj.reduce((s,p)=>s+(p[7]||0),0);
+    html+='<div><div class="dg-title">&#128188; Contratos PJ</div>'+
+      dr2('Total de Contratos',pjProj.length)+
+      dr2('Valor Total','<span class="drv hl">'+BRL(pjTotal)+'</span>')+
+      '<div style="margin-top:8px;max-height:160px;overflow-y:auto" class="scroll-wrap"><table class="t"><thead><tr><th>ID</th><th>Tipo</th><th>Valor</th></tr></thead><tbody>';
+    pjProj.sort((a,b)=>(b[7]||0)-(a[7]||0)).slice(0,10).forEach(p=>{
+      html+='<tr><td class="mc">'+p[0]+'</td><td>'+p[1]+'</td><td class="nr">'+BRLk(p[7])+'</td></tr>';
+    });
+    html+='</tbody></table></div></div>';
+  }
+
+  document.getElementById('projDwBody').innerHTML=html;
+  document.getElementById('projOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeProjDW(){ document.getElementById('projOverlay').classList.remove('open'); document.body.style.overflow=''; }
+
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeDW(); closeProjDW(); } });
 
 // ---- BOOT ----
 buildStrip();
