@@ -4,36 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painéis — CGPROJ/SAES · Ministério da Saúde</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b0f14;--s1:#131820;--s2:#1a2230;--bd:#1f2d3d;--ac:#00e5a0;--ac2:#0099ff;--ac3:#ff6b35;--ac4:#ffd166;--tx:#e8edf3;--tm:#6b7f96;--td:#3d5068;--pur:#a855f7;}
+:root{--bg:#F4F6F9;--card:#FFFFFF;--card-hover:#F8FAFC;--bd:#E5E7EB;--bd2:#D1D5DB;--ac:#2563EB;--ac2:#3B82F6;--ac3:#1D4ED8;--green:#059669;--orange:#EA580C;--yellow:#D97706;--purple:#7C3AED;--tx:#1F2937;--tm:#6B7280;--td:#9CA3AF;--shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);--shadow-md:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.06);}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--tx);font-family:'Sora',sans-serif;min-height:100vh;}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,160,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,160,.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+body{background:var(--bg);color:var(--tx);font-family:'Inter','Segoe UI','Roboto',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;}
 
 .wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:48px 28px 64px;}
 
-/* HEADER */
-header{margin-bottom:52px;}
-.gov-bar{display:flex;align-items:center;gap:10px;margin-bottom:28px;padding-bottom:18px;border-bottom:1px solid var(--bd);}
-.gov-dot{width:10px;height:10px;border-radius:50%;background:var(--ac);animation:pulse 2.5s infinite;}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,229,160,.4)}50%{box-shadow:0 0 0 6px rgba(0,229,160,0)}}
-.gov-name{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--tm);}
-.gov-sep{color:var(--bd);margin:0 4px;}
+/* TOPBAR */
+.gov-bar-top{background:linear-gradient(135deg,#1E3A5F 0%,#2563EB 100%);padding:14px 28px;margin:-48px -28px 32px;border-radius:0 0 16px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(37,99,235,.25);}
+.gov-bar-left{display:flex;align-items:center;gap:12px;}
+.gov-bar-dot{width:8px;height:8px;border-radius:50%;background:#34D399;box-shadow:0 0 6px #34D399;animation:pulse 2.5s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,.4)}50%{box-shadow:0 0 0 6px rgba(52,211,153,0)}}
+.gov-bar-text{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.85);}
+.gov-bar-sep{color:rgba(255,255,255,.3);margin:0 2px;}
+.gov-bar-right{display:flex;align-items:center;gap:8px;}
+.gov-bar-badge{background:rgba(255,255,255,.15);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:600;color:#fff;}
 
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);color:var(--ac);font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:14px;font-family:'DM Mono',monospace;}
-h1{font-size:clamp(28px,4vw,48px);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-bottom:10px;}
+/* HERO */
+header{margin-bottom:40px;}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.2);color:var(--ac);font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:14px;font-family:'JetBrains Mono',monospace;}
+h1{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-bottom:10px;color:var(--tx);}
 h1 em{color:var(--ac);font-style:normal;}
-.hero-sub{font-size:13px;color:var(--tm);font-weight:300;max-width:520px;line-height:1.6;}
+.hero-sub{font-size:13px;color:var(--tm);font-weight:400;max-width:520px;line-height:1.7;}
 
 /* SEARCH */
 .search-section{margin-bottom:36px;}
 .search-wrap{position:relative;max-width:400px;}
-.search-input{width:100%;background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:10px 14px 10px 40px;color:var(--tx);font-size:13px;font-family:'Sora',sans-serif;outline:none;transition:border-color .2s;}
-.search-input:focus{border-color:var(--ac);}
+.search-input{width:100%;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px 14px 10px 40px;color:var(--tx);font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s,box-shadow .2s;box-shadow:0 1px 2px rgba(0,0,0,.05);}
+.search-input:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(37,99,235,.1);}
 .search-input::placeholder{color:var(--td);}
 .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--td);font-size:14px;pointer-events:none;}
-.search-count{margin-top:8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--td);}
+.search-count{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--td);}
 
 /* SECTION LABEL */
 .section-label{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--td);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
@@ -43,32 +46,32 @@ h1 em{color:var(--ac);font-style:normal;}
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:40px;}
 
 /* PANEL CARD */
-.panel-card{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:22px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:14px;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative;overflow:hidden;cursor:pointer;}
-.panel-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--card-color,var(--ac));opacity:.8;}
-.panel-card:hover{border-color:var(--card-color,var(--ac));transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.3);}
-.panel-card.green{--card-color:var(--ac);}
-.panel-card.blue{--card-color:var(--ac2);}
-.panel-card.orange{--card-color:var(--ac3);}
-.panel-card.yellow{--card-color:var(--ac4);}
-.panel-card.purple{--card-color:var(--pur);}
+.panel-card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:22px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:14px;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.05);}
+.panel-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--card-color,var(--ac));opacity:.9;}
+.panel-card:hover{border-color:var(--card-color,var(--ac));transform:translateY(-3px);box-shadow:var(--shadow-md);}
+.panel-card.green{--card-color:#059669;}
+.panel-card.blue{--card-color:#2563EB;}
+.panel-card.orange{--card-color:#EA580C;}
+.panel-card.yellow{--card-color:#D97706;}
+.panel-card.purple{--card-color:#7C3AED;}
 
 .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-.card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(255,255,255,.04);border:1px solid var(--bd);flex-shrink:0;}
-.card-status{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:12px;font-family:'DM Mono',monospace;}
-.status-live{background:rgba(0,229,160,.1);color:var(--ac);border:1px solid rgba(0,229,160,.2);}
-.status-live::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--ac);animation:blink 1.8s infinite;}
+.card-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--bg);border:1px solid var(--bd);flex-shrink:0;}
+.card-status{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:12px;font-family:'JetBrains Mono',monospace;}
+.status-live{background:#D1FAE5;color:#065F46;border:1px solid #A7F3D0;}
+.status-live::before{content:'';width:5px;height:5px;border-radius:50%;background:#059669;animation:blink 1.8s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-.status-wip{background:rgba(255,209,102,.08);color:var(--ac4);border:1px solid rgba(255,209,102,.2);}
-.status-draft{background:rgba(61,80,104,.2);color:var(--td);border:1px solid var(--bd);}
+.status-wip{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A;}
+.status-draft{background:#F3F4F6;color:var(--td);border:1px solid var(--bd);}
 
-.card-title{font-size:14px;font-weight:700;letter-spacing:-.01em;margin-bottom:4px;}
+.card-title{font-size:14px;font-weight:700;letter-spacing:-.01em;margin-bottom:4px;color:var(--tx);}
 .card-desc{font-size:11px;color:var(--tm);line-height:1.5;}
 
 .card-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px;}
-.meta-tag{font-family:'DM Mono',monospace;font-size:9px;color:var(--td);background:var(--s2);border:1px solid var(--bd);padding:2px 7px;border-radius:4px;}
+.meta-tag{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--tm);background:var(--bg);border:1px solid var(--bd);padding:2px 8px;border-radius:4px;}
 
 .card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--bd);}
-.card-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--td);}
+.card-date{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--td);}
 .card-arrow{font-size:14px;color:var(--card-color,var(--ac));opacity:.7;transition:opacity .2s,transform .2s;}
 .panel-card:hover .card-arrow{opacity:1;transform:translateX(4px);}
 
@@ -77,53 +80,58 @@ h1 em{color:var(--ac);font-style:normal;}
 
 /* FOOTER */
 footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
-footer span{font-family:'DM Mono',monospace;font-size:10px;color:var(--td);}
+footer span{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--td);}
 .footer-logo{display:flex;align-items:center;gap:8px;}
 .footer-logo-dot{width:6px;height:6px;border-radius:50%;background:var(--ac);}
 
-@media(max-width:600px){h1{font-size:28px;}.wrap{padding:28px 16px 48px;}.cards-grid{grid-template-columns:1fr;}}
+@media(max-width:600px){h1{font-size:28px;}.wrap{padding:28px 16px 48px;}.cards-grid{grid-template-columns:1fr;}.gov-bar-top{margin:-28px -16px 24px;padding:12px 16px;border-radius:0 0 12px 12px;}}
 
 /* ── PASSWORD MODAL ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
 .modal-overlay.open{opacity:1;pointer-events:all;}
-.modal-box{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:32px 28px;width:100%;max-width:380px;position:relative;transform:translateY(16px);transition:transform .25s;box-shadow:0 24px 64px rgba(0,0,0,.6);}
+.modal-box{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:32px 28px;width:100%;max-width:380px;position:relative;transform:translateY(16px);transition:transform .25s;box-shadow:0 24px 64px rgba(0,0,0,.15);}
 .modal-overlay.open .modal-box{transform:translateY(0);}
-.modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac);border-radius:16px 16px 0 0;}
-.modal-icon{width:48px;height:48px;border-radius:12px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px;}
-.modal-title{font-size:16px;font-weight:800;letter-spacing:-.01em;margin-bottom:4px;}
+.modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ac);border-radius:16px 16px 0 0;}
+.modal-icon{width:48px;height:48px;border-radius:12px;background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.2);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px;}
+.modal-title{font-size:16px;font-weight:800;letter-spacing:-.01em;margin-bottom:4px;color:var(--tx);}
 .modal-sub{font-size:11px;color:var(--tm);margin-bottom:20px;line-height:1.5;}
 .modal-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--td);margin-bottom:6px;}
 .modal-input-wrap{position:relative;margin-bottom:8px;}
-.modal-input{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:10px 40px 10px 12px;color:var(--tx);font-size:13px;font-family:'DM Mono',monospace;outline:none;letter-spacing:.08em;transition:border-color .2s;}
-.modal-input:focus{border-color:var(--ac);}
-.modal-input.error{border-color:var(--ac3) !important;animation:shake .3s ease;}
+.modal-input{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px 40px 10px 12px;color:var(--tx);font-size:13px;font-family:'JetBrains Mono',monospace;outline:none;letter-spacing:.08em;transition:border-color .2s,box-shadow .2s;}
+.modal-input:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(37,99,235,.1);}
+.modal-input.error{border-color:#DC2626 !important;animation:shake .3s ease;}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .modal-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--td);font-size:14px;user-select:none;transition:color .15s;}
 .modal-eye:hover{color:var(--tm);}
-.modal-error{font-size:10px;color:var(--ac3);font-family:'DM Mono',monospace;margin-bottom:12px;min-height:14px;}
-.modal-btn{width:100%;background:var(--ac);color:#0b0f14;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:11px;border:none;border-radius:8px;cursor:pointer;font-family:'Sora',sans-serif;transition:opacity .15s,transform .1s;margin-bottom:10px;}
-.modal-btn:hover{opacity:.88;}
+.modal-error{font-size:10px;color:#DC2626;font-family:'JetBrains Mono',monospace;margin-bottom:12px;min-height:14px;}
+.modal-btn{width:100%;background:var(--ac);color:#fff;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:11px;border:none;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .15s,transform .1s;margin-bottom:10px;}
+.modal-btn:hover{opacity:.9;}
 .modal-btn:active{transform:scale(.98);}
 .modal-btn:disabled{opacity:.4;cursor:not-allowed;}
 .modal-cancel{display:block;text-align:center;font-size:11px;color:var(--td);cursor:pointer;padding:4px;transition:color .15s;}
 .modal-cancel:hover{color:var(--tm);}
-.modal-attempts{font-family:'DM Mono',monospace;font-size:10px;color:var(--td);text-align:right;margin-top:4px;}
-.locked-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:10px;background:rgba(61,80,104,.25);color:var(--td);border:1px solid var(--bd);font-family:'DM Mono',monospace;}
-.unlocked-badge{background:rgba(0,229,160,.08);color:var(--ac);border-color:rgba(0,229,160,.2);font-size:9px;font-weight:600;padding:2px 7px;}
+.modal-attempts{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--td);text-align:right;margin-top:4px;}
+.locked-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;background:#F3F4F6;color:var(--td);border:1px solid var(--bd);font-family:'JetBrains Mono',monospace;}
+.unlocked-badge{background:#D1FAE5;color:#065F46;border-color:#A7F3D0;font-size:9px;font-weight:600;padding:2px 8px;}
 .panel-card .card-lock{position:absolute;top:14px;right:14px;font-size:12px;opacity:.5;}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <!-- GOV BAR -->
-  <div class="gov-bar">
-    <div class="gov-dot"></div>
-    <span class="gov-name">Ministério da Saúde</span>
-    <span class="gov-sep">/</span>
-    <span class="gov-name">SAES</span>
-    <span class="gov-sep">/</span>
-    <span class="gov-name">CGPROJ</span>
+  <!-- INSTITUTIONAL TOPBAR -->
+  <div class="gov-bar-top">
+    <div class="gov-bar-left">
+      <div class="gov-bar-dot"></div>
+      <span class="gov-bar-text">Ministério da Saúde</span>
+      <span class="gov-bar-sep">/</span>
+      <span class="gov-bar-text">SAES</span>
+      <span class="gov-bar-sep">/</span>
+      <span class="gov-bar-text">CGPROJ</span>
+    </div>
+    <div class="gov-bar-right">
+      <span class="gov-bar-badge" id="panelCountBadge"></span>
+    </div>
   </div>
 
   <!-- HERO -->
@@ -161,7 +169,6 @@ footer span{font-family:'DM Mono',monospace;font-size:10px;color:var(--td);}
 
 <script>
 // ── CADASTRO DOS PAINÉIS ───────────────────────────────────────────────────
-// Para adicionar um novo painel, basta adicionar um objeto nesta lista.
 var PANELS = [
   {
     id: 'ponto',
@@ -169,7 +176,7 @@ var PANELS = [
     desc: 'Acompanhamento de horas trabalhadas, localização de registros e ranking de colaboradores. Filtro individual por colaborador com histórico completo.',
     icon: '⏱',
     file: 'painel_ponto_v2.html',
-    status: 'live',      // live | wip | draft
+    status: 'live',
     color: 'green',
     tags: ['Pontomais', 'SAES-M11', '306 colaboradores', 'Jan–Mar 2026'],
     date: '05/03/2026',
@@ -179,7 +186,7 @@ var PANELS = [
     title: 'Execução Financeira OPAS',
     desc: 'Dashboard de gastos por Termo Aditivo (TA1, TA3, TA4, TA5) com visão de contratos PF, PJ, passagens e diárias.',
     icon: '💰',
-    file: 'opas.html',   // troque pelo nome real do seu arquivo
+    file: 'opas.html',
     status: 'live',
     color: 'blue',
     tags: ['TC-105-2019','TC-089-2015', 'OPAS/OMS', 'TED', 'Matrizes Lógicas'],
@@ -218,18 +225,6 @@ var PANELS = [
     tags: ['PROADI-SUS', 'Hospitais de Excelência', 'P&D', 'SUS'],
     date: '2026',
   },
-  // ── ADICIONE NOVOS PAINÉIS AQUI ──────────────────────────────────────────
-  // {
-  //   id: 'novo',
-  //   title: 'Nome do Painel',
-  //   desc: 'Descrição breve do que o painel mostra.',
-  //   icon: '📊',
-  //   file: 'nome_do_arquivo.html',
-  //   status: 'wip',
-  //   color: 'orange',
-  //   tags: ['Tag1', 'Tag2'],
-  //   date: '2026',
-  // },
 ];
 
 // ── STATUS LABELS ─────────────────────────────────────────────────────────
@@ -303,6 +298,7 @@ document.getElementById('searchInput').addEventListener('input', function(e){
 var now = new Date();
 document.getElementById('footerDate').textContent =
   'Gerado em ' + now.toLocaleDateString('pt-BR') + ' · ' + PANELS.length + ' painéis cadastrados';
+document.getElementById('panelCountBadge').textContent = PANELS.length + ' painéis';
 
 // ── DEPARTAMENTOS TED ────────────────────────────────────────────────────
 var DEPT_PANELS = [
@@ -340,7 +336,7 @@ function renderDeptCards(filter) {
     card.setAttribute('data-id', d.id);
     card.innerHTML =
       '<div class="card-top">'
-        + '<div class="card-icon" style="font-size:13px;font-family:\'DM Mono\',monospace;font-weight:700;letter-spacing:-.02em">'+d.sigla.substring(0,4)+'</div>'
+        + '<div class="card-icon" style="font-size:13px;font-family:\'JetBrains Mono\',monospace;font-weight:700;letter-spacing:-.02em">'+d.sigla.substring(0,4)+'</div>'
         + '<span class="card-status status-live">Disponível</span>'
       + '</div>'
       + '<div>'
@@ -367,7 +363,6 @@ function handleDeptClick(e, dept) {
     window.location.href = dept.file;
     return;
   }
-  // Reuse existing modal with a virtual panel object
   openModal({id: dept.id, title: dept.sigla + ' — Painel TED', icon: '📋', file: dept.file});
 }
 
@@ -375,16 +370,11 @@ function handleDeptClick(e, dept) {
 render('');
 renderDeptCards('');
 
-/* ── AUTH CONFIG ─────────────────────────────────────────────────
-   Para trocar a senha:
-   1. Calcule o SHA-256 da nova senha (use https://emn178.github.io/online-tools/sha256.html)
-   2. Substitua o hash abaixo
+/* ── AUTH CONFIG ─────────────────────────────────────────────
    Senha padrão: saes@2026
 ─────────────────────────────────────────────────────────────── */
 var GLOBAL_HASH = 'b4c00cd82f41629001f797810be552b886595b64cceeaadce1517f4c9f0812e3';
 
-// Hash por painel (se quiser senhas diferentes por painel, troque aqui)
-// Se não definido, usa GLOBAL_HASH
 var PANEL_HASH = {
   'ponto':  'b4c00cd82f41629001f797810be552b886595b64cceeaadce1517f4c9f0812e3',
   'tc105':  'b4c00cd82f41629001f797810be552b886595b64cceeaadce1517f4c9f0812e3',
@@ -397,13 +387,11 @@ var _pendingPanel = null;
 var _attempts = 0;
 var MAX_ATTEMPTS = 5;
 
-/* SHA-256 via Web Crypto API (nativo no browser) */
 async function sha256(str) {
   var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
 }
 
-/* Session unlock: chave salva por painel na aba atual */
 function isUnlocked(id) {
   return sessionStorage.getItem('unlocked_' + id) === '1';
 }
@@ -411,7 +399,6 @@ function setUnlocked(id) {
   sessionStorage.setItem('unlocked_' + id, '1');
 }
 
-/* Intercept card click */
 function handleCardClick(e, panel) {
   e.preventDefault();
   if(isUnlocked(panel.id)) {
@@ -421,7 +408,6 @@ function handleCardClick(e, panel) {
   openModal(panel);
 }
 
-/* Modal controls */
 function openModal(panel) {
   _pendingPanel = panel;
   _attempts = 0;
@@ -492,12 +478,10 @@ async function submitPassword() {
   }
 }
 
-/* Close on overlay click */
 document.getElementById('authModal').addEventListener('click', function(e){
   if(e.target === this) closeModal();
 });
 
-/* Enter key */
 document.getElementById('modalInput').addEventListener('keydown', function(e){
   if(e.key === 'Enter') submitPassword();
   if(e.key === 'Escape') closeModal();

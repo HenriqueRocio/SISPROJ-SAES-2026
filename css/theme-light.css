@@ -1,0 +1,213 @@
+/* ══════════════════════════════════════════════════════════════
+   SISPROJ — Design System — Light Theme
+   CGPROJ · SAES · Ministério da Saúde
+   ══════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* ── Backgrounds ── */
+  --bg: #F4F6F9;
+  --bg2: #EEF1F5;
+  --bg3: #E8ECF2;
+
+  /* ── Surfaces ── */
+  --card: #FFFFFF;
+  --card2: #F8FAFC;
+  --card-hover: #F1F5F9;
+
+  /* ── Borders ── */
+  --border: #E5E7EB;
+  --border2: #D1D5DB;
+
+  /* ── Text ── */
+  --text: #1F2937;
+  --text2: #6B7280;
+  --text3: #9CA3AF;
+  --white: #111827;
+
+  /* ── Accent (institutional blue) ── */
+  --accent: #2563EB;
+  --accent2: #3B82F6;
+  --accent3: #1D4ED8;
+
+  /* ── Semantic colors ── */
+  --green: #059669;
+  --green2: #10B981;
+  --green-bg: #D1FAE5;
+  --green-border: #A7F3D0;
+
+  --yellow: #D97706;
+  --yellow2: #F59E0B;
+  --yellow-bg: #FEF3C7;
+  --yellow-border: #FDE68A;
+
+  --orange: #EA580C;
+  --orange-bg: #FFEDD5;
+  --orange-border: #FED7AA;
+
+  --red: #DC2626;
+  --red-bg: #FEE2E2;
+  --red-border: #FECACA;
+
+  --purple: #7C3AED;
+  --purple-bg: #EDE9FE;
+  --purple-border: #DDD6FE;
+
+  --teal: #0891B2;
+  --teal-bg: #CFFAFE;
+  --teal-border: #A5F3FC;
+
+  /* ── Fonts ── */
+  --font: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+  --mono: 'JetBrains Mono', 'Consolas', monospace;
+
+  /* ── Radii ── */
+  --r: 10px;
+  --r2: 8px;
+  --r3: 6px;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
+  --shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+  --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,.1), 0 4px 6px rgba(0,0,0,.05);
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+/* ══════════════════════════════════════════════════════════════
+   TOPBAR — Institutional Header
+   ══════════════════════════════════════════════════════════════ */
+.topbar {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: linear-gradient(135deg, #1E3A5F 0%, #2563EB 100%);
+  color: #FFFFFF;
+  position: sticky;
+  top: 0;
+  z-index: 400;
+  box-shadow: 0 2px 8px rgba(37,99,235,.25);
+}
+.tb-left { display: flex; align-items: center; gap: 12px; }
+.tb-logo {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,.2);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 12px;
+  color: #fff;
+}
+.tb-title { font-size: 15px; font-weight: 600; color: #FFFFFF; }
+.tb-sub { font-size: 10px; color: rgba(255,255,255,.7); font-family: var(--mono); }
+.tb-right { display: flex; align-items: center; gap: 12px; }
+.tb-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,.15);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 10px;
+  font-family: var(--mono);
+  font-weight: 600;
+  color: #fff;
+}
+.tb-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #34D399;
+  box-shadow: 0 0 6px #34D399;
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .3; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   DEPARTMENT STRIP / TABS
+   ══════════════════════════════════════════════════════════════ */
+.dept-strip {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+}
+.ds-btn {
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all .18s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.ds-btn:hover { color: var(--text); background: var(--card-hover); }
+.ds-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+.ds-cnt {
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: rgba(37,99,235,.08);
+  color: var(--accent);
+}
+.ds-btn.active .ds-cnt { background: rgba(37,99,235,.15); color: var(--accent3); }
+.ds-btn.alert .ds-cnt { background: var(--red-bg); color: var(--red); }
+
+/* ══════════════════════════════════════════════════════════════
+   CONTENT AREA
+   ══════════════════════════════════════════════════════════════ */
+.content { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+
+/* ══════════════════════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════════════════════ */
+footer {
+  padding: 16px 24px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text3);
+  border-top: 1px solid var(--border);
+  background: var(--card);
+}
