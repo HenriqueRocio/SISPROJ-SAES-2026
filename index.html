@@ -146,6 +146,10 @@ footer span{font-family:'DM Mono',monospace;font-size:10px;color:var(--td);}
   <div class="section-label" id="sectionLabel">Painéis disponíveis</div>
   <div class="cards-grid" id="cardsGrid"></div>
 
+  <!-- DEPT CARDS -->
+  <div class="section-label" style="margin-top:24px" id="deptSectionLabel">Visão por Departamento — TEDs</div>
+  <div class="cards-grid" id="deptGrid"></div>
+
   <footer>
     <div class="footer-logo">
       <div class="footer-logo-dot"></div>
@@ -292,6 +296,7 @@ function render(filter) {
 // ── SEARCH ────────────────────────────────────────────────────────────────
 document.getElementById('searchInput').addEventListener('input', function(e){
   render(e.target.value);
+  renderDeptCards(e.target.value);
 });
 
 // ── FOOTER DATE ───────────────────────────────────────────────────────────
@@ -299,8 +304,76 @@ var now = new Date();
 document.getElementById('footerDate').textContent =
   'Gerado em ' + now.toLocaleDateString('pt-BR') + ' · ' + PANELS.length + ' painéis cadastrados';
 
+// ── DEPARTAMENTOS TED ────────────────────────────────────────────────────
+var DEPT_PANELS = [
+  {id:'ted_gab_saes', sigla:'GAB. SAES', nome:'Gabinete/SAES', file:'ted_gab_saes.html', pf:167, projVig:2, color:'blue'},
+  {id:'ted_daet', sigla:'DAET', nome:'Depto de Atenção Especializada e Temática', file:'ted_daet.html', pf:147, projVig:35, color:'green'},
+  {id:'ted_dahud', sigla:'DAHUD', nome:'Depto de Atenção Hospitalar, Domiciliar e de Urgência', file:'ted_dahud.html', pf:61, projVig:34, color:'blue'},
+  {id:'ted_deeqae', sigla:'DEEQAE', nome:'Depto de Estruturação, Especialização e Qualificação da AE', file:'ted_deeqae.html', pf:69, projVig:1, color:'yellow'},
+  {id:'ted_desmad', sigla:'DESMAD', nome:'Depto de Saúde Mental, Álcool e Drogas', file:'ted_desmad.html', pf:24, projVig:9, color:'purple'},
+  {id:'ted_drac', sigla:'DRAC', nome:'Depto de Regulação, Avaliação e Controle', file:'ted_drac.html', pf:78, projVig:1, color:'green'},
+  {id:'ted_dgh', sigla:'DGH', nome:'Depto de Gestão Hospitalar', file:'ted_dgh.html', pf:52, projVig:0, color:'orange'},
+  {id:'ted_decan', sigla:'DECAN', nome:'Depto de Certificação e Atenção', file:'ted_decan.html', pf:34, projVig:4, color:'blue'},
+  {id:'ted_dcebas', sigla:'DCEBAS', nome:'Depto de Certificação de Entidades Beneficentes', file:'ted_dcebas.html', pf:36, projVig:0, color:'yellow'},
+  {id:'ted_fnsus', sigla:'FNSUS', nome:'Fundo Nacional de Saúde — SAES', file:'ted_fnsus.html', pf:19, projVig:2, color:'green'},
+  {id:'ted_inca', sigla:'INCA', nome:'Instituto Nacional do Câncer', file:'ted_inca.html', pf:0, projVig:2, color:'purple'},
+];
+
+function renderDeptCards(filter) {
+  filter = (filter||'').toLowerCase();
+  var grid = document.getElementById('deptGrid');
+  var label = document.getElementById('deptSectionLabel');
+  var filtered = DEPT_PANELS.filter(function(d){
+    return !filter
+      || d.sigla.toLowerCase().indexOf(filter) !== -1
+      || d.nome.toLowerCase().indexOf(filter) !== -1
+      || 'ted departamento'.indexOf(filter) !== -1;
+  });
+  label.textContent = filter && filtered.length < DEPT_PANELS.length ? 'Departamentos — Resultados' : 'Visão por Departamento — TEDs';
+  grid.innerHTML = '';
+  if(!filtered.length) { grid.innerHTML = '<div class="empty-state">Nenhum departamento encontrado.</div>'; return; }
+  filtered.forEach(function(d){
+    var card = document.createElement('a');
+    card.className = 'panel-card ' + d.color;
+    card.href = d.file;
+    card.onclick = function(e){ e.preventDefault(); handleDeptClick(e, d); };
+    card.setAttribute('data-id', d.id);
+    card.innerHTML =
+      '<div class="card-top">'
+        + '<div class="card-icon" style="font-size:13px;font-family:\'DM Mono\',monospace;font-weight:700;letter-spacing:-.02em">'+d.sigla.substring(0,4)+'</div>'
+        + '<span class="card-status status-live">Disponível</span>'
+      + '</div>'
+      + '<div>'
+        + '<div class="card-title">' + d.sigla + '</div>'
+        + '<div class="card-desc">' + d.nome + '</div>'
+      + '</div>'
+      + '<div class="card-meta">'
+        + '<span class="meta-tag">TED</span>'
+        + '<span class="meta-tag">' + d.pf + ' PF</span>'
+        + '<span class="meta-tag">' + d.projVig + ' projetos vigentes</span>'
+      + '</div>'
+      + '<div class="card-footer">'
+        + '<span class="card-date">Atualizado: mar/2026</span>'
+        + '<span style="display:flex;align-items:center;gap:8px;">'
+        + (isUnlocked(d.id) ? '<span class="unlocked-badge locked-badge">&#10003; Desbloqueado</span>' : '<span class="locked-badge">&#128274; Senha</span>')
+        + '<span class="card-arrow">&#8594;</span></span>'
+      + '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function handleDeptClick(e, dept) {
+  if(isUnlocked(dept.id)) {
+    window.location.href = dept.file;
+    return;
+  }
+  // Reuse existing modal with a virtual panel object
+  openModal({id: dept.id, title: dept.sigla + ' — Painel TED', icon: '📋', file: dept.file});
+}
+
 // ── INIT ──────────────────────────────────────────────────────────────────
 render('');
+renderDeptCards('');
 
 /* ── AUTH CONFIG ─────────────────────────────────────────────────
    Para trocar a senha:
