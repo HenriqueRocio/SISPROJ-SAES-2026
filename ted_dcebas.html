@@ -269,7 +269,7 @@ const CLT = [["ADRIANA PONTES ABRAHAM", "48930", "TED-027-2025", "DIREX-019-FIO-
 const BOL = [["DEBORA CHAVES BARTOCCI", "TED-027-2025", "DCEBAS", "CGCER", "Bolsista", 8000.0, 24000.0, "2027-11-10"], ["ERICK ALVES PEREIRA LOPES", "TED-027-2025", "DCEBAS", "CGCER", "Bolsista", 7000.0, 28000.0, "2027-10-30"], ["GILDEMAR CARDOSO DA CUNHA JUNIOR", "TED-027-2025", "DCEBAS", "CGCER", "Bolsista", 7000.0, 21000.0, "2027-11-10"], ["JULIANA CUNHA FRAZAO", "TED-027-2025", "DCEBAS", "CGCER", "Bolsista", 4500.0, 13500.0, "2027-11-10"], ["LUANA LOPES ROSENDO", "TED-027-2025", "DCEBAS", "CGCER", "Bolsista", 8000.0, 32000.0, "2027-10-30"], ["MARIA DO SOCORRO LIMA NASCIMENTO", "TED-027-2025", "DCEBAS", "CGCER", "Bolsista", 7000.0, 28000.0, "2027-10-30"], ["NEIDE BERNARDO DA SILVA", "TED-027-2025", "DCEBAS", "CGCER", "Bolsista", 8000.0, 32000.0, "2027-10-30"], ["RIVADAVIA DO ROSARIO MARINS", "TED-027-2025", "DCEBAS", "CGCER", "Bolsista", 7800.0, 31200.0, "2027-10-30"], ["ROSANGELA DO NASCIMENTO OLIVEIRA", "TED-027-2025", "DCEBAS", "CGCER", "Bolsista", 8000.0, 32000.0, "2027-10-30"], ["VALTERLIS LOURENCO DOS SANTOS", "TED-027-2025", "DCEBAS", "CGCER", "Bolsista", 8000.0, 24000.0, "2027-11-20"], ["HINGRID TAMARES SILVA REIS ", "TED-027-2025", "DCEBAS", "CGPROF", "Bolsista", 6500.0, 26000.0, "2027-10-30"], ["MARCIO PRADO VELOSO", "TED-027-2025", "DCEBAS", "CGPROF", "Bolsista", 9200.0, 27600.0, "2027-11-10"], ["MARILIANE GUZZO", "TED-027-2025", "DCEBAS", "CGPROF", "Bolsista", 8200.0, 24600.0, "2027-11-20"], ["NEREIDE LAGO", "TED-027-2025", "DCEBAS", "CGPROF", "Bolsista", 8000.0, 32000.0, "2027-10-30"], ["TAILES SILVA PEREIRA", "TED-027-2025", "DCEBAS", "CGPROF", "Bolsista", 8000.0, 24000.0, "2027-11-20"], ["ANA MARIA SILVA", "TED-027-2025", "DCEBAS", "DCEBAS/ASSESSORIA", "Bolsista", 7000.0, 28000.0, "2027-10-30"], ["LEUZA LEOCADIA DE OLIVEIRA", "TED-027-2025", "DCEBAS", "DCEBAS/ASSESSORIA", "Bolsista", 8000.0, 32000.0, "2027-10-30"], ["SANDRA JOSÉ FERRAZ DE AGUIAR", "TED-027-2025", "DCEBAS", "DCEBAS/ASSESSORIA", "Bolsista", 6500.0, 19500.0, "2027-11-20"], ["ELIZANGELA DE ALMEIDA SAUL", "TED-027-2025", "DCEBAS", "DIGAD", "Bolsista", 6000.0, 24000.0, "2027-10-30"], ["ORLANDO DE CARVALHO PINTO NETO", "TED-027-2025", "DCEBAS", "DIGAD", "Bolsista", 7000.0, 28000.0, "2027-10-30"]];
 const PROJ = [];
 const PJ_D = [];
-const PD_TOP = {"DCEBAS": [{"id": "PD-15293", "tipo": "Ordinária", "situacao": "Prestação de Contas - PENDENTE", "projeto": "TED-009-2023", "nome": "BRUNA PEREIRA COSTA", "diarias": 1582.5, "passagem": 1404.17, "total": 2986.67, "origem": "BRASÍLIA", "destino": "RIO DE JANEIRO"}, {"id": "PD-15220", "tipo": "Ordinária", "situacao": "Prestação de Contas - PENDENTE", "projeto": "TED-009-2023", "nome": "MARCIO PRADO VELOSO", "diarias": 1235.0, "passagem": 815.36, "total": 2050.36, "origem": "BRASÍLIA", "destino": "BELÉM"}]};
+const PD_TOP = {"DCEBAS": [{"id": "PD-15293", "tipo": "Ordinária", "situacao": "Prestação de Contas - PENDENTE", "projeto": "TED-009-2023", "nome": "BRUNA PEREIRA COSTA", "diarias": 1582.5, "passagem": 1404.17, "total": 2986.67, "origem": "BRASÍLIA", "destino": "RIO DE JANEIRO", "coord": "CGPROF"}, {"id": "PD-15220", "tipo": "Ordinária", "situacao": "Prestação de Contas - PENDENTE", "projeto": "TED-009-2023", "nome": "MARCIO PRADO VELOSO", "diarias": 1235.0, "passagem": 815.36, "total": 2050.36, "origem": "BRASÍLIA", "destino": "BELÉM", "coord": "CGPROF"}]};
 const DST = {"DCEBAS": {"proj_total": 0, "proj_vigentes": 0, "val_aprov": 0, "val_emp": 0, "val_pago": 0, "clt_ativos": 16, "clt_total": 17, "clt_folha": 156151.23, "clt_custo_est": 10127726.0, "clt_custo_exec": 814868.0, "pd_total": 9, "pd_pendente": 2, "pd_valor": 31872.32, "pd_pend_valor": 5037.030000000001, "pj_total": 0, "pj_valor": 0, "bol_ativos": 20, "bol_total": 191}};
 const DEPTS = ["DCEBAS"];
 const DEPT_NAMES = {"DCEBAS": "Depto de Certificação de Entidades Beneficentes"};
@@ -440,7 +440,7 @@ function renderDept(el,dept){
   if(proj_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#128193;</span><span class="mhdr-t">Projetos TEDs</span><span class="mhdr-s">'+proj_v.length+' vigentes · '+proj_d.length+' totais</span></div><div class="scroll-wrap"><div class="prc-grid" id="projGrid"></div></div></div>';
   if(clt_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#128100;</span><span class="mhdr-t">CLT em Execução</span><span class="mhdr-s">clique para detalhar</span></div><div class="fbar"><input type="text" id="cltF" placeholder="Buscar nome, cargo..." oninput="filtCLT()"><select id="cltS" onchange="filtCLT()"><option value="">Todos status</option><option value="Ativo">Ativo</option><option value="Programado">Programado</option><option value="Inativo">Inativo</option></select><span class="fcnt" id="cltCnt">'+clt_d.length+' contratos</span></div><div class="tbl-wrap" style="max-height:480px"><table class="t"><thead><tr><th>Nome</th><th>Cargo</th><th>Projeto</th><th>Coord.</th><th>Status</th><th>Término</th><th style="text-align:right">Custo Efetivo</th><th style="text-align:right">Custo Exec.</th></tr></thead><tbody id="cltGrid"></tbody></table></div></div>';
   if(bol_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#127891;</span><span class="mhdr-t">Bolsistas em Execução</span><span class="mhdr-s">clique para detalhar</span></div><div class="fbar"><input type="text" id="bolF" placeholder="Buscar nome, projeto..." oninput="filtBOL()"><select id="bolS" onchange="filtBOL()"><option value="">Todos vínculos</option><option value="Bolsista">Bolsista</option><option value="RPA">RPA</option></select><span class="fcnt" id="bolCnt">'+bol_d.length+' contratos</span></div><div class="tbl-wrap" style="max-height:480px"><table class="t"><thead><tr><th>Nome</th><th>Projeto</th><th>Coord.</th><th>Vínculo</th><th>Término</th><th style="text-align:right">Val. Mensal</th><th style="text-align:right">Val. Executado</th></tr></thead><tbody id="bolGrid"></tbody></table></div></div>';
-  if(pend.length) h+='<div class="mcard"><div class="mhdr"><span>&#9992;&#65039;</span><span class="mhdr-t">Passagens e Diárias — Top por Valor</span><span class="mhdr-s">clique para detalhar</span></div><div class="fbar"><input type="text" id="pdF" placeholder="Buscar nome, projeto, destino..." oninput="filtPD()"><select id="pdTipo" onchange="filtPD()"><option value="">Todos tipos</option><option value="Ordinária">Ordinária</option><option value="Extraordinária">Extraordinária</option></select><span class="fcnt" id="pdCnt">'+pend.length+' registros</span></div><div class="tbl-wrap" style="max-height:480px"><table class="t" id="pdTbl"><thead><tr><th>ID</th><th class="sortable" data-col="tipo">Tipo</th><th class="sortable" data-col="projeto">Projeto</th><th class="sortable" data-col="nome">Nome</th><th class="sortable" data-col="departamento">Depto</th><th class="sortable" data-col="origem">Origem</th><th class="sortable" data-col="destino">Destino</th><th class="sortable" data-col="diarias" style="text-align:right">Diárias</th><th class="sortable" data-col="passagem" style="text-align:right">Passagem</th><th class="sortable" data-col="total" style="text-align:right">Total</th></tr></thead><tbody id="pdGrid"></tbody></table></div></div>';
+  if(pend.length) h+='<div class="mcard"><div class="mhdr"><span>&#9992;&#65039;</span><span class="mhdr-t">Passagens e Diárias — Top por Valor</span><span class="mhdr-s">clique para detalhar</span></div><div class="fbar"><input type="text" id="pdF" placeholder="Buscar nome, projeto, destino..." oninput="filtPD()"><select id="pdTipo" onchange="filtPD()"><option value="">Todos tipos</option><option value="Ordinária">Ordinária</option><option value="Extraordinária">Extraordinária</option></select><label style="font-size:9.5px;color:var(--text2);font-family:var(--mono);display:flex;align-items:center;gap:4px">De <input type="date" id="pdDtI" onchange="filtPD()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);border-radius:var(--r3);padding:4px 6px;font-size:10px;font-family:var(--mono);outline:none"></label><label style="font-size:9.5px;color:var(--text2);font-family:var(--mono);display:flex;align-items:center;gap:4px">Até <input type="date" id="pdDtF" onchange="filtPD()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);border-radius:var(--r3);padding:4px 6px;font-size:10px;font-family:var(--mono);outline:none"></label><span class="fcnt" id="pdCnt">'+pend.length+' registros</span></div><div class="tbl-wrap" style="max-height:480px"><table class="t" id="pdTbl"><thead><tr><th>ID</th><th class="sortable" data-col="tipo">Tipo</th><th class="sortable" data-col="projeto">Projeto</th><th class="sortable" data-col="nome">Nome</th><th class="sortable" data-col="departamento">Depto</th><th class="sortable" data-col="coord">Coord.</th><th class="sortable" data-col="origem">Origem</th><th class="sortable" data-col="destino">Destino</th><th class="sortable" data-col="diarias" style="text-align:right">Diárias</th><th class="sortable" data-col="passagem" style="text-align:right">Passagem</th><th class="sortable" data-col="total" style="text-align:right">Total</th></tr></thead><tbody id="pdGrid"></tbody></table></div></div>';
   if(pj_d.length) h+='<div class="mcard"><div class="mhdr"><span>&#127970;</span><span class="mhdr-t">Contratos PJ</span><span class="mhdr-s">'+pj_d.length+' contratos · '+BRLk(pj_d.reduce((s,r)=>s+r[7],0))+'</span></div><div class="tbl-wrap" style="max-height:420px"><table class="t" id="pjTbl"><thead><tr><th>ID</th><th>Categoria</th><th>Projeto</th><th>Objeto</th><th>Fornecedor</th><th style="text-align:right">Valor</th></tr></thead><tbody id="pjGrid"></tbody></table></div></div>';
 
   el.innerHTML=h;
@@ -573,6 +573,7 @@ function renderPD(list){
       '<td class="mc">'+(r.projeto||'—')+'</td>'+
       '<td style="font-size:10px">'+(r.nome||'—')+'</td>'+
       '<td class="mc" style="font-size:9.5px">'+(r._dept||'—')+'</td>'+
+      '<td class="mc" style="font-size:9.5px">'+(r.coord||'—')+'</td>'+
       '<td class="mc" style="font-size:9.5px">'+(r.origem||'—')+'</td>'+
       '<td class="mc" style="font-size:9.5px">'+(r.destino||'—')+'</td>'+
       '<td class="nr">'+BRL(r.diarias)+'</td>'+
@@ -590,8 +591,15 @@ function renderPD(list){
 function filtPD(){
   const q=(document.getElementById('pdF')||{value:''}).value.toLowerCase();
   const tp=(document.getElementById('pdTipo')||{value:''}).value;
+  const di=(document.getElementById('pdDtI')||{value:''}).value;
+  const df=(document.getElementById('pdDtF')||{value:''}).value;
   const base=_pdViewAll||[];
-  const res=base.filter(r=>(!q||(r.nome+r.projeto+r.destino+r.origem+(r._dept||'')).toLowerCase().includes(q))&&(!tp||r.tipo===tp));
+  const res=base.filter(r=>{
+    if(q&&!(r.nome+r.projeto+r.destino+r.origem+(r._dept||'')+(r.coord||'')).toLowerCase().includes(q)) return false;
+    if(tp&&r.tipo!==tp) return false;
+    if(di||df){const y=r.projeto?r.projeto.match(/(\d{4})/):null;if(y){const pd=y[1]+'-01-01';if(di&&pd<di) return false;if(df&&pd>df) return false;}else{return false;}}
+    return true;
+  });
   sortPD(res);
   renderPD(res);
 }
@@ -601,6 +609,7 @@ function sortPD(list){
   list.sort((a,b)=>{
     let va=a[c]||'', vb=b[c]||'';
     if(c==='departamento'){va=a._dept||'';vb=b._dept||'';}
+    if(c==='coord'){va=a.coord||'';vb=b.coord||'';}
     if(typeof va==='number') return (va-vb)*d;
     return String(va).localeCompare(String(vb))*d;
   });
@@ -853,6 +862,8 @@ function openPdDW(r){
       dr2('Tipo','<span class="b-tag '+(r.tipo==='Extraordinária'?'t-p':'t-b')+'">'+r.tipo+'</span>')+
       dr2('Situação',r.situacao||'—')+
       dr2('Projeto','<span class="b-tag t-b">'+(r.projeto||'—')+'</span>')+
+      dr2('Departamento',r._dept||'—')+
+      dr2('Coordenação',r.coord||'—')+
     '</div>'+
     '<div><div class="dg-title">&#9992; Trajeto</div>'+
       dr2('Origem','<strong>'+(r.origem||'—')+'</strong>')+
